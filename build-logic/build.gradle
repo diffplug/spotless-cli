@@ -7,9 +7,24 @@
 plugins {
     // Support convention plugins written in Groovy. Convention plugins are build scripts in 'src/main' that automatically become available as plugins in the main build.
     id 'groovy-gradle-plugin'
+    id 'com.diffplug.spotless'
 }
 
 repositories {
     // Use the plugin portal to apply community plugins in convention plugins.
     gradlePluginPortal()
+}
+
+spotless {
+    encoding 'UTF-8'
+
+    groovy {
+        importOrder('java|javax', 'org', 'com', 'com.diffplug', '', '\\#')
+        removeSemicolons()
+        greclipse()
+        excludeJava()
+    }
+    groovyGradle {
+        greclipse()
+    }
 }

@@ -7,8 +7,13 @@
  */
 
 pluginManagement {
-    // Include 'plugins build' to define convention plugins.
-    includeBuild('build-logic')
+	// Include 'plugins build' to define convention plugins.
+	includeBuild('build-logic')
+
+	repositories {
+		mavenCentral()
+		gradlePluginPortal()
+	}
 }
 
 plugins {

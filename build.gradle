@@ -1,0 +1,13 @@
+plugins {
+	id 'buildlogic.spotless-gradle-conventions'
+}
+
+subprojects {
+	apply plugin: 'buildlogic.spotless-gradle-conventions'
+}
+
+allprojects {
+	repositories {
+		mavenCentral()
+	}
+}

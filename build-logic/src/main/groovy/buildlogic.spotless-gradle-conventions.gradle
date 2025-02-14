@@ -1,0 +1,9 @@
+plugins {
+    id 'buildlogic.spotless-common-conventions'
+}
+
+spotless {
+    groovyGradle {
+        greclipse()
+    }
+}
