@@ -1,0 +1,12 @@
+plugins {
+    id 'buildlogic.spotless-common-conventions'
+}
+
+spotless {
+    java {
+        palantirJavaFormat()
+        formatAnnotations()
+        removeUnusedImports()
+        importOrder('java|javax', 'org', 'com', 'com.diffplug', '', '\\#')
+    }
+}
