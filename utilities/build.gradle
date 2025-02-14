@@ -5,9 +5,9 @@
  */
 
 plugins {
-    id 'buildlogic.java-library-conventions'
+	id 'buildlogic.java-library-conventions'
 }
 
 dependencies {
-    api project(':list')
+	api project(':list')
 }
