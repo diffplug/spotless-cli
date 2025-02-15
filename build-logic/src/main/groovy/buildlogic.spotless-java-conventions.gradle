@@ -8,5 +8,6 @@ spotless {
         formatAnnotations()
         removeUnusedImports()
         importOrder('java|javax', 'org', 'com', 'com.diffplug', '', '\\#')
+        licenseHeaderFile rootProject.file('gradle/spotless.license')
     }
 }
