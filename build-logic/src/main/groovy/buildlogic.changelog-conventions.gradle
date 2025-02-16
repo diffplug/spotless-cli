@@ -1,8 +1,8 @@
 plugins {
-    id 'com.diffplug.spotless-changelog'
+	id 'com.diffplug.spotless-changelog'
 }
 
 
 spotlessChangelog {
-    appendDashSnapshotUnless_dashPrelease=true
+	appendDashSnapshotUnless_dashPrelease=true
 }

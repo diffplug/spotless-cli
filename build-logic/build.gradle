@@ -27,6 +27,7 @@ spotless {
 		endWithNewline()
 	}
 	groovyGradle {
+		target '*.gradle', 'src/main/groovy/**/*.gradle'
 		greclipse()
 		endWithNewline()
 	}

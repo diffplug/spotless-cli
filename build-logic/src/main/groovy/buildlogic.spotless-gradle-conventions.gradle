@@ -1,10 +1,10 @@
 plugins {
-    id 'buildlogic.spotless-common-conventions'
+	id 'buildlogic.spotless-common-conventions'
 }
 
 spotless {
-    groovyGradle {
-        greclipse()
-        endWithNewline()
-    }
+	groovyGradle {
+		greclipse()
+		endWithNewline()
+	}
 }
