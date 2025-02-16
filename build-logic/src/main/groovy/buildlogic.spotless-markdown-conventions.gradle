@@ -1,0 +1,11 @@
+plugins {
+    id 'buildlogic.spotless-common-conventions'
+}
+
+spotless {
+    freshmark { // freshmark for keeping markdown files up to date
+        target '*.md'
+        prettier() // prettier for markdown formatting
+    }
+
+}
