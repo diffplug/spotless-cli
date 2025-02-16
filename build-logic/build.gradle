@@ -24,8 +24,10 @@ spotless {
 		removeSemicolons()
 		greclipse()
 		excludeJava()
+		endWithNewline()
 	}
 	groovyGradle {
 		greclipse()
+		endWithNewline()
 	}
 }
