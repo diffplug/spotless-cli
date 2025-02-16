@@ -1,6 +1,7 @@
 plugins {
 	id 'buildlogic.spotless-gradle-conventions'
 	id 'buildlogic.spotless-markdown-conventions'
+	id 'buildlogic.changelog-conventions'
 }
 
 subprojects {
