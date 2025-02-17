@@ -27,7 +27,7 @@ plugins {
 	id 'com.adarshr.test-logger' version '4.0.0' apply false
 
 	// https://github.com/graalvm/native-build-tools/releases
-	id 'org.graalvm.buildtools.native' version '0.10.2' apply false
+	id 'org.graalvm.buildtools.native' version '0.10.5' apply false
 
 	// https://github.com/GradleUp/shadow/releases
 	id 'com.gradleup.shadow' version '8.3.6' apply false

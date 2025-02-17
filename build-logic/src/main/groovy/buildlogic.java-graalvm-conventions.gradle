@@ -4,6 +4,12 @@ plugins {
 	id 'buildlogic.jar-shadow-conventions'
 }
 
+tasks.withType(org.graalvm.buildtools.gradle.tasks.GenerateResourcesConfigFile).configureEach {
+	notCompatibleWithConfigurationCache('https://github.com/britter/maven-plugin-development/issues/8')
+}
+tasks.withType(org.graalvm.buildtools.gradle.tasks.BuildNativeImageTask).configureEach {
+	notCompatibleWithConfigurationCache('https://github.com/britter/maven-plugin-development/issues/8')
+}
 
 def nativeCompileMetaDir = project.layout.buildDirectory.dir('nativeCompile/src/main/resources/native-image/' + project.group + '/' + project.name)
 
@@ -70,3 +76,5 @@ tasks.named('shadowJar', com.github.jengelman.gradle.plugins.shadow.tasks.Shadow
 		into('META-INF/native-image/' + project.group + '/' + project.name)
 	}
 }
+
+project.ext.nativeCompileMetaDir = nativeCompileMetaDir
