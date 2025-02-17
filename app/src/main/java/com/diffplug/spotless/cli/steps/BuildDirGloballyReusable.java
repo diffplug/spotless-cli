@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 DiffPlug
+ * Copyright 2024 DiffPlug
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,15 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.example.app;
+package com.diffplug.spotless.cli.steps;
 
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-class MessageUtilsTest {
-    @Test
-    void testGetMessage() {
-        assertEquals("Hello      World!", MessageUtils.getMessage());
-    }
-}
+public interface BuildDirGloballyReusable {}

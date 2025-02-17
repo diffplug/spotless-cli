@@ -11,6 +11,11 @@ plugins {
 dependencies {
 	implementation 'org.apache.commons:commons-text'
 	implementation project(':utilities')
+	testImplementation project(':testlib')
+	implementation libs.bundles.spotless.libs
+
+	implementation libs.picocli
+	annotationProcessor libs.picocli.codegen
 }
 
 application {

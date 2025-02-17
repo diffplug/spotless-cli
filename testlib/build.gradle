@@ -1,0 +1,8 @@
+plugins {
+	id 'buildlogic.java-testlibrary-conventions'
+}
+
+dependencies {
+	implementation libs.junit.jupiter.api
+	implementation libs.bundles.durian.libs
+}
