@@ -5,8 +5,9 @@
  */
 
 plugins {
-	id 'buildlogic.java-application-conventions'
+	id 'buildlogic.picocli-conventions'
 	id 'buildlogic.java-special-tests-conventions'
+	id 'buildlogic.java-graalvm-conventions'
 }
 
 dependencies {
@@ -15,11 +16,37 @@ dependencies {
 	testImplementation project(':testlib')
 	implementation libs.bundles.spotless.libs
 
-	implementation libs.picocli
-	annotationProcessor libs.picocli.codegen
+	implementation libs.bundles.native.includes
 }
 
 application {
-	// Define the main class for the application.
-	mainClass = 'org.example.app.App'
+	mainClass = 'com.diffplug.spotless.cli.SpotlessCLI'
+	applicationName = 'spotless'
+	archivesBaseName = 'spotless-cli'
+}
+
+gradle.taskGraph.whenReady { TaskExecutionGraph graph ->
+	//	println "Graph: " + graph.allTasks*.name
+	if (graph.hasTask(':app:nativeCompile') || graph.hasTask(':app:metadataCopy') || graph.hasTask(':app:shadowJar')) {
+		// enable graalvm agent using property here instead of command line `-Pagent=standard`
+		// this collects information about reflective access and resources used by the application (e.g. GJF)
+		project.ext.agent = 'standard'
+	}
+}
+
+tasks.withType(Test).configureEach {
+	if (it.name == 'test' || it.name == 'testNpm') {
+		it.outputs.dir(nativeCompileMetaDir)
+		if (project.hasProperty('agent')) {
+			it.inputs.property('agent', project.property('agent')) // make sure to re-run tests if agent changes
+		}
+	}
+	if (it.name == 'testCliProcess' || it.name == 'testCliProcessNpm') {
+		it.dependsOn('shadowJar')
+		it.systemProperty 'spotless.cli.shadowJar', tasks.shadowJar.archiveFile.get().asFile
+	}
+	if (it.name == 'testCliNative' || it.name == 'testCliNativeNpm') {
+		it.dependsOn('nativeCompile')
+		it.systemProperty 'spotless.cli.nativeImage', tasks.nativeCompile.outputFile.get().asFile
+	}
 }

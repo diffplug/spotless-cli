@@ -2,7 +2,8 @@ plugins {
 	id 'com.diffplug.spotless-changelog'
 }
 
-
 spotlessChangelog {
 	appendDashSnapshotUnless_dashPrelease=true
 }
+
+version = spotlessChangelog.versionNext

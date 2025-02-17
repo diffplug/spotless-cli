@@ -7,8 +7,10 @@
 plugins {
 	// https://github.com/diffplug/spotless/blob/main/plugin-gradle/CHANGES.md
 	id 'com.diffplug.spotless' version '7.0.2' apply false
-}
 
+	// https://github.com/GradleUp/shadow/releases
+	id 'com.gradleup.shadow' version '8.3.6' apply false
+}
 
 dependencyResolutionManagement {
 	// Reuse version catalog from the main build.

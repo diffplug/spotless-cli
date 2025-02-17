@@ -1,0 +1,72 @@
+plugins {
+	id 'java'
+	id 'org.graalvm.buildtools.native'
+	id 'buildlogic.jar-shadow-conventions'
+}
+
+
+def nativeCompileMetaDir = project.layout.buildDirectory.dir('nativeCompile/src/main/resources/native-image/' + project.group + '/' + project.name)
+
+// use tasks 'nativeCompile' and 'nativeRun' to compile and run the native image
+graalvmNative {
+	agent {
+		enabled = !project.hasProperty('skipGraalAgent') // we would love to make this dynamic, but it's not possible
+		defaultMode = "standard"
+		metadataCopy {
+			inputTaskNames.add('test')
+			inputTaskNames.add('testNpm')
+			mergeWithExisting = false
+			outputDirectories.add(nativeCompileMetaDir.get().asFile.path)
+		}
+		tasksToInstrumentPredicate = new java.util.function.Predicate<Task>() {
+					@Override
+					boolean test(Task task) {
+						//						if (project.hasProperty('agent')) {
+						println ("Instrumenting task: " + task.name + " " + task.name == 'test' + "proj: " + task.project.hasProperty('agent'))
+						return task.name == 'test' || task.name == 'testNpm'
+						//						}
+						//						return false
+					}
+				}
+	}
+	binaries {
+		main {
+			imageName = 'spotless'
+			mainClass = 'com.diffplug.spotless.cli.SpotlessCLI'
+			sharedLibrary = false
+			useFatJar = true // use shadowJar as input to have same classpath
+
+			// optimizations, see https://www.graalvm.org/latest/reference-manual/native-image/optimizations-and-performance/
+			//buildArgs.add('-O3') // on production builds
+
+			// the following options are required for GJF
+			// see: <https://github.com/google/google-java-format/issues/894#issuecomment-1430408909>
+			buildArgs.add('-J--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED')
+			buildArgs.add('-J--add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED')
+			buildArgs.add('-J--add-exports=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED')
+			buildArgs.add('-J--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED')
+			buildArgs.add('-J--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED')
+
+			buildArgs.add('--initialize-at-build-time=com.sun.tools.javac.file.Locations')
+
+			buildArgs.add('-H:IncludeResourceBundles=com.sun.tools.javac.resources.compiler')
+			buildArgs.add('-H:IncludeResourceBundles=com.sun.tools.javac.resources.javac')
+		}
+	}
+}
+
+tasks.named('metadataCopy') {
+	dependsOn('test', 'testNpm')
+}
+
+tasks.named('nativeCompile') {
+	dependsOn('shadowJar')
+	classpathJar = tasks.shadowJar.archiveFile.get().asFile
+}
+
+tasks.named('shadowJar', com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) {
+	dependsOn('metadataCopy') // produces graalvm agent info
+	from(nativeCompileMetaDir.get().asFile.path) {
+		into('META-INF/native-image/' + project.group + '/' + project.name)
+	}
+}

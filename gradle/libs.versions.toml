@@ -6,6 +6,7 @@ annotations = "26.0.2"
 assertj-core = "3.27.3"
 durian = "1.2.0"
 junit = "5.8.1"
+native-include-googleJavaFormat = "1.24.0"
 picocli = "4.7.6"
 spotless-lib = "3.0.2-SNAPSHOT"
 
@@ -17,6 +18,7 @@ durian-io = { module = "com.diffplug.durian:durian-io", version.ref = "durian" }
 durian-collect = { module = "com.diffplug.durian:durian-collect", version.ref = "durian" }
 junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
 junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
+native-include-googleJavaFormat = { module = "com.google.googlejavaformat:google-java-format", version.ref = "native-include-googleJavaFormat" }
 picocli = { module = "info.picocli:picocli", version.ref = "picocli" }
 picocli-codegen = { module = "info.picocli:picocli-codegen", version.ref = "picocli" }
 spotless-lib = { module = "com.diffplug.spotless:spotless-lib", version.ref = "spotless-lib" }
@@ -25,3 +27,6 @@ spotless-lib-extra = { module = "com.diffplug.spotless:spotless-lib-extra", vers
 [bundles]
 spotless-libs = ["spotless-lib", "spotless-lib-extra"]
 durian-libs = ["durian-core", "durian-io", "durian-collect"]
+native-includes = [
+    "native-include-googleJavaFormat"
+]
