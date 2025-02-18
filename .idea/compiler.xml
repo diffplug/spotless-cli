@@ -4,6 +4,9 @@
     <annotationProcessing>
       <profile name="Gradle Imported" enabled="true">
         <outputRelativeToContentRoot value="true" />
+        <option name="other.resource.bundles" value="application" />
+        <option name="other.resource.patterns" value=".*\\.properties,.*\\.json,.*\\.js" />
+        <option name="project" value="spotless-cli/app" />
         <processorPath useClasspath="false">
           <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/info.picocli/picocli-codegen/4.7.6/c36d09aee9ded3685ceac45de8c1e02623158920/picocli-codegen-4.7.6.jar" />
           <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/info.picocli/picocli/4.7.6/77c2cb87814b6a03d431fc856024a9f8ff605ad4/picocli-4.7.6.jar" />
