@@ -28,6 +28,8 @@ dependencies {
 	implementation libs.annotations
 	implementation libs.bundles.spotless.libs
 	implementation libs.bundles.durian.libs
+
+	testImplementation libs.bundles.test.libs
 }
 
 testing {

@@ -27,3 +27,4 @@ native-includes = [
     "native-include-googleJavaFormat"
 ]
 spotless-libs = ["spotless-lib", "spotless-lib-extra"]
+test-libs = ["assertj-core", "junit-jupiter-api"]

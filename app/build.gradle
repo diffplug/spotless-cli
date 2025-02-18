@@ -16,6 +16,8 @@ dependencies {
 	testImplementation project(':testlib')
 	implementation libs.bundles.spotless.libs
 
+	// these are fixed versions of the otherwise dynamic dependencies for spotless
+	// this is necessary to allow for native compilation where reflective access to dynamic jars is not possible
 	implementation libs.bundles.native.includes
 }
 

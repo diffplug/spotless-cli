@@ -3,6 +3,6 @@ plugins {
 }
 
 dependencies {
-	implementation libs.junit.jupiter.api
+	implementation libs.bundles.test.libs
 	implementation libs.bundles.durian.libs
 }
