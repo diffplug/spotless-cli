@@ -10,6 +10,8 @@ plugins {
 	id 'buildlogic.java-graalvm-conventions'
 }
 
+version = rootProject.version
+
 dependencies {
 	implementation 'org.apache.commons:commons-text'
 	implementation project(':utilities')
