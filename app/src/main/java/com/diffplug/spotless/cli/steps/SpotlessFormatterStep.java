@@ -24,7 +24,7 @@ import com.diffplug.spotless.cli.core.SpotlessActionContext;
 
 import picocli.CommandLine;
 
-@CommandLine.Command(mixinStandardHelpOptions = true)
+@CommandLine.Command(mixinStandardHelpOptions = true, usageHelpAutoWidth = true)
 public abstract class SpotlessFormatterStep implements SpotlessCLIFormatterStep {
 
     @NotNull @Override

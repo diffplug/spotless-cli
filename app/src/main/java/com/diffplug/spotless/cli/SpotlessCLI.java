@@ -44,6 +44,7 @@ import picocli.CommandLine.Command;
 @Command(
         name = "spotless",
         mixinStandardHelpOptions = true,
+        usageHelpAutoWidth = true,
         versionProvider = SpotlessCLIVersionProvider.class,
         description = "Runs spotless",
         synopsisSubcommandLabel = "[FORMATTING_STEPS]",
