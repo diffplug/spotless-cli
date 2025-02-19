@@ -27,6 +27,18 @@ public class SpotlessCLIVersionProvider implements CommandLine.IVersionProvider 
         Properties properties = new Properties();
         properties.load(getClass().getResourceAsStream("/application.properties"));
         String version = properties.getProperty("cli.version");
-        return new String[] {"Spotless CLI version " + version};
+        String libVersion = properties.getProperty("lib.version");
+        String libExtraVersion = properties.getProperty("lib.extra.version");
+        String line = "-".repeat(50);
+        return """
+                %1$s
+                🧼 Spotless CLI %2$s
+                %1$s
+
+                spotless-lib:       %3$s
+                spotless-lib-extra: %4$s
+                """
+                .formatted(line, version, libVersion, libExtraVersion)
+                .split("\n");
     }
 }

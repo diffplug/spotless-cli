@@ -21,7 +21,9 @@ compileJava {
 tasks.withType(ProcessResources)
 		.configureEach(new ApplicationPropertiesProcessResourcesAction(
 		[
-			"cli.version": rootProject.version
+			"cli.version": rootProject.version,
+			"lib.version": libs.versions.spotless.lib.get(),
+			"lib.extra.version": libs.versions.spotless.lib.get(),
 		]
 		))
 

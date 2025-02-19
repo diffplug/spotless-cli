@@ -30,6 +30,6 @@ public class SpotlessCLIHelpAndVersionTest extends CLIIntegrationHarness {
     @Test
     void testVersion() {
         SpotlessCLIRunner.Result result = cliRunner().withOption("--version").run();
-        assertThat(result.stdOut()).contains("Spotless CLI version");
+        assertThat(result.stdOut()).containsPattern("Spotless CLI \\d+\\.\\d+\\.\\d+.*");
     }
 }
