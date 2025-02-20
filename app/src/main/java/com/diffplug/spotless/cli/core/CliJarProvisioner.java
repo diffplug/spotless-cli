@@ -25,6 +25,12 @@ import java.util.Set;
 import com.diffplug.spotless.JarState;
 import com.diffplug.spotless.Provisioner;
 
+/**
+ * Since we are not a build tool per se, we do not actually have a provisioning
+ * method other than our app bundle itself. And as we want to compile to native
+ * we cannot use dynamic class loading. So override spotless-lib dynamic class loading
+ * to actually use only classes within our distribution.
+ */
 public class CliJarProvisioner implements Provisioner {
 
     public static final CliJarProvisioner INSTANCE = new CliJarProvisioner();
@@ -32,8 +38,7 @@ public class CliJarProvisioner implements Provisioner {
     public static final File OWN_JAR = createSentinelFile();
 
     public CliJarProvisioner() {
-        JarState.setOverrideClassLoader(getClass().getClassLoader()); // use the classloader of this class
-        // TODO (simschla, 11.11.2024): THIS IS A HACK, replace with proper solution
+        JarState.setForcedClassLoader(getClass().getClassLoader()); // use the classloader of this class
     }
 
     private static File createSentinelFile() {
