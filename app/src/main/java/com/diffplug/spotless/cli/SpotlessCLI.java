@@ -47,6 +47,16 @@ import picocli.CommandLine.Command;
         usageHelpAutoWidth = true,
         versionProvider = SpotlessCLIVersionProvider.class,
         description = "Runs spotless",
+        header =
+                """
+                                 __  __             \s
+               _________  ____  / /_/ /__  __________
+              / ___/ __ \\/ __ \\/ __/ / _ \\/ ___/ ___/
+             (__  ) /_/ / /_/ / /_/ /  __(__  |__  )\s
+            /____/ .___/\\____/\\__/_/\\___/____/____/ \s Spotless CLI
+                /_/                                 \s
+
+            """,
         synopsisSubcommandLabel = "[FORMATTING_STEPS]",
         commandListHeading = "%nAvailable formatting steps:%n",
         subcommandsRepeatable = true,
