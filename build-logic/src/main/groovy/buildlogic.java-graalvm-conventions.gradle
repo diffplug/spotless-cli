@@ -42,6 +42,8 @@ graalvmNative {
 			sharedLibrary = false
 			useFatJar = true // use shadowJar as input to have same classpath
 
+			// allow calling prettier (using local http server)
+			buildArgs.add('--enable-url-protocols=http')
 			// optimizations, see https://www.graalvm.org/latest/reference-manual/native-image/optimizations-and-performance/
 			//buildArgs.add('-O3') // on production builds
 
