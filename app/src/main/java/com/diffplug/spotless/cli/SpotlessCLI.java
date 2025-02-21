@@ -18,11 +18,10 @@ package com.diffplug.spotless.cli;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.List;
-
-import org.jetbrains.annotations.NotNull;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import com.diffplug.spotless.Formatter;
-import com.diffplug.spotless.FormatterStep;
 import com.diffplug.spotless.LineEnding;
 import com.diffplug.spotless.LintState;
 import com.diffplug.spotless.ThrowingEx;
@@ -31,6 +30,7 @@ import com.diffplug.spotless.cli.core.SpotlessActionContext;
 import com.diffplug.spotless.cli.core.SpotlessCommandLineStream;
 import com.diffplug.spotless.cli.core.TargetFileTypeInferer;
 import com.diffplug.spotless.cli.core.TargetResolver;
+import com.diffplug.spotless.cli.execution.FormatterStepsSupplier;
 import com.diffplug.spotless.cli.execution.SpotlessExecutionStrategy;
 import com.diffplug.spotless.cli.help.OptionConstants;
 import com.diffplug.spotless.cli.steps.GoogleJavaFormat;
@@ -96,25 +96,26 @@ public class SpotlessCLI implements SpotlessAction, SpotlessCommand, SpotlessAct
     public LineEnding lineEnding;
 
     @Override
-    public Integer executeSpotlessAction(@NotNull List<FormatterStep> formatterSteps) {
+    public Integer executeSpotlessAction(FormatterStepsSupplier formatterSteps) {
+
         validateTargets();
         TargetResolver targetResolver = targetResolver();
 
-        try (Formatter formatter = Formatter.builder()
-                .lineEndingsPolicy(lineEnding.createPolicy())
-                .encoding(encoding)
-                .steps(formatterSteps)
-                .build()) {
+        try (ExecutorService executor =
+                        Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+                FormatterFactory formatterFactory =
+                        new ThreadLocalFormatterFactory(lineEnding.createPolicy(), encoding, formatterSteps)) {
 
             ResultType resultType = targetResolver
                     .resolveTargets()
-                    .parallel()
-                    .peek(path -> System.out.printf(
-                            "%s: formatting %s%n", Thread.currentThread().getName(), path))
-                    .map(path -> ThrowingEx.get(() -> new Result(
-                            path,
-                            LintState.of(formatter, path.toFile())))) // TODO handle suppressions, see SpotlessTaskImpl
-                    .map(result -> this.handleResult(formatter, result))
+                    .map(path -> {
+                        return executor.submit(() -> {
+                            Formatter formatter = formatterFactory.createFormatter();
+                            return new Result(path, LintState.of(formatter, path.toFile()));
+                        });
+                    })
+                    .map(future -> ThrowingEx.get(future::get))
+                    .map(result -> this.handleResult(formatterFactory.createFormatter(), result))
                     .reduce(ResultType.CLEAN, ResultType::combineWith);
             return spotlessMode.translateResultTypeToExitCode(resultType);
         }

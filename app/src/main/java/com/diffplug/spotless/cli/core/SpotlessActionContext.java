@@ -38,6 +38,15 @@ public class SpotlessActionContext {
         this.executionLayout = ExecutionLayout.create(fileResolver, Objects.requireNonNull(commandLineStream));
     }
 
+    public SpotlessActionContext(
+            @NotNull TargetFileTypeInferer.TargetFileType targetFileType,
+            @NotNull FileResolver fileResolver,
+            @NotNull ExecutionLayout executionLayout) {
+        this.targetFileType = targetFileType;
+        this.fileResolver = fileResolver;
+        this.executionLayout = executionLayout;
+    }
+
     @NotNull public TargetFileTypeInferer.TargetFileType targetFileType() {
         return targetFileType;
     }
@@ -60,6 +69,10 @@ public class SpotlessActionContext {
 
     public static Builder builder() {
         return new Builder();
+    }
+
+    public SpotlessActionContext deriveContext(Integer deriveId) {
+        return new SpotlessActionContext(targetFileType, fileResolver, executionLayout.deriveLayout(deriveId));
     }
 
     public static class Builder {

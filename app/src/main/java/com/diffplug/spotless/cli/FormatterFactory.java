@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 DiffPlug
+ * Copyright 2025 DiffPlug
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,11 @@
  */
 package com.diffplug.spotless.cli;
 
-import com.diffplug.spotless.cli.execution.FormatterStepsSupplier;
+import com.diffplug.spotless.Formatter;
 
-public interface SpotlessAction extends SpotlessCommand {
-    Integer executeSpotlessAction(FormatterStepsSupplier formatterSteps);
+public interface FormatterFactory extends AutoCloseable {
+    Formatter createFormatter();
+
+    @Override
+    void close();
 }

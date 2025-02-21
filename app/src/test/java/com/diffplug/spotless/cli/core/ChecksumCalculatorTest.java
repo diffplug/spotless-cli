@@ -28,6 +28,7 @@ import org.junit.jupiter.api.Test;
 import com.diffplug.spotless.FormatterStep;
 import com.diffplug.spotless.cli.SpotlessAction;
 import com.diffplug.spotless.cli.SpotlessActionContextProvider;
+import com.diffplug.spotless.cli.execution.FormatterStepsSupplier;
 import com.diffplug.spotless.cli.steps.SpotlessCLIFormatterStep;
 import com.diffplug.spotless.cli.steps.SpotlessFormatterStep;
 
@@ -205,7 +206,7 @@ class ChecksumCalculatorTest {
         Path baseDir;
 
         @Override
-        public Integer executeSpotlessAction(@NotNull List<FormatterStep> formatterSteps) {
+        public Integer executeSpotlessAction(FormatterStepsSupplier formatterSteps) {
             return 0;
         }
     }

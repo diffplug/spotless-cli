@@ -32,11 +32,24 @@ public class ExecutionLayout {
     private final FileResolver fileResolver;
     private final SpotlessCommandLineStream commandLineStream;
     private final ChecksumCalculator checksumCalculator;
+    private final Integer deriveId;
 
     private ExecutionLayout(@NotNull FileResolver fileResolver, @NotNull SpotlessCommandLineStream commandLineStream) {
         this.fileResolver = Objects.requireNonNull(fileResolver);
         this.commandLineStream = Objects.requireNonNull(commandLineStream);
         this.checksumCalculator = new ChecksumCalculator();
+        this.deriveId = 0;
+    }
+
+    private ExecutionLayout(
+            @NotNull FileResolver fileResolver,
+            @NotNull SpotlessCommandLineStream commandLineStream,
+            @NotNull ChecksumCalculator checksumCalculator,
+            @NotNull Integer deriveId) {
+        this.fileResolver = fileResolver;
+        this.commandLineStream = commandLineStream;
+        this.checksumCalculator = checksumCalculator;
+        this.deriveId = deriveId;
     }
 
     public static ExecutionLayout create(
@@ -81,7 +94,7 @@ public class ExecutionLayout {
     }
 
     private Path gradleBuildDir() {
-        return fileResolver.resolvePath(Paths.get("build", "spotless-cli"));
+        return fileResolver.resolvePath(Paths.get("build", "spotless-cli", String.valueOf(deriveId)));
     }
 
     private boolean isMavenDirectory() {
@@ -89,12 +102,12 @@ public class ExecutionLayout {
     }
 
     private Path mavenBuildDir() {
-        return fileResolver.resolvePath(Paths.get("target", "spotless-cli"));
+        return fileResolver.resolvePath(Paths.get("target", "spotless-cli", String.valueOf(deriveId)));
     }
 
     private Path tempBuildDir() {
         String tmpDir = System.getProperty("java.io.tmpdir");
-        return Path.of(tmpDir, "spotless-cli");
+        return Path.of(tmpDir, "spotless-cli", String.valueOf(deriveId));
     }
 
     public Path buildDirFor(@NotNull SpotlessCLIFormatterStep step) {
@@ -106,5 +119,9 @@ public class ExecutionLayout {
         }
         String commandLineChecksum = checksumCalculator.calculateChecksum(commandLineStream);
         return buildDir.resolve(checksum + "-" + commandLineChecksum);
+    }
+
+    public @NotNull ExecutionLayout deriveLayout(Integer deriveId) {
+        return new ExecutionLayout(fileResolver, commandLineStream, checksumCalculator, deriveId);
     }
 }

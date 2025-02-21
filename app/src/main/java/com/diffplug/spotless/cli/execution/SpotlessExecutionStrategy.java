@@ -15,10 +15,6 @@
  */
 package com.diffplug.spotless.cli.execution;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import com.diffplug.spotless.FormatterStep;
 import com.diffplug.spotless.cli.core.SpotlessActionContext;
 import com.diffplug.spotless.cli.core.SpotlessCommandLineStream;
 
@@ -41,10 +37,12 @@ public class SpotlessExecutionStrategy implements CommandLine.IExecutionStrategy
         SpotlessActionContext context = provideSpotlessActionContext(commandLineStream);
 
         // 2. run setup (for combining steps handled as subcommands)
-        List<FormatterStep> steps = prepareFormatterSteps(commandLineStream, context);
+        FormatterStepsSupplierFactory stepsSupplierFactory = new ThreadLocalFormatterStepsFactory();
+        FormatterStepsSupplier stepsSupplier =
+                stepsSupplierFactory.createFormatterStepsSupplier(commandLineStream, context);
 
         // 3. run spotless steps
-        return executeSpotlessAction(commandLineStream, steps);
+        return executeSpotlessAction(commandLineStream, stepsSupplier);
     }
 
     private SpotlessActionContext provideSpotlessActionContext(SpotlessCommandLineStream commandLineStream) {
@@ -55,19 +53,12 @@ public class SpotlessExecutionStrategy implements CommandLine.IExecutionStrategy
                 .orElseThrow(() -> new IllegalStateException("No SpotlessActionContextProvider found"));
     }
 
-    private List<FormatterStep> prepareFormatterSteps(
-            SpotlessCommandLineStream commandLineStream, SpotlessActionContext context) {
-        return commandLineStream
-                .formatterSteps()
-                .flatMap(step -> step.prepareFormatterSteps(context).stream())
-                .collect(Collectors.toList());
-    }
-
-    private Integer executeSpotlessAction(SpotlessCommandLineStream commandLineStream, List<FormatterStep> steps) {
+    private Integer executeSpotlessAction(
+            SpotlessCommandLineStream commandLineStream, FormatterStepsSupplier stepsSupplier) {
         return commandLineStream
                 .actions()
                 .findFirst()
-                .map(spotlessAction -> spotlessAction.executeSpotlessAction(steps))
+                .map(spotlessAction -> spotlessAction.executeSpotlessAction(stepsSupplier))
                 .orElse(-1);
     }
 }

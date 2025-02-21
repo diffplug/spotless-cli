@@ -23,7 +23,7 @@ import com.diffplug.spotless.cli.steps.SpotlessCLIFormatterStep;
 
 import picocli.CommandLine;
 
-public interface SpotlessCommandLineStream { // todo turn into an interface
+public interface SpotlessCommandLineStream {
 
     static SpotlessCommandLineStream of(CommandLine.ParseResult parseResult) {
         return new DefaultSpotlessCommandLineStream(parseResult);
