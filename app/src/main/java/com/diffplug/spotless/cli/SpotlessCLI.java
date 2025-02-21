@@ -101,8 +101,7 @@ public class SpotlessCLI implements SpotlessAction, SpotlessCommand, SpotlessAct
         validateTargets();
         TargetResolver targetResolver = targetResolver();
 
-        try (ExecutorService executor =
-                        Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+        try (ExecutorService executor = Executors.newFixedThreadPool(1);
                 FormatterFactory formatterFactory =
                         new ThreadLocalFormatterFactory(lineEnding.createPolicy(), encoding, formatterSteps)) {
 
@@ -111,11 +110,11 @@ public class SpotlessCLI implements SpotlessAction, SpotlessCommand, SpotlessAct
                     .map(path -> {
                         return executor.submit(() -> {
                             Formatter formatter = formatterFactory.createFormatter();
-                            return new Result(path, LintState.of(formatter, path.toFile()));
+                            return new Result(path, LintState.of(formatter, path.toFile()), formatter);
                         });
                     })
                     .map(future -> ThrowingEx.get(future::get))
-                    .map(result -> this.handleResult(formatterFactory.createFormatter(), result))
+                    .map(result -> this.handleResult(result))
                     .reduce(ResultType.CLEAN, ResultType::combineWith);
             return spotlessMode.translateResultTypeToExitCode(resultType);
         }
@@ -129,7 +128,7 @@ public class SpotlessCLI implements SpotlessAction, SpotlessCommand, SpotlessAct
         }
     }
 
-    private ResultType handleResult(Formatter formatter, Result result) {
+    private ResultType handleResult(Result result) {
         if (result.lintState.isClean()) {
             //			System.out.println("File is clean: " + result.target.toFile().getName());
             return ResultType.CLEAN;
@@ -139,7 +138,7 @@ public class SpotlessCLI implements SpotlessAction, SpotlessCommand, SpotlessAct
                     + result.target.toFile().getName()); // TODO: where to print the output to?
             return ResultType.DID_NOT_CONVERGE;
         }
-        return this.spotlessMode.handleResult(formatter, result);
+        return this.spotlessMode.handleResult(result);
     }
 
     private TargetResolver targetResolver() {
@@ -192,9 +191,9 @@ public class SpotlessCLI implements SpotlessAction, SpotlessCommand, SpotlessAct
     private enum SpotlessMode {
         CHECK {
             @Override
-            ResultType handleResult(Formatter formatter, Result result) {
+            ResultType handleResult(Result result) {
                 if (result.lintState.isHasLints()) {
-                    result.lintState.asStringOneLine(result.target.toFile(), formatter);
+                    result.lintState.asStringOneLine(result.target.toFile(), result.formatter);
                 } else {
                     System.out.println(String.format("%s is violating formatting rules.", result.target));
                 }
@@ -217,13 +216,13 @@ public class SpotlessCLI implements SpotlessAction, SpotlessCommand, SpotlessAct
         },
         APPLY {
             @Override
-            ResultType handleResult(Formatter formatter, Result result) {
+            ResultType handleResult(Result result) {
                 if (result.lintState.isHasLints()) {
                     // something went wrong, we should not apply the changes
                     System.err.println(
                             "File has lints: " + result.target.toFile().getName());
                     System.err.println(
-                            "lint:\n" + result.lintState.asStringDetailed(result.target.toFile(), formatter));
+                            "lint:\n" + result.lintState.asStringDetailed(result.target.toFile(), result.formatter));
                     return ResultType.DIRTY;
                 }
                 ThrowingEx.run(() -> result.lintState.getDirtyState().writeCanonicalTo(result.target.toFile()));
@@ -245,7 +244,7 @@ public class SpotlessCLI implements SpotlessAction, SpotlessCommand, SpotlessAct
             }
         };
 
-        abstract ResultType handleResult(Formatter formatter, Result result);
+        abstract ResultType handleResult(Result result);
 
         abstract Integer translateResultTypeToExitCode(ResultType resultType);
     }
@@ -272,10 +271,12 @@ public class SpotlessCLI implements SpotlessAction, SpotlessCommand, SpotlessAct
     private static final class Result {
         private final Path target;
         private final LintState lintState;
+        private final Formatter formatter;
 
-        public Result(Path target, LintState lintState) {
+        public Result(Path target, LintState lintState, Formatter formatter) {
             this.target = target;
             this.lintState = lintState;
+            this.formatter = formatter;
         }
     }
 }
