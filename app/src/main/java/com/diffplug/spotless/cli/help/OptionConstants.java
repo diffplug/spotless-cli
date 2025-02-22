@@ -23,6 +23,10 @@ public final class OptionConstants {
 
     public static final String DEFAULT_VALUE_SUFFIX = NEW_LINE + "(default: ${DEFAULT-VALUE})";
 
+    public static final String DEFAULT_VALUE_SUFFIX_BEGIN = NEW_LINE + "(default: ";
+
+    public static final String DEFAULT_VALUE_SUFFIX_END = ")";
+
     public static final String VALID_AND_DEFAULT_VALUES_SUFFIX = VALID_VALUES_SUFFIX + DEFAULT_VALUE_SUFFIX;
 
     private OptionConstants() {

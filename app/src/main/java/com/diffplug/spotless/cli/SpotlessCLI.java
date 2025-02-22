@@ -98,6 +98,21 @@ public class SpotlessCLI implements SpotlessAction, SpotlessCommand, SpotlessAct
             description = "The line ending of the files to format." + OptionConstants.VALID_AND_DEFAULT_VALUES_SUFFIX)
     public LineEnding lineEnding;
 
+    private int parallelity;
+
+    @CommandLine.Option(
+            names = {"--parallelity", "-p"},
+            paramLabel = "N",
+            description =
+                    "The number of parallel formatter threads to run. " + OptionConstants.DEFAULT_VALUE_SUFFIX_BEGIN
+                            + "#cores * 0.5" + OptionConstants.DEFAULT_VALUE_SUFFIX_END)
+    public void setParallelity(int parallelity) {
+        if (parallelity < 1) {
+            throw new CommandLine.ParameterException(spec.commandLine(), "Error: --parallelity must be > 0");
+        }
+        this.parallelity = parallelity;
+    }
+
     @Override
     public Integer executeSpotlessAction(FormatterStepsSupplier formatterSteps) {
 
@@ -125,8 +140,12 @@ public class SpotlessCLI implements SpotlessAction, SpotlessCommand, SpotlessAct
         }
     }
 
-    private static @NotNull ExecutorService createExecutorServiceForFormatting(FormatterFactory formatterFactory) {
-        return Executors.newFixedThreadPool(Integer.parseInt(System.getProperty("noft", "1")));
+    private @NotNull ExecutorService createExecutorServiceForFormatting(FormatterFactory formatterFactory) {
+        return Executors.newFixedThreadPool(numberOfParallelThreads());
+    }
+
+    private int numberOfParallelThreads() {
+        return parallelity == 0 ? Math.max(Runtime.getRuntime().availableProcessors() / 2, 1) : parallelity;
     }
 
     private void validateTargets() {
