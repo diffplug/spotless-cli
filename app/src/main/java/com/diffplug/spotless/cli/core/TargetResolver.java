@@ -41,10 +41,7 @@ public class TargetResolver {
     }
 
     public Stream<Path> resolveTargets() {
-        // Start with a parallel stream on the targets.
-        // flatMap is used here, but because each inner stream (from resolveTarget)
-        // is forced to be parallel (when needed), overall processing remains parallel.
-        return targets.parallelStream().flatMap(this::resolveTarget);
+        return targets.stream().flatMap(this::resolveTarget);
     }
 
     private Stream<Path> resolveTarget(String target) {
@@ -55,7 +52,6 @@ public class TargetResolver {
         }
         Path targetPath = fileResolver.resolvePath(Path.of(target));
         if (Files.isRegularFile(targetPath) && Files.isReadable(targetPath)) {
-            // A single file stream doesn’t benefit much from parallelism.
             return Stream.of(targetPath);
         }
         if (Files.isDirectory(targetPath)) {
@@ -66,14 +62,14 @@ public class TargetResolver {
     }
 
     private Stream<Path> resolveDir(Path startDir) {
-        return ThrowingEx.get(() -> Files.walk(startDir)).parallel().filter(Files::isRegularFile);
+        return ThrowingEx.get(() -> Files.walk(startDir)).filter(Files::isRegularFile);
     }
 
     private Stream<Path> resolveGlob(String glob) {
         // Split the glob into directory parts and the glob pattern.
         String[] parts = glob.split(Pattern.quote(File.separator));
         List<String> startDirParts =
-                Stream.of(parts).takeWhile(part -> !isGlobPathPart(part)).collect(Collectors.toList());
+                Stream.of(parts).takeWhile(part -> !isGlobPathPart(part)).toList();
 
         Path startDir = Path.of(
                 glob.startsWith(File.separator)
@@ -84,7 +80,6 @@ public class TargetResolver {
 
         final PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:" + globPart);
         return ThrowingEx.get(() -> Files.walk(startDir))
-                .parallel()
                 .filter(Files::isRegularFile)
                 .filter(path -> matcher.matches(startDir.relativize(path)))
                 .map(Path::normalize);
