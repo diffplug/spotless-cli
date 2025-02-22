@@ -17,17 +17,12 @@ package com.diffplug.spotless.cli.core;
 
 import java.io.File;
 import java.nio.file.FileSystems;
-import java.nio.file.FileVisitOption;
-import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -35,12 +30,9 @@ import org.jetbrains.annotations.NotNull;
 
 import com.diffplug.spotless.ThrowingEx;
 
-import static java.util.function.Predicate.not;
-
 public class TargetResolver {
 
     private final List<String> targets;
-
     private final FileResolver fileResolver;
 
     public TargetResolver(@NotNull Path baseDir, @NotNull List<String> targets) {
@@ -49,76 +41,53 @@ public class TargetResolver {
     }
 
     public Stream<Path> resolveTargets() {
-        return targets.parallelStream()
-                .map(this::resolveTarget)
-                .reduce(Stream::concat) // beware! when using flatmap, the stream goes to sequential
-                .orElse(Stream.empty());
+        // Start with a parallel stream on the targets.
+        // flatMap is used here, but because each inner stream (from resolveTarget)
+        // is forced to be parallel (when needed), overall processing remains parallel.
+        return targets.parallelStream().flatMap(this::resolveTarget);
     }
 
     private Stream<Path> resolveTarget(String target) {
-
-        final boolean isGlob = target.contains("*") || target.contains("?");
+        boolean isGlob = target.contains("*") || target.contains("?");
         System.out.println("isGlob: " + isGlob + " target: " + target);
-
         if (isGlob) {
             return resolveGlob(target);
         }
         Path targetPath = fileResolver.resolvePath(Path.of(target));
-        if (Files.isReadable(targetPath)) {
+        if (Files.isRegularFile(targetPath) && Files.isReadable(targetPath)) {
+            // A single file stream doesn’t benefit much from parallelism.
             return Stream.of(targetPath);
         }
         if (Files.isDirectory(targetPath)) {
             return resolveDir(targetPath);
         }
-        // TODO log warn?
+        // Optionally log a warning if the target was not found.
         return Stream.empty();
     }
 
     private Stream<Path> resolveDir(Path startDir) {
-        List<Path> collected = new ArrayList<>();
-        ThrowingEx.run(() -> Files.walkFileTree(
-                startDir, EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE, new SimpleFileVisitor<>() {
-                    @Override
-                    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-                        collected.add(file);
-                        return FileVisitResult.CONTINUE;
-                    }
-                }));
-        return collected.parallelStream();
+        return ThrowingEx.get(() -> Files.walk(startDir)).parallel().filter(Files::isRegularFile);
     }
 
     private Stream<Path> resolveGlob(String glob) {
-        Path startDir;
-        String globPart;
-        // if the glob is absolute, we need to split the glob into its parts and use all parts except glob chars '*',
-        // '**', and '?'
-        String[] parts = glob.split("\\Q" + File.separator + "\\E");
+        // Split the glob into directory parts and the glob pattern.
+        String[] parts = glob.split(Pattern.quote(File.separator));
         List<String> startDirParts =
-                Stream.of(parts).takeWhile(not(TargetResolver::isGlobPathPart)).collect(Collectors.toList());
+                Stream.of(parts).takeWhile(part -> !isGlobPathPart(part)).collect(Collectors.toList());
 
-        startDir = Path.of(
+        Path startDir = Path.of(
                 glob.startsWith(File.separator)
                         ? File.separator
                         : fileResolver.baseDir().toString(),
                 startDirParts.toArray(String[]::new));
-        globPart = Stream.of(parts).skip(startDirParts.size()).collect(Collectors.joining(File.separator));
+        String globPart = Stream.of(parts).skip(startDirParts.size()).collect(Collectors.joining(File.separator));
 
-        PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:" + globPart);
-        List<Path> collected = new ArrayList<>();
-        ThrowingEx.run(() -> Files.walkFileTree(
-                startDir, EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE, new SimpleFileVisitor<>() {
-                    @Override
-                    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-                        Path relativeFile = startDir.relativize(file);
-                        if (matcher.matches(relativeFile)) {
-                            System.out.println("Matched: " + file);
-                            collected.add(file);
-                        }
-                        return FileVisitResult.CONTINUE;
-                    }
-                }));
-        return collected.parallelStream().map(Path::normalize);
-        //				.map(Path::toAbsolutePath);
+        final PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:" + globPart);
+        return ThrowingEx.get(() -> Files.walk(startDir))
+                .parallel()
+                .filter(Files::isRegularFile)
+                .filter(path -> matcher.matches(startDir.relativize(path)))
+                .map(Path::normalize);
     }
 
     private static boolean isGlobPathPart(String part) {
