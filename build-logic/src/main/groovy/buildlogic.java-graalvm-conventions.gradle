@@ -57,6 +57,7 @@ graalvmNative {
 
 			buildArgs.add('--initialize-at-build-time=com.sun.tools.javac.file.Locations')
 
+			buildArgs.add('-H:+UnlockExperimentalVMOptions') // to enable the following options
 			buildArgs.add('-H:IncludeResourceBundles=com.sun.tools.javac.resources.compiler')
 			buildArgs.add('-H:IncludeResourceBundles=com.sun.tools.javac.resources.javac')
 		}
