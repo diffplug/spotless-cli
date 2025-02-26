@@ -22,7 +22,7 @@ output = [
 
 `spotless` is a command line interface (CLI) for the [spotless code formatter](../README.md).
 It intends to be a simple alternative to its siblings: the plugins for [gradle](../plugin-gradle/README.md), [maven](../plugin-maven/README.md)
-and others.
+and others. It supports formatting a plethora of file types and can be easily configured.
 
 Example usage:
 
@@ -66,11 +66,32 @@ choco install ...
 
 Alternatively, you can download the latest binary for your system from the [releases page](https://...) and add it to your PATH.
 
-## Usage
+## General usage
 
-### Available Formatter Steps
+The general principle is to specify the files to format, configure global options and then add one or more formatter steps - with configuration if needed.
 
-#### google-java-format
+```shell
+# Generell structure of the invocation
+spotless --target [more options] formatter1 [config1] formatter2 [config2] ...
+```
+
+Be aware that the order of the formatter steps is important. The formatters are applied in the order they are specified.
+
+To see all available options and formatters, run:
+
+```shell
+spotless --help
+```
+
+## Available Formatter Steps
+
+Spotless CLI supports the following formatter steps in alphabetical order:
+
+- [google-java-format](#google-java-format)
+- [license-header](#license-header)
+- [prettier](#prettier)
+
+### google-java-format
 
 <!---freshmark gjfshields
 output = [
@@ -82,6 +103,125 @@ output = [
 
 <!---freshmark /gjfshields -->
 
-- TODO: add usage and examples
-- TBD: can usage be generated automatically e.g. via freshmark?
--
+Formats Java files according to the [google-java-format](https://github.com/google/google-java-format) style guide.
+
+To see usage instructions for the google-java-format formatter, run: `spotless google-java-format --help`
+
+<!-- TODO implement mechanism to add this text dynamically from the cli (maybe using freshmark) -->
+
+```shell
+Usage: spotless google-java-format [-hijrV] [-s=<style>]
+Runs google java format
+  -h, --help              Show this help message and exit.
+  -i, --reorder-imports   Reorder imports.
+                            (default: false)
+  -j, --format-javadoc    Format javadoc.
+                            (default: true)
+  -r, --reflow-long-strings
+                          Reflow long strings.
+                            (default: false)
+  -s, --style=<style>     The style to use for the google java format.
+                            One of: AOSP, GOOGLE
+                            (default: GOOGLE)
+  -V, --version           Print version information and exit.
+```
+
+Example usage:
+
+```shell
+spotless --target '**/src/**/*.java' google-java-format --reorder-imports=true
+```
+
+### license-header
+
+Add or update a license header to the files.
+
+To see usage instructions for the license-header formatter, run: `spotless license-header --help`
+
+```shell
+Usage: spotless license-header [-hV] [-c=<contentPattern>] [-d=<delimiter>]
+                               [-m=<yearMode>] [-s=<skipLinesMatching>]
+                               [-Y=<yearSeparator>] (-H=<header> |
+                               -f=<headerFile>)
+Runs license header
+  -c, --content-pattern=<contentPattern>
+                          The pattern to match the content of the file before
+                            inserting the licence header. (If the file content
+                            does not match the pattern, the header will not be
+                            inserted/updated.)
+  -d, --delimiter=<delimiter>
+                          The delimiter to use for the license header. If not
+                            provided, the delimiter will be guessed based on
+                            the first few files we find. Otherwise, 'java' will
+                            be assumed.
+  -f, --header-file=<headerFile>
+                          The license header content in a file to apply.
+                            May contain $YEAR as placeholder.
+  -h, --help              Show this help message and exit.
+  -H, --header=<header>   The license header content to apply. May contain
+                            $YEAR as placeholder.
+  -m, --year-mode=<yearMode>
+                          How and if the year in the copyright header should be
+                            updated.
+                            One of: PRESERVE, UPDATE_TO_TODAY, SET_FROM_GIT
+                            (default: PRESERVE)
+  -s, --skip-lines-matching=<skipLinesMatching>
+                          Skip lines matching the given regex pattern before
+                            inserting the licence header.
+  -V, --version           Print version information and exit.
+  -Y, --year-separator=<yearSeparator>
+                          The separator to use for the year range in the
+                            license header.
+                            (default: -)
+```
+
+Example usage:
+
+```shell
+spotless --target '**/src/**/*.java' license-header --header='/* (c) Diffplug $YEAR */'
+```
+
+### prettier
+
+[Prettier](https://prettier.io/) is an opinionated code formatter that supports many languages. Some are supported out of the box such as
+JavaScript, JSX, Angular, Vue, Flow, TypeScript, CSS, Less, SCSS, HTML, Ember/Handlebars, JSON, GraphQL, Markdown and YAML.
+
+Even more languages can be supported by including [prettier-plugins](https://prettier.io/docs/plugins).
+
+To see usage instructions for the prettier formatter, run: `spotless prettier --help`
+
+```shell
+Usage: spotless prettier [-hV] [-C=<cacheDir>] [-n=<explicitNpmExecutable>]
+                         [-N=<explicitNodeExecutable>]
+                         [-P=<prettierConfigPath>] [-R=<explicitNpmrcFile>]
+                         [-A=<additionalNpmrcLocations>]...
+                         [-c=<String=String>]... [-D=<String=String>]...
+Runs prettier
+  -A, --additional-npmrc-location=<additionalNpmrcLocations>
+                  Additional locations to search for .npmrc files.
+  -c, --prettier-config-option=<String=String>
+                  The Prettier configuration options.
+  -C, --cache-dir=<cacheDir>
+                  The directory to use for caching Prettier.
+  -D, --dev-dependency=<String=String>
+                  The devDependencies to use for Prettier.
+  -h, --help      Show this help message and exit.
+  -n, --npm-exec=<explicitNpmExecutable>
+                  The explicit path to the npm executable.
+  -N, --node-exec=<explicitNodeExecutable>
+                  The explicit path to the node executable.
+  -P, --prettier-config-path=<prettierConfigPath>
+                  The path to the Prettier configuration file.
+  -R, --npmrc-file=<explicitNpmrcFile>
+                  The explicit path to the .npmrc file.
+  -V, --version   Print version information and exit.
+```
+
+Example usage:
+
+```shell
+spotless --target '**/*.json' prettier
+
+# or using a custom version and plugin
+TODO TODO TODO
+```
