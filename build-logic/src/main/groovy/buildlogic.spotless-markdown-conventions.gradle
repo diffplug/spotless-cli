@@ -2,10 +2,20 @@ plugins {
 	id 'buildlogic.spotless-common-conventions'
 }
 
+def versionCatalog = project.extensions.getByType(VersionCatalogsExtension).named("libs")
+def versionsCollected = [:]
+versionCatalog.versionAliases.each {versionAlias ->
+	versionsCollected.put('libs.versions.' + versionAlias, versionCatalog.findVersion(versionAlias).get())
+}
+
 spotless {
 	freshmark {
 		// freshmark for keeping markdown files up to date
 		target '*.md'
+		// provide lib versions to freshmark
+		properties {
+			it.putAll(versionsCollected)
+		}
 		prettier() // prettier for markdown formatting
 		endWithNewline()
 	}
