@@ -5,7 +5,7 @@ durian = "1.2.0"
 junit = "5.8.1"
 native-include-googleJavaFormat = "1.24.0"
 picocli = "4.7.6"
-spotless-lib = "3.1.0-SNAPSHOT"
+spotless-lib = "3.1.0"
 
 [libraries]
 annotations = { module = "org.jetbrains:annotations", version.ref = "annotations" }
