@@ -83,6 +83,54 @@ To see all available options and formatters, run:
 spotless --help
 ```
 
+This will show you the available options and formatters as such:
+
+<!---freshmark usage_main
+output =
+   '```shell\n' +
+   {{usage.main.array}}.join('\n') +
+    '\n```';
+-->
+
+```shell
+                     __  __
+   _________  ____  / /_/ /__  __________
+  / ___/ __ \/ __ \/ __/ / _ \/ ___/ ___/
+ (__  ) /_/ / /_/ / /_/ /  __(__  |__  )
+/____/ .___/\____/\__/_/\___/____/____/   Spotless CLI
+    /_/
+
+
+Usage: spotless [-hV] [-e=<encoding>] [-l=<lineEnding>] [-m=<spotlessMode>]
+                [-p=N] [-t=<targets>]... [FORMATTING_STEPS]
+Runs spotless
+  -e, --encoding=<encoding>
+                           The encoding of the files to format.
+                             (default: UTF-8)
+  -h, --help               Show this help message and exit.
+  -l, --line-ending=<lineEnding>
+                           The line ending of the files to format.
+                             One of: GIT_ATTRIBUTES,
+                             GIT_ATTRIBUTES_FAST_ALLSAME, PLATFORM_NATIVE,
+                             WINDOWS, UNIX, MAC_CLASSIC, PRESERVE
+                             (default: UNIX)
+  -m, --mode=<spotlessMode>
+                           The mode to run spotless in.
+                             One of: CHECK, APPLY
+                             (default: APPLY)
+  -p, --parallelity=N      The number of parallel formatter threads to run.
+                             (default: #cores * 0.5)
+  -t, --target=<targets>   The target files to format.
+  -V, --version            Print version information and exit.
+
+Available formatting steps:
+  license-header      Runs license header
+  google-java-format  Runs google java format
+  prettier            Runs prettier
+```
+
+<!---freshmark /usage_main -->
+
 ## Available Formatter Steps
 
 Spotless CLI supports the following formatter steps in alphabetical order:
@@ -107,7 +155,12 @@ Formats Java files according to the [google-java-format](https://github.com/goog
 
 To see usage instructions for the google-java-format formatter, run: `spotless google-java-format --help`
 
-<!-- TODO implement mechanism to add this text dynamically from the cli (maybe using freshmark) -->
+<!---freshmark usage_google_java_format
+output =
+   '```shell\n' +
+   {{usage.google-java-format.array}}.join('\n') +
+    '\n```';
+-->
 
 ```shell
 Usage: spotless google-java-format [-hijrV] [-s=<style>]
@@ -126,6 +179,8 @@ Runs google java format
   -V, --version           Print version information and exit.
 ```
 
+<!---freshmark /usage_google_java_format -->
+
 Example usage:
 
 ```shell
@@ -137,6 +192,13 @@ spotless --target '**/src/**/*.java' google-java-format --reorder-imports=true
 Add or update a license header to the files.
 
 To see usage instructions for the license-header formatter, run: `spotless license-header --help`
+
+<!---freshmark usage_license_header
+output =
+   '```shell\n' +
+   {{usage.license-header.array}}.join('\n') +
+    '\n```';
+-->
 
 ```shell
 Usage: spotless license-header [-hV] [-c=<contentPattern>] [-d=<delimiter>]
@@ -175,6 +237,8 @@ Runs license header
                             (default: -)
 ```
 
+<!---freshmark /usage_license_header -->
+
 Example usage:
 
 ```shell
@@ -189,6 +253,13 @@ JavaScript, JSX, Angular, Vue, Flow, TypeScript, CSS, Less, SCSS, HTML, Ember/Ha
 Even more languages can be supported by including [prettier-plugins](https://prettier.io/docs/plugins).
 
 To see usage instructions for the prettier formatter, run: `spotless prettier --help`
+
+<!---freshmark usage_prettier
+output =
+   '```shell\n' +
+   {{usage.prettier.array}}.join('\n') +
+    '\n```';
+-->
 
 ```shell
 Usage: spotless prettier [-hV] [-C=<cacheDir>] [-n=<explicitNpmExecutable>]
@@ -216,6 +287,8 @@ Runs prettier
                   The explicit path to the .npmrc file.
   -V, --version   Print version information and exit.
 ```
+
+<!---freshmark /usage_prettier -->
 
 Example usage:
 

@@ -2,21 +2,69 @@ plugins {
 	id 'buildlogic.spotless-common-conventions'
 }
 
-def versionCatalog = project.extensions.getByType(VersionCatalogsExtension).named("libs")
-def versionsCollected = [:]
-versionCatalog.versionAliases.each {versionAlias ->
-	versionsCollected.put('libs.versions.' + versionAlias, versionCatalog.findVersion(versionAlias).get())
-}
-
 spotless {
 	freshmark {
 		// freshmark for keeping markdown files up to date
 		target '*.md'
 		// provide lib versions to freshmark
-		properties {
-			it.putAll(versionsCollected)
-		}
+		properties(new FreshmarkPropertiesAction(rootProject, project))
 		prettier() // prettier for markdown formatting
 		endWithNewline()
 	}
+}
+
+class FreshmarkPropertiesAction implements Action<Map<String, Object>> {
+
+	private final Project rootProject
+	private final Project project
+
+	FreshmarkPropertiesAction(Project rootProject, Project project) {
+		this.rootProject = rootProject
+		this.project = project
+	}
+
+	@Override
+	void execute(Map<String, Object> properties) {
+		def versionsCollected = getVersionsCollected()
+		properties.putAll(versionsCollected)
+		def usageHelps = getUsageHelps()
+		properties.putAll(usageHelps)
+	}
+
+	Map<String, String> getVersionsCollected() {
+		def versionCatalog = project.extensions.getByType(VersionCatalogsExtension).named("libs")
+		Map<String, String> versionsCollected = [:]
+		versionCatalog.versionAliases.each {versionAlias ->
+			versionsCollected.put('libs.versions.' + versionAlias, versionCatalog.findVersion(versionAlias).get().toString())
+		}
+		return versionsCollected
+	}
+
+	Map<String, String> getUsageHelps() {
+		Map<String, String> usageHelps = [:]
+		File outputDir = rootProject.file("app/build/generated-usages")
+		File[] usageFiles = outputDir.listFiles()
+
+		usageFiles.each { usageFile ->
+			String usage = asJsArrayOfLines(usageFile.readLines())
+			String name = usageFile.name.substring(0, usageFile.name.indexOf('.'))
+			usageHelps.put("usage.${name}.array".toString(), usage)
+		}
+		return usageHelps
+	}
+
+	private static String asJsArrayOfLines(List<String> lines) {
+		return '[' +
+				lines.collect() { line -> "'${jsEscaped(line)}'" }
+				.join(',\n') +
+				']'
+	}
+
+	private static String jsEscaped(String str) {
+		return str.replace('\\', '\\\\').replace("'", "\\'")
+	}
+}
+
+tasks.named('spotlessFreshmark').configure {
+	dependsOn(':app:generateUsage') // to make sure usage files are generated before spotlessFreshmark
 }
