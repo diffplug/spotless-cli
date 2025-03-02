@@ -15,8 +15,11 @@
  */
 package com.diffplug.spotless.cli;
 
+import com.diffplug.spotless.cli.core.SpotlessCommandLineStream;
 import com.diffplug.spotless.cli.execution.FormatterStepsSupplier;
 
 public interface SpotlessAction extends SpotlessCommand {
     Integer executeSpotlessAction(FormatterStepsSupplier formatterSteps);
+
+    default void setupLogging() {}
 }

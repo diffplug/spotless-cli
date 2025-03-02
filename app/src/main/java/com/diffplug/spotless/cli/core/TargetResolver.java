@@ -29,8 +29,12 @@ import java.util.stream.Stream;
 import org.jetbrains.annotations.NotNull;
 
 import com.diffplug.spotless.ThrowingEx;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TargetResolver {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TargetResolver.class);
 
     private final List<String> targets;
     private final FileResolver fileResolver;
@@ -46,18 +50,20 @@ public class TargetResolver {
 
     private Stream<Path> resolveTarget(String target) {
         boolean isGlob = target.contains("*") || target.contains("?");
-        System.out.println("isGlob: " + isGlob + " target: " + target);
         if (isGlob) {
+            LOGGER.debug("Resolving target as glob: {}", target);
             return resolveGlob(target);
         }
         Path targetPath = fileResolver.resolvePath(Path.of(target));
         if (Files.isRegularFile(targetPath) && Files.isReadable(targetPath)) {
+            LOGGER.debug("Resolving target as file: {}", target);
             return Stream.of(targetPath);
         }
         if (Files.isDirectory(targetPath)) {
+            LOGGER.debug("Resolving target as directory: {}", target);
             return resolveDir(targetPath);
         }
-        // Optionally log a warning if the target was not found.
+        LOGGER.info("Target not found: {}", target);
         return Stream.empty();
     }
 

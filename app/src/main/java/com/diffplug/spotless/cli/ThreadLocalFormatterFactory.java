@@ -21,8 +21,13 @@ import java.util.LinkedHashSet;
 import com.diffplug.spotless.Formatter;
 import com.diffplug.spotless.LineEnding;
 import com.diffplug.spotless.cli.execution.FormatterStepsSupplier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ThreadLocalFormatterFactory implements FormatterFactory {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ThreadLocalFormatterFactory.class);
+
     private final LineEnding.Policy policy;
     private final Charset encoding;
     private final FormatterStepsSupplier formatterSteps;
@@ -42,8 +47,7 @@ public class ThreadLocalFormatterFactory implements FormatterFactory {
         if (threadLocalFormatter.get() == null) {
             synchronized (this) {
                 if (threadLocalFormatter.get() == null) {
-                    System.out.println("ThreadLocalFormatterFactory.createFormatter() thread.name: "
-                            + Thread.currentThread().getName());
+                    LOGGER.info("Creating Formatter for thread: {}", Thread.currentThread().getName());
                     Formatter formatter = Formatter.builder()
                             .lineEndingsPolicy(policy)
                             .encoding(encoding)

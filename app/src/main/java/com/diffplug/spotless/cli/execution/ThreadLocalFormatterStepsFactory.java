@@ -48,9 +48,6 @@ public class ThreadLocalFormatterStepsFactory implements FormatterStepsSupplierF
                 synchronized (this) {
                     if (threadLocalFormatterSteps.get() == null) {
                         SpotlessActionContext threadContext = context.deriveContext(threadId.get());
-                        System.out.println("ThreadLocalFormatterStepsSupplier.getFormatterSteps() threadId: "
-                                + threadId.get() + " thread.name: "
-                                + Thread.currentThread().getName() + " -- context: " + threadContext);
                         threadLocalFormatterSteps.set(commandLineStream
                                 .formatterSteps()
                                 .flatMap(step -> step.prepareFormatterSteps(threadContext).stream())

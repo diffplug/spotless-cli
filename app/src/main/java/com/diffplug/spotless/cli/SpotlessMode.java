@@ -16,31 +16,33 @@
 package com.diffplug.spotless.cli;
 
 import com.diffplug.spotless.ThrowingEx;
+import com.diffplug.spotless.cli.logging.output.Output;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 enum SpotlessMode {
     CHECK {
+        private static final Logger LOGGER = LoggerFactory.getLogger(SpotlessMode.class);
         @Override
         ResultType handleResult(Result result) {
             if (result.lintState().isHasLints()) {
-                result.lintState().asStringOneLine(result.target().toFile(), result.formatter());
+                Output.out(
+                        () -> new Output.MessageWithArgs("File has lints: {} -- {}", result.target().toFile().getPath(), result.lintState().asStringOneLine(result.target().toFile(), result.formatter())),
+                        () -> new Output.MessageWithArgs("File has lints: {}\n\t{}", result.target().toFile().getPath(), result.lintState().asStringDetailed(result.target().toFile(), result.formatter()))
+                );
             } else {
-                System.out.println(String.format("%s is violating formatting rules.", result.target()));
+                LOGGER.debug("File is clean: {}", result.target().toFile().getPath());
             }
             return ResultType.DIRTY;
         }
 
         @Override
         Integer translateResultTypeToExitCode(ResultType resultType) {
-            if (resultType == ResultType.CLEAN) {
-                return 0;
-            }
-            if (resultType == ResultType.DIRTY) {
-                return 1;
-            }
-            if (resultType == ResultType.DID_NOT_CONVERGE) {
-                return -1;
-            }
-            throw new IllegalStateException("Unexpected result type: " + resultType);
+            return switch(resultType) {
+                case CLEAN -> 0;
+                case DIRTY -> 1;
+                case DID_NOT_CONVERGE -> -1;
+            };
         }
     },
     APPLY {
@@ -48,9 +50,10 @@ enum SpotlessMode {
         ResultType handleResult(Result result) {
             if (result.lintState().isHasLints()) {
                 // something went wrong, we should not apply the changes
-                System.err.println("File has lints: " + result.target().toFile().getName());
-                System.err.println("lint:\n"
-                        + result.lintState().asStringDetailed(result.target().toFile(), result.formatter()));
+                Output.out(
+                        () -> new Output.MessageWithArgs("File has lints: {} -- {}", result.target().toFile().getPath(), result.lintState().asStringOneLine(result.target().toFile(), result.formatter())),
+                        () -> new Output.MessageWithArgs("File has lints: {}\n\t{}", result.target().toFile().getPath(), result.lintState().asStringDetailed(result.target().toFile(), result.formatter()))
+                );
                 return ResultType.DIRTY;
             }
             ThrowingEx.run(() -> result.lintState()
@@ -61,16 +64,11 @@ enum SpotlessMode {
 
         @Override
         Integer translateResultTypeToExitCode(ResultType resultType) {
-            if (resultType == ResultType.CLEAN) {
-                return 0;
-            }
-            if (resultType == ResultType.DIRTY) {
-                return 0;
-            }
-            if (resultType == ResultType.DID_NOT_CONVERGE) {
-                return -1;
-            }
-            throw new IllegalStateException("Unexpected result type: " + resultType);
+            return switch(resultType) {
+                case CLEAN -> 0;
+                case DIRTY -> 1;
+                case DID_NOT_CONVERGE -> -1;
+            };
         }
     };
 

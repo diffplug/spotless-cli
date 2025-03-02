@@ -22,6 +22,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import com.diffplug.spotless.cli.logging.output.LoggingConfigurer;
+import com.diffplug.spotless.cli.logging.output.Output;
 import org.jetbrains.annotations.NotNull;
 
 import com.diffplug.spotless.Formatter;
@@ -41,6 +43,8 @@ import com.diffplug.spotless.cli.steps.LicenseHeader;
 import com.diffplug.spotless.cli.steps.Prettier;
 import com.diffplug.spotless.cli.version.SpotlessCLIVersionProvider;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -65,6 +69,8 @@ import picocli.CommandLine.Command;
         subcommandsRepeatable = true,
         subcommands = {LicenseHeader.class, GoogleJavaFormat.class, Prettier.class})
 public class SpotlessCLI implements SpotlessAction, SpotlessCommand, SpotlessActionContextProvider {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(SpotlessCLI.class);
 
     @CommandLine.Spec
     CommandLine.Model.CommandSpec spec; // injected by picocli
@@ -114,21 +120,32 @@ public class SpotlessCLI implements SpotlessAction, SpotlessCommand, SpotlessAct
     }
 
     @Override
-    public Integer executeSpotlessAction(FormatterStepsSupplier formatterSteps) {
+    public void setupLogging() {
+        LoggingConfigurer.configureLogging(LoggingConfigurer.CLIOutputLevel.VVVVV, null); // TODO add options to set that
+    }
 
+    @Override
+    public Integer executeSpotlessAction(FormatterStepsSupplier formatterSteps) {
+        // Test output
+        Output.out("Executing Spotless action!!! {}", this);
+        LOGGER.info("Executing Spotless action!!! -- logger -- {}", this);
         validateTargets();
         TargetResolver targetResolver = targetResolver();
 
         try (FormatterFactory formatterFactory =
                         new ThreadLocalFormatterFactory(lineEnding.createPolicy(), encoding, formatterSteps);
-                ExecutorService executor = createExecutorServiceForFormatting(formatterFactory)) {
+                ExecutorService executor = createExecutorServiceForFormatting()) {
 
             List<Future<Result>> stepResults = targetResolver
                     .resolveTargets()
                     .map(path -> {
                         return executor.submit(() -> {
                             Formatter formatter = formatterFactory.createFormatter();
-                            return new Result(path, LintState.of(formatter, path.toFile()), formatter);
+                            // actual formatting
+                            LOGGER.debug("Formatting file: {}", path);
+                            LintState lintState = LintState.of(formatter, path.toFile());
+                            LOGGER.debug("LintState for file {}: {}", path, lintState);
+                            return new Result(path, lintState, formatter);
                         });
                     })
                     .toList();
@@ -140,7 +157,7 @@ public class SpotlessCLI implements SpotlessAction, SpotlessCommand, SpotlessAct
         }
     }
 
-    private @NotNull ExecutorService createExecutorServiceForFormatting(FormatterFactory formatterFactory) {
+    private @NotNull ExecutorService createExecutorServiceForFormatting() {
         return Executors.newFixedThreadPool(numberOfParallelThreads());
     }
 
@@ -158,12 +175,11 @@ public class SpotlessCLI implements SpotlessAction, SpotlessCommand, SpotlessAct
 
     private ResultType handleResult(Result result) {
         if (result.lintState().isClean()) {
-            //			System.out.println("File is clean: " + result.target.toFile().getName());
+            LOGGER.debug("File is clean: {}", result.target().toFile());
             return ResultType.CLEAN;
         }
         if (result.lintState().getDirtyState().didNotConverge()) {
-            System.err.println("File did not converge: "
-                    + result.target().toFile().getName()); // TODO: where to print the output to?
+            LOGGER.warn("File did not converge: {}", result.target().toFile()); // maybe log to user facing?
             return ResultType.DID_NOT_CONVERGE;
         }
         return this.spotlessMode.handleResult(result);

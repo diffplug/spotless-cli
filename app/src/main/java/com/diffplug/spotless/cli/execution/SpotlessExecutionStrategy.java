@@ -33,6 +33,10 @@ public class SpotlessExecutionStrategy implements CommandLine.IExecutionStrategy
     }
 
     private Integer runSpotlessActions(SpotlessCommandLineStream commandLineStream) {
+        // 0. setup logging
+        commandLineStream.actions()
+                .findFirst()
+                .ifPresent(action -> action.setupLogging());
         // 1. prepare context
         SpotlessActionContext context = provideSpotlessActionContext(commandLineStream);
 

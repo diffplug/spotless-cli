@@ -31,8 +31,6 @@ public class SpotlessCLIRunnerInNativeExternalProcess extends SpotlessCLIRunner 
             throw new IllegalStateException(SPOTLESS_CLI_NATIVE_IMAGE_SYSPROP
                     + " system property must be set to the path of the native binary");
         }
-        System.out.println(
-                "SpotlessCLIRunnerInNativeExternalProcess: " + System.getProperty(SPOTLESS_CLI_NATIVE_IMAGE_SYSPROP));
     }
 
     protected Result executeCommand(List<String> args) {

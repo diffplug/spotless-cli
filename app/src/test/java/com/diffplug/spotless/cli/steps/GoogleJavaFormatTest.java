@@ -33,9 +33,6 @@ public class GoogleJavaFormatTest extends CLIIntegrationHarness {
                 .withStep(GoogleJavaFormat.class)
                 .run();
 
-        System.out.println(result.stdOut());
-        System.out.println("-------");
-        System.out.println(result.stdErr());
         assertFile("Java.java").sameAsResource("java/googlejavaformat/JavaCodeFormatted.test");
     }
 }

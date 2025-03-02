@@ -133,11 +133,6 @@ class ChecksumCalculatorTest {
         assertThat(checksum1).isNotEqualTo(checksum2);
     }
 
-    @Test
-    void itDoesSomething2() {
-        System.out.println("Hello");
-    }
-
     private static Step step(Path test1, String test2, StepArgGroup argGroup, List<Path> parameters) {
         Step step = new Step();
         step.test1 = test1;

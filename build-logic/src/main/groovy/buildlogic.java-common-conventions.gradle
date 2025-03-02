@@ -29,6 +29,11 @@ dependencies {
 	implementation libs.bundles.spotless.libs
 	implementation libs.bundles.durian.libs
 
+	// logging
+	implementation libs.slf4j.api
+	runtimeOnly libs.slf4j.binding
+	testRuntimeOnly libs.slf4j.binding
+
 	testImplementation libs.bundles.test.libs
 }
 
