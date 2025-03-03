@@ -15,30 +15,42 @@
  */
 package com.diffplug.spotless.cli;
 
-import com.diffplug.spotless.ThrowingEx;
-import com.diffplug.spotless.cli.logging.output.Output;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.diffplug.spotless.ThrowingEx;
+import com.diffplug.spotless.cli.logging.output.Output;
 
 enum SpotlessMode {
     CHECK {
         private static final Logger LOGGER = LoggerFactory.getLogger(SpotlessMode.class);
+
         @Override
         ResultType handleResult(Result result) {
             if (result.lintState().isHasLints()) {
-                Output.out(
-                        () -> new Output.MessageWithArgs("File has lints: {} -- {}", result.target().toFile().getPath(), result.lintState().asStringOneLine(result.target().toFile(), result.formatter())),
-                        () -> new Output.MessageWithArgs("File has lints: {}\n\t{}", result.target().toFile().getPath(), result.lintState().asStringDetailed(result.target().toFile(), result.formatter()))
-                );
+
+                Output.eitherDefault(() -> new Output.MessageWithArgs(
+                                "File has lints: {} -- {}",
+                                result.target().toFile().getPath(),
+                                result.lintState()
+                                        .asStringOneLine(result.target().toFile(), result.formatter())))
+                        .orDetail(() -> new Output.MessageWithArgs(
+                                "File has lints: {}\n\t{}",
+                                result.target().toFile().getPath(),
+                                result.lintState()
+                                        .asStringDetailed(result.target().toFile(), result.formatter())))
+                        .write();
             } else {
-                LOGGER.debug("File is clean: {}", result.target().toFile().getPath());
+                LOGGER.debug(
+                        "Check-Result - File is clean: {}",
+                        result.target().toFile().getPath());
             }
             return ResultType.DIRTY;
         }
 
         @Override
         Integer translateResultTypeToExitCode(ResultType resultType) {
-            return switch(resultType) {
+            return switch (resultType) {
                 case CLEAN -> 0;
                 case DIRTY -> 1;
                 case DID_NOT_CONVERGE -> -1;
@@ -46,15 +58,28 @@ enum SpotlessMode {
         }
     },
     APPLY {
+        private static final Logger LOGGER = LoggerFactory.getLogger(SpotlessMode.class);
+
         @Override
         ResultType handleResult(Result result) {
             if (result.lintState().isHasLints()) {
                 // something went wrong, we should not apply the changes
-                Output.out(
-                        () -> new Output.MessageWithArgs("File has lints: {} -- {}", result.target().toFile().getPath(), result.lintState().asStringOneLine(result.target().toFile(), result.formatter())),
-                        () -> new Output.MessageWithArgs("File has lints: {}\n\t{}", result.target().toFile().getPath(), result.lintState().asStringDetailed(result.target().toFile(), result.formatter()))
-                );
+                Output.eitherDefault(() -> new Output.MessageWithArgs(
+                                "File has lints: {} -- {}",
+                                result.target().toFile().getPath(),
+                                result.lintState()
+                                        .asStringOneLine(result.target().toFile(), result.formatter())))
+                        .orDetail(() -> new Output.MessageWithArgs(
+                                "File has lints: {}\n\t{}",
+                                result.target().toFile().getPath(),
+                                result.lintState()
+                                        .asStringDetailed(result.target().toFile(), result.formatter())))
+                        .write();
                 return ResultType.DIRTY;
+            } else {
+                LOGGER.debug(
+                        "Apply-Result - File is clean: {}",
+                        result.target().toFile().getPath());
             }
             ThrowingEx.run(() -> result.lintState()
                     .getDirtyState()
@@ -64,7 +89,7 @@ enum SpotlessMode {
 
         @Override
         Integer translateResultTypeToExitCode(ResultType resultType) {
-            return switch(resultType) {
+            return switch (resultType) {
                 case CLEAN -> 0;
                 case DIRTY -> 1;
                 case DID_NOT_CONVERGE -> -1;

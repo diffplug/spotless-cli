@@ -22,11 +22,11 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
 
-import com.diffplug.spotless.ThrowingEx;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import com.diffplug.spotless.ThrowingEx;
 
 public final class LoggingConfigurer {
 
@@ -84,12 +84,12 @@ public final class LoggingConfigurer {
         if (logFile == null) {
             ConsoleHandler consoleHandler = new ConsoleHandler();
             consoleHandler.setLevel(Level.ALL); // Set logging level
-            consoleHandler.setFormatter(new SimpleFormatter()); // Set formatter
+            consoleHandler.setFormatter(new LogfmtFormatter(LogfmtFormatter.KeyDecorator.MULTI_COLOR)); // Set formatter
             return consoleHandler;
         }
         FileHandler fileHandler = ThrowingEx.get(() -> new FileHandler(logFile.getAbsolutePath(), false));
         fileHandler.setLevel(Level.ALL); // Set logging level
-        fileHandler.setFormatter(new SimpleFormatter()); // Set formatter
+        fileHandler.setFormatter(new LogfmtFormatter()); // Set formatter
         return fileHandler;
     }
 

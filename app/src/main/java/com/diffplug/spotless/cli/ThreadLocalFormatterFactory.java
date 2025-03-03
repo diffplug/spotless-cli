@@ -18,11 +18,12 @@ package com.diffplug.spotless.cli;
 import java.nio.charset.Charset;
 import java.util.LinkedHashSet;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.diffplug.spotless.Formatter;
 import com.diffplug.spotless.LineEnding;
 import com.diffplug.spotless.cli.execution.FormatterStepsSupplier;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ThreadLocalFormatterFactory implements FormatterFactory {
 
@@ -47,7 +48,9 @@ public class ThreadLocalFormatterFactory implements FormatterFactory {
         if (threadLocalFormatter.get() == null) {
             synchronized (this) {
                 if (threadLocalFormatter.get() == null) {
-                    LOGGER.info("Creating Formatter for thread: {}", Thread.currentThread().getName());
+                    LOGGER.info(
+                            "Creating Formatter for thread: {}",
+                            Thread.currentThread().getName());
                     Formatter formatter = Formatter.builder()
                             .lineEndingsPolicy(policy)
                             .encoding(encoding)
