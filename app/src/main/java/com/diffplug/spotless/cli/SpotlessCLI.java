@@ -22,9 +22,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import com.diffplug.spotless.cli.logging.output.LoggingConfigurer;
-import com.diffplug.spotless.cli.logging.output.Output;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.diffplug.spotless.Formatter;
 import com.diffplug.spotless.LineEnding;
@@ -38,13 +38,13 @@ import com.diffplug.spotless.cli.core.TargetResolver;
 import com.diffplug.spotless.cli.execution.FormatterStepsSupplier;
 import com.diffplug.spotless.cli.execution.SpotlessExecutionStrategy;
 import com.diffplug.spotless.cli.help.OptionConstants;
+import com.diffplug.spotless.cli.logging.output.LoggingConfigurer;
+import com.diffplug.spotless.cli.logging.output.Output;
 import com.diffplug.spotless.cli.steps.GoogleJavaFormat;
 import com.diffplug.spotless.cli.steps.LicenseHeader;
 import com.diffplug.spotless.cli.steps.Prettier;
 import com.diffplug.spotless.cli.version.SpotlessCLIVersionProvider;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -121,13 +121,14 @@ public class SpotlessCLI implements SpotlessAction, SpotlessCommand, SpotlessAct
 
     @Override
     public void setupLogging() {
-        LoggingConfigurer.configureLogging(LoggingConfigurer.CLIOutputLevel.VVVVV, null); // TODO add options to set that
+        LoggingConfigurer.configureLogging(
+                LoggingConfigurer.CLIOutputLevel.VVVVV, null); // TODO add options to set that
     }
 
     @Override
     public Integer executeSpotlessAction(FormatterStepsSupplier formatterSteps) {
         // Test output
-        Output.out("Executing Spotless action!!! {}", this);
+        Output.write("Executing Spotless action!!! {}", this);
         LOGGER.info("Executing Spotless action!!! -- logger -- {}", this);
         validateTargets();
         TargetResolver targetResolver = targetResolver();

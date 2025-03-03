@@ -27,10 +27,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jetbrains.annotations.NotNull;
-
-import com.diffplug.spotless.ThrowingEx;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.diffplug.spotless.ThrowingEx;
 
 public class TargetResolver {
 
