@@ -20,6 +20,11 @@ output = [
 
 <!---freshmark /shields -->
 
+> [!NOTE]\
+> This project is a work in progress :hourglass_flowing_sand: and not yet released.
+>
+> Please check back later for the first release. :heart:
+
 `spotless` is a command line interface (CLI) for the [spotless code formatter](../README.md).
 It intends to be a simple alternative to its siblings: the plugins for [gradle](../plugin-gradle/README.md), [maven](../plugin-maven/README.md)
 and others. It supports formatting a plethora of file types and can be easily configured.
