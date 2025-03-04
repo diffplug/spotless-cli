@@ -1,6 +1,8 @@
 plugins {
 	id 'buildlogic.spotless-gradle-conventions'
+	id 'buildlogic.spotless-json-conventions'
 	id 'buildlogic.spotless-markdown-conventions'
+	id 'buildlogic.spotless-yaml-conventions'
 	id 'buildlogic.changelog-conventions'
 }
 

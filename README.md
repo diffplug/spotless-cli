@@ -20,7 +20,7 @@ output = [
 
 <!---freshmark /shields -->
 
-> [!NOTE]\
+> [!NOTE]
 > This project is a work in progress :hourglass_flowing_sand: and not yet released.
 >
 > Please check back later for the first release. :heart:
@@ -92,12 +92,12 @@ This will show you the available options and formatters as such:
 
 <!---freshmark usage_main
 output =
-   '```shell\n' +
+   '```\n' +
    {{usage.main.array}}.join('\n') +
     '\n```';
 -->
 
-```shell
+```
                      __  __
    _________  ____  / /_/ /__  __________
   / ___/ __ \/ __ \/ __/ / _ \/ ___/ ___/
@@ -162,12 +162,12 @@ To see usage instructions for the google-java-format formatter, run: `spotless g
 
 <!---freshmark usage_google_java_format
 output =
-   '```shell\n' +
+   '```\n' +
    {{usage.google-java-format.array}}.join('\n') +
     '\n```';
 -->
 
-```shell
+```
 Usage: spotless google-java-format [-hijrV] [-s=<style>]
 Runs google java format
   -h, --help              Show this help message and exit.
@@ -200,12 +200,12 @@ To see usage instructions for the license-header formatter, run: `spotless licen
 
 <!---freshmark usage_license_header
 output =
-   '```shell\n' +
+   '```\n' +
    {{usage.license-header.array}}.join('\n') +
     '\n```';
 -->
 
-```shell
+```
 Usage: spotless license-header [-hV] [-c=<contentPattern>] [-d=<delimiter>]
                                [-m=<yearMode>] [-s=<skipLinesMatching>]
                                [-Y=<yearSeparator>] (-H=<header> |
@@ -261,12 +261,12 @@ To see usage instructions for the prettier formatter, run: `spotless prettier --
 
 <!---freshmark usage_prettier
 output =
-   '```shell\n' +
+   '```\n' +
    {{usage.prettier.array}}.join('\n') +
     '\n```';
 -->
 
-```shell
+```
 Usage: spotless prettier [-hV] [-C=<cacheDir>] [-n=<explicitNpmExecutable>]
                          [-N=<explicitNodeExecutable>]
                          [-P=<prettierConfigPath>] [-R=<explicitNpmrcFile>]

@@ -1,0 +1,10 @@
+plugins {
+	id 'buildlogic.spotless-common-conventions'
+}
+
+spotless {
+	format 'json', {
+		target '.github/**/*.json', '*.json', 'src/**/*.json'
+		prettier()
+	}
+}
