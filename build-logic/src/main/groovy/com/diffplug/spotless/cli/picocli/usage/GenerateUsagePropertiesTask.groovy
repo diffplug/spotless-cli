@@ -47,10 +47,7 @@ abstract class GenerateUsagePropertiesTask extends DefaultTask {
 		// remove all files from outputDir if any
 		outputDir.get().deleteDir()
 
-		String mainUsage = getUsage("")
-		writeUsageFile(mainUsage, "main")
-
-		List<String> formatterNames = findFormatterNamesFromClasspath()
+		List<String> formatterNames = DocumentedUsages.formatterNames
 		Map<String, String> formatterUsages = [:]
 		formatterNames.each { formatterName ->
 			formatterUsages.put(formatterName, getUsage(formatterName))
@@ -59,17 +56,6 @@ abstract class GenerateUsagePropertiesTask extends DefaultTask {
 		formatterUsages.each { formatterName, usage ->
 			writeUsageFile(usage, formatterName)
 		}
-	}
-
-	List<String> findFormatterNamesFromClasspath() {
-		ClasspathScanner scanner = new ClasspathScanner(runtimeClasspath.get(), { String clazzName -> clazzName.contains("com.diffplug.spotless.cli")})
-		CommandInfoReader commandInfoReader = new CommandInfoReader(scanner.withoutClassFilter())
-		List<Class<?>> formatterClasses = scanner.findInstancesOf("com.diffplug.spotless.cli.steps.SpotlessCLIFormatterStep")
-		List<String> formatterNames = []
-		for (Class<?> formatterClass : formatterClasses) {
-			formatterNames << commandInfoReader.readCommandName(formatterClass)
-		}
-		return formatterNames
 	}
 
 	String getUsage(String formatterName) {

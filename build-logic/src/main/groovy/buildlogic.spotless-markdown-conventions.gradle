@@ -1,3 +1,5 @@
+import com.diffplug.spotless.cli.picocli.usage.DocumentedUsages
+
 plugins {
 	id 'buildlogic.spotless-common-conventions'
 }
@@ -40,18 +42,35 @@ class FreshmarkPropertiesAction implements Action<Map<String, Object>> {
 		return versionsCollected
 	}
 
-	Map<String, String> getUsageHelps() {
-		Map<String, String> usageHelps = [:]
+	Map<String, Object> getUsageHelps() {
+		Map<String, Object> usageHelps = [:]
 		File outputDir = rootProject.file("app/build/generated-usages")
-		File[] usageFiles = outputDir.listFiles()
 
-		usageFiles.each { usageFile ->
-			String usage = asJsArrayOfLines(usageFile.readLines())
-			String name = usageFile.name.substring(0, usageFile.name.indexOf('.'))
-			usageHelps.put("usage.${name}.array".toString(), usage)
+		DocumentedUsages.values().each { usage ->
+			File usageFile = new File(outputDir, usage.fileName)
+			usageHelps.put("usage.${usage.formatterStepName}.array".toString(), new UsageHelp(usageFile))
 		}
 		return usageHelps
 	}
+}
+
+
+class UsageHelp implements Serializable {
+
+	private final File usageFile
+
+	UsageHelp(File usageFile) {
+		this.usageFile = usageFile
+	}
+
+	@Override
+	String toString() {
+		if (usageFile.canRead()) {
+			return asJsArrayOfLines(usageFile.readLines())
+		}
+		return '[]'
+	}
+
 
 	private static String asJsArrayOfLines(List<String> lines) {
 		return '[' +
@@ -67,4 +86,5 @@ class FreshmarkPropertiesAction implements Action<Map<String, Object>> {
 
 tasks.named('spotlessFreshmark').configure {
 	dependsOn(':app:generateUsage') // to make sure usage files are generated before spotlessFreshmark
+	inputs.files(rootProject.project(':app').tasks.named('generateUsage').get().inputs.files)
 }
