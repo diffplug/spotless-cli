@@ -30,6 +30,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "lts/jod" # 22
+      - name: "debug env"
+        run: "env | sort"
+      - name: "debug node"
+        run: "node --version && npm --version"
       - name: "Setup Gradle"
         uses: "gradle/actions/setup-gradle@v4"
       - name: "Run check on build-logic subproject"
