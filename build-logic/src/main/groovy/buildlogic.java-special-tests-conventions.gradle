@@ -28,6 +28,18 @@ tasks.register('testAll') {
 	dependsOn tasks.matching { it.name.startsWith('test') && it.name != 'testAll' }
 }
 
+def testAllCliProcess = tasks.register('testAllCliProcess') {
+	dependsOn tasks.matching { it.name.startsWith('testCliProcess') }
+}
+
+tasks.named('check').configure {
+	it.dependsOn(testAllCliProcess)
+}
+
+tasks.register('testAllCliNative') {
+	dependsOn tasks.matching { it.name.startsWith('testCliNative') }
+}
+
 tasks.withType(Test).configureEach {
 	testLogging.showStandardStreams = true
 }
