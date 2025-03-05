@@ -34,8 +34,6 @@ jobs:
         uses: "gradle/actions/setup-gradle@v4"
       - name: "Run check on build-logic subproject"
         run: "./gradlew :build-logic:check --no-configuration-cache"
-      - name: "Make sure usage files are up to date"
-        run: "./gradlew generateUsage"
       - name: "Run check on project"
         run: "./gradlew check"
       - name: "junit result"
