@@ -34,6 +34,8 @@ jobs:
         run: "node --version && npm --version"
       - name: "Setup Gradle"
         uses: "gradle/actions/setup-gradle@v4"
+        with:
+          cache-read-only: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/initial-version' }} # TODO remove when initial-version is removed
       - name: "Run check on build-logic subproject"
         run: "./gradlew :build-logic:check --no-configuration-cache"
       - name: "Run check on project"
@@ -59,7 +61,6 @@ jobs:
     runs-on: "${{ matrix.runner }}"
     env:
       SEGMENT_DOWNLOAD_TIMEOUT_MINS: "15"
-      BUILDCACHE_LOCAL_DEFAULT_DIRECTORY: "true"
     steps:
       - name: "Checkout"
         uses: "actions/checkout@v4"
@@ -76,6 +77,8 @@ jobs:
           node-version: "lts/jod" # 22
       - name: "Setup Gradle"
         uses: "gradle/actions/setup-gradle@v4"
+        with:
+          cache-read-only: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/initial-version' }} # TODO remove when initial-version is removed
       - name: "Check if binary works"
         run: "./gradlew testAllCliNative"
       - name: "junit result"
