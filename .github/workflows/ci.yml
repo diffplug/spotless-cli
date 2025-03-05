@@ -47,18 +47,23 @@ jobs:
           check_name: "JUnit Report"
           report_paths: "**/build/test-results/test/*.xml"
   nativeCompile:
-    name: "run nativeCompile on relevant platforms"
+    name: "${{ matrix.platform.name }} nativeCompile testing"
     needs: "gradleCheck"
     strategy:
       matrix:
-        runner:
-          - "ubuntu-latest"
-          - "ubuntu-24.04-arm"
-          - "windows-latest"
-          - "macos-latest"
-          - "macos-13"
+        platform:
+          - name: "Linux / x64"
+            runner: "ubuntu-latest"
+          - name: "Linux / arm"
+            runner: "ubuntu-24.04-arm"
+          - name: "Windows"
+            runner: "windows-latest"
+          - name: "macOS / arm"
+            runner: "macos-latest"
+          - name: "macOS / x64"
+            runner: "macos-13"
       fail-fast: false
-    runs-on: "${{ matrix.runner }}"
+    runs-on: "${{ matrix.platform.runner }}"
     env:
       SEGMENT_DOWNLOAD_TIMEOUT_MINS: "15"
     steps:
