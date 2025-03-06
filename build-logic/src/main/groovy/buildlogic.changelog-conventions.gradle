@@ -3,7 +3,19 @@ plugins {
 }
 
 spotlessChangelog {
+	// need -Prelease=true in order to do a publish
 	appendDashSnapshotUnless_dashPrelease=true
+
+	if (project.hasProperty('releaseForceVersion') && project.releaseForceVersion != '') {
+		forceNextVersion = project.releaseForceVersion
+	}
+	tagMessage "{{changes}}"
+	// https://cli.github.com/manual/gh_release_create
+	runAfterPush "gh release create {{version}} --title 'spotless-cli v{{version}}' --notes-from-tag ${releaseBinaries().join(' ')}"
 }
 
 version = spotlessChangelog.versionNext
+
+List<String> releaseBinaries() {
+	return [""] // TODO implement
+}

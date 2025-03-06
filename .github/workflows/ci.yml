@@ -1,6 +1,6 @@
 ---
 name: "ci_checks"
-"on":
+on:
   pull_request: null
   push:
     branches:
