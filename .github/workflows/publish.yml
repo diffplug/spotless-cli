@@ -65,7 +65,7 @@ jobs:
       - name: "upload binary" # for collecting later
         uses: actions/upload-artifact@v4
         with:
-          name: "${{ env.RUN_UNIQUE_ID }}-native-binary-${{ matrix.platform.name }}"
+          name: "spotless-native-binary--${{ matrix.platform.name }}"
           path: app/build/native/nativeCompile/spotless
           retention-days: 1
           if-no-files-found: "error"
@@ -91,6 +91,6 @@ jobs:
         uses: "actions/download-artifact@v4"
         with:
           # no name - download all artifacts
-          path: "app/build/collected-binaries"
-      - name: Display structure of downloaded files
-        run: "ls -R app/build/collected-binaries"
+          path: "build/collected-binaries"
+      - name: "Create release"
+        run: "./gradlew -Prelease=true -PreleaseBinariesRootDir=build/collected-binaries changelogPush"

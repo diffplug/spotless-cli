@@ -1,0 +1,77 @@
+
+File releaseBinariesRootDir = project.file(project.findProperty('releaseBinariesRootDir') ?: 'build/release-binaries')
+def releaseBinariesSubdirectories = [] as List<File>
+File releaseBinariesZipDir = rootProject.file('app/build/prepared-release-zips')
+
+project.ext.releaseBinariesZipDir = releaseBinariesZipDir
+
+String zipName(File subDir) {
+	def matcher = (subDir.name =~ /^spotless-.*--(?<platform>.*)$/)
+	if (!matcher.matches()) {
+		return subDir.name
+	}
+	def platform = matcher.group('platform')
+	return "spotless-${version}-${platform}"
+}
+
+if (releaseBinariesRootDir.exists()) {
+	// clear output directory
+	def cleanReleaseBinariesZipDir = tasks.register('cleanReleaseBinariesZipDir', Delete) {
+		delete releaseBinariesZipDir
+	}
+
+	// Get all immediate subdirectories
+	releaseBinariesSubdirectories = releaseBinariesRootDir.listFiles()?.findAll { it.isDirectory() } ?: []
+
+	releaseBinariesSubdirectories.each { subDir ->
+		def createZipTaskName = 'prepareReleaseZipBinary_' + subDir.name
+
+		tasks.register(createZipTaskName, Zip) {
+			group = 'prepareReleaseZipBinary'
+			description = "Creates a zip file for the release binary in ${subDir.name}"
+			def zipName = zipName(subDir)
+			dependsOn(cleanReleaseBinariesZipDir)
+			from subDir
+			into zipName
+			archiveFileName = "${zipName}.zip"
+			destinationDirectory.set(releaseBinariesZipDir)
+		}
+	}
+}
+
+// umbrella task
+def prepareReleaseBinaryZips = tasks.register('prepareReleaseBinaryZips') {
+	group = 'prepareReleaseZipBinary'
+	description = 'Creates zip files for all release binaries'
+	dependsOn releaseBinariesSubdirectories.collect { 'prepareReleaseZipBinary_' + it.name }
+	doFirst {
+		if (releaseBinariesSubdirectories.isEmpty()) {
+			logger.lifecycle("No release binaries found in $releaseBinariesRootDir -- wrong configuration for property 'releaseBinariesRootDir'?")
+		}
+	}
+}
+
+// dynamically wire the prepareReleaseBinaryZips task to the changelogPush task
+tasks.matching { Task t ->
+	t.name == 'changelogPush' && JavaCompile.isInstance(t)
+}.configureEach { Task t ->
+	t.dependsOn(prepareReleaseBinaryZips)
+}
+
+List<String> getPathsOfReleaseBinaryZips() {
+	return [
+		project.ext.releaseBinariesZipDir.path + '/*.zip'
+	]
+}
+
+project.ext {
+	getPathsOfReleaseBinaryZips = this.&getPathsOfReleaseBinaryZips
+}
+
+tasks.register('printPathsOfReleaseBinaryZips') {
+	dependsOn(prepareReleaseBinaryZips)
+	def paths = getPathsOfReleaseBinaryZips().join(' ')
+	doLast {
+		println "paths: $paths"
+	}
+}
