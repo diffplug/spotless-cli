@@ -76,8 +76,8 @@ Alternatively, you can download the latest binary for your system from the [rele
 The general principle is to specify the files to format, configure global options and then add one or more formatter steps - with configuration if needed.
 
 ```shell
-# Generell structure of the invocation
-spotless --target [more options] formatter1 [config1] formatter2 [config2] ...
+# general structure of the invocation
+spotless --target [... more options] formatter1 [config-of-formatter1] formatter2 [config-of-formatter2] ...
 ```
 
 Be aware that the order of the formatter steps is important. The formatters are applied in the order they are specified.
