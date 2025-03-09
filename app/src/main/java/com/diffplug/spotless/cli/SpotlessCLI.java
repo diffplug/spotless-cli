@@ -15,6 +15,7 @@
  */
 package com.diffplug.spotless.cli;
 
+import java.io.File;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.List;
@@ -119,10 +120,55 @@ public class SpotlessCLI implements SpotlessAction, SpotlessCommand, SpotlessAct
         this.parallelity = parallelity;
     }
 
+    @CommandLine.ArgGroup(exclusive = true, multiplicity = "0..1")
+    LoggingLevelOptions loggingLevelOptions;
+
+    class LoggingLevelOptions {
+
+        private boolean[] verbosity;
+
+        @CommandLine.Option(
+                names = {"-v"},
+                description = "Enable verbose output. Multiple -v options increase the verbosity (max 5).",
+                arity = "0")
+        public void setVerbose(boolean[] verbosity) {
+            if (verbosity.length > 5) {
+                throw new CommandLine.ParameterException(
+                        spec.commandLine(), "Error: --verbose can be used at most 5 times");
+            }
+            this.verbosity = verbosity;
+        }
+
+        @CommandLine.Option(
+                names = {"--quiet", "-q"},
+                description = "Disable as much output as possible.",
+                arity = "0")
+        boolean quiet;
+
+        LoggingConfigurer.CLIOutputLevel toCliOutputLevel() {
+            if (quiet) {
+                return LoggingConfigurer.CLIOutputLevel.QUIET;
+            }
+            if (verbosity == null) {
+                return LoggingConfigurer.CLIOutputLevel.DEFAULT;
+            }
+            int verbosityCount = this.verbosity.length;
+            return LoggingConfigurer.CLIOutputLevel.verbosity(verbosityCount);
+        }
+    }
+
+    @CommandLine.Option(
+            names = {"--log-file"},
+            description = "The log file to write the output to.")
+    File logFile;
+
     @Override
     public void setupLogging() {
         LoggingConfigurer.configureLogging(
-                LoggingConfigurer.CLIOutputLevel.VVVVV, null); // TODO add options to set that
+                loggingLevelOptions != null
+                        ? loggingLevelOptions.toCliOutputLevel()
+                        : LoggingConfigurer.CLIOutputLevel.DEFAULT,
+                logFile);
     }
 
     @Override

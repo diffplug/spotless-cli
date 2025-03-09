@@ -94,12 +94,31 @@ public final class LoggingConfigurer {
     }
 
     public enum CLIOutputLevel {
-        VVVVV, // everything, even debug levels
-        VVVV, // spotless on debug, everything else non- debug levels
-        VVV, // everything spotless, even debug levels
-        VV, // everything spotless, except debug levels
-        V, // only info and above
+        VVVVV(5), // everything, even debug levels
+        VVVV(4), // spotless on debug, everything else non- debug levels
+        VVV(3), // everything spotless, even debug levels
+        VV(2), // everything spotless, except debug levels
+        V(1), // only info and above
         DEFAULT, // only warnings and above
-        QUIET, // only errors and above
+        QUIET; // only errors and above
+
+        private final int verbosity;
+
+        CLIOutputLevel(int verbosity) {
+            this.verbosity = verbosity;
+        }
+
+        CLIOutputLevel() {
+            this(-1);
+        }
+
+        public static CLIOutputLevel verbosity(int verbosity) {
+            for (CLIOutputLevel level : CLIOutputLevel.values()) {
+                if (level.verbosity == verbosity) {
+                    return level;
+                }
+            }
+            throw new IllegalArgumentException("Unknown verbosity " + verbosity);
+        }
     }
 }

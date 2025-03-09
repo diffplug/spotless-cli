@@ -106,27 +106,30 @@ output =
     /_/
 
 
-Usage: spotless [-hV] [-e=<encoding>] [-l=<lineEnding>] [-m=<spotlessMode>]
-                [-p=N] [-t=<targets>]... [FORMATTING_STEPS]
+Usage: spotless [-hV] [-e=<encoding>] [-l=<lineEnding>] [--log-file=<logFile>]
+                [-m=<spotlessMode>] [-p=N] [-t=<targets>]... [-q | -v [-v]...]
+                [FORMATTING_STEPS]
 Runs spotless
-  -e, --encoding=<encoding>
-                           The encoding of the files to format.
-                             (default: UTF-8)
-  -h, --help               Show this help message and exit.
+  -e, --encoding=<encoding>  The encoding of the files to format.
+                               (default: UTF-8)
+  -h, --help                 Show this help message and exit.
   -l, --line-ending=<lineEnding>
-                           The line ending of the files to format.
-                             One of: GIT_ATTRIBUTES,
-                             GIT_ATTRIBUTES_FAST_ALLSAME, PLATFORM_NATIVE,
-                             WINDOWS, UNIX, MAC_CLASSIC, PRESERVE
-                             (default: UNIX)
-  -m, --mode=<spotlessMode>
-                           The mode to run spotless in.
-                             One of: CHECK, APPLY
-                             (default: APPLY)
-  -p, --parallelity=N      The number of parallel formatter threads to run.
-                             (default: #cores * 0.5)
-  -t, --target=<targets>   The target files to format.
-  -V, --version            Print version information and exit.
+                             The line ending of the files to format.
+                               One of: GIT_ATTRIBUTES,
+                               GIT_ATTRIBUTES_FAST_ALLSAME, PLATFORM_NATIVE,
+                               WINDOWS, UNIX, MAC_CLASSIC, PRESERVE
+                               (default: UNIX)
+      --log-file=<logFile>   The log file to write the output to.
+  -m, --mode=<spotlessMode>  The mode to run spotless in.
+                               One of: CHECK, APPLY
+                               (default: APPLY)
+  -p, --parallelity=N        The number of parallel formatter threads to run.
+                               (default: #cores * 0.5)
+  -q, --quiet                Disable as much output as possible.
+  -t, --target=<targets>     The target files to format.
+  -v                         Enable verbose output. Multiple -v options
+                               increase the verbosity (max 5).
+  -V, --version              Print version information and exit.
 
 Available formatting steps:
   license-header      Runs license header
