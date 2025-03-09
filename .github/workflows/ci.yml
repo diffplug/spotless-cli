@@ -39,7 +39,7 @@ jobs:
       - name: "Run check on build-logic subproject"
         run: "./gradlew :build-logic:check --no-configuration-cache"
       - name: "Run check on project"
-        run: "./gradlew check"
+        run: "./gradlew generateUsage && ./gradlew check"
       - name: "junit result"
         uses: "mikepenz/action-junit-report@v4"
         if: "always()"
