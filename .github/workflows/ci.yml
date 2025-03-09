@@ -52,15 +52,15 @@ jobs:
     strategy:
       matrix:
         platform:
-          - name: "Linux / x64"
+          - name: "linux-x86_64"
             runner: "ubuntu-latest"
-          - name: "Linux / arm"
+          - name: "linux-aarch64"
             runner: "ubuntu-24.04-arm"
-          - name: "Windows"
+          - name: "windows-x86_64"
             runner: "windows-latest"
-          - name: "macOS / arm"
+          - name: "macos-aaarch64"
             runner: "macos-latest"
-          - name: "macOS / x64"
+          - name: "macos-x86_64"
             runner: "macos-13"
       fail-fast: false
     runs-on: "${{ matrix.platform.runner }}"
