@@ -43,7 +43,11 @@ class ChecksumCalculatorTest {
     @Test
     void itCalculatesAChecksumForStep() {
         Step step = step(
-                randomPath(), randomString(), argGroup(null, randomByteArray()), List.of(randomPath(), randomPath()));
+                randomPath(),
+                randomString(),
+                argGroup(null, randomByteArray()),
+                argGroup(randomString(), null),
+                List.of(randomPath(), randomPath()));
 
         String checksum = checksumCalculator.calculateChecksum(step);
 
@@ -52,10 +56,18 @@ class ChecksumCalculatorTest {
 
     @Test
     void itCalculatesDifferentChecksumsForSteps() {
-        Step step1 =
-                step(randomPath(), randomString(), argGroup(randomString(), null), List.of(randomPath(), randomPath()));
+        Step step1 = step(
+                randomPath(),
+                randomString(),
+                argGroup(randomString(), null),
+                argGroup(null, randomByteArray()),
+                List.of(randomPath(), randomPath()));
         Step step2 = step(
-                randomPath(), randomString(), argGroup(null, randomByteArray()), List.of(randomPath(), randomPath()));
+                randomPath(),
+                randomString(),
+                argGroup(null, randomByteArray()),
+                argGroup(randomString(), null),
+                List.of(randomPath(), randomPath()));
 
         String checksum1 = checksumCalculator.calculateChecksum(step1);
         String checksum2 = checksumCalculator.calculateChecksum(step2);
@@ -66,7 +78,11 @@ class ChecksumCalculatorTest {
     @Test
     void itRecalculatesSameChecksumsForStep() {
         Step step = step(
-                randomPath(), randomString(), argGroup(null, randomByteArray()), List.of(randomPath(), randomPath()));
+                randomPath(),
+                randomString(),
+                argGroup(null, randomByteArray()),
+                argGroup(randomString(), null),
+                List.of(randomPath(), randomPath()));
 
         String checksum1 = checksumCalculator.calculateChecksum(step);
         String checksum2 = checksumCalculator.calculateChecksum(step);
@@ -77,7 +93,11 @@ class ChecksumCalculatorTest {
     @Test
     void itCalculatesAChecksumForCommandLineStream() {
         Step step = step(
-                randomPath(), randomString(), argGroup(null, randomByteArray()), List.of(randomPath(), randomPath()));
+                randomPath(),
+                randomString(),
+                argGroup(null, randomByteArray()),
+                argGroup(randomString(), null),
+                List.of(randomPath(), randomPath()));
         Action action = action(randomPath());
         SpotlessCommandLineStream commandLineStream = commandLine(action, step);
 
@@ -89,7 +109,11 @@ class ChecksumCalculatorTest {
     @Test
     void itCalculatesDifferentChecksumForDifferentCommandLineStreamDueToAction() {
         Step step = step(
-                randomPath(), randomString(), argGroup(null, randomByteArray()), List.of(randomPath(), randomPath()));
+                randomPath(),
+                randomString(),
+                argGroup(null, randomByteArray()),
+                argGroup(randomString(), null),
+                List.of(randomPath(), randomPath()));
         Action action1 = action(randomPath());
         Action action2 = action(randomPath());
         SpotlessCommandLineStream commandLineStream1 = commandLine(action1, step);
@@ -104,9 +128,17 @@ class ChecksumCalculatorTest {
     @Test
     void itCalculatesDifferentChecksumForDifferentCommandLineStreamDueToSteps() {
         Step step1 = step(
-                randomPath(), randomString(), argGroup(null, randomByteArray()), List.of(randomPath(), randomPath()));
+                randomPath(),
+                randomString(),
+                argGroup(null, randomByteArray()),
+                argGroup(randomString(), randomByteArray()),
+                List.of(randomPath(), randomPath()));
         Step step2 = step(
-                randomPath(), randomString(), argGroup(null, randomByteArray()), List.of(randomPath(), randomPath()));
+                randomPath(),
+                randomString(),
+                argGroup(null, randomByteArray()),
+                argGroup(randomString(), randomByteArray()),
+                List.of(randomPath(), randomPath()));
         Action action = action(randomPath());
         SpotlessCommandLineStream commandLineStream1 = commandLine(action, step1);
         SpotlessCommandLineStream commandLineStream2 = commandLine(action, step2);
@@ -120,9 +152,17 @@ class ChecksumCalculatorTest {
     @Test
     void itCalculatesDifferentChecksumForDifferentCommandLineStreamDueToStepOrder() {
         Step step1 = step(
-                randomPath(), randomString(), argGroup(null, randomByteArray()), List.of(randomPath(), randomPath()));
+                randomPath(),
+                randomString(),
+                argGroup(null, randomByteArray()),
+                argGroup(null, randomByteArray()),
+                List.of(randomPath(), randomPath()));
         Step step2 = step(
-                randomPath(), randomString(), argGroup(null, randomByteArray()), List.of(randomPath(), randomPath()));
+                randomPath(),
+                randomString(),
+                argGroup(null, randomByteArray()),
+                argGroup(null, randomByteArray()),
+                List.of(randomPath(), randomPath()));
         Action action = action(randomPath());
         SpotlessCommandLineStream commandLineStream1 = commandLine(action, step1, step2);
         SpotlessCommandLineStream commandLineStream2 = commandLine(action, step2, step1);
@@ -133,11 +173,41 @@ class ChecksumCalculatorTest {
         assertThat(checksum1).isNotEqualTo(checksum2);
     }
 
-    private static Step step(Path test1, String test2, StepArgGroup argGroup, List<Path> parameters) {
+    @Test
+    void itCalculatesDifferentChecksumDueToDifferentSetterOption() {
+        Path test1 = randomPath();
+        String test2 = randomString();
+        Step step1 = step(test1, test2, randomString(), null, null, List.of());
+        Step step2 = step(test1, test2, randomString(), null, null, List.of());
+
+        Action action = action(randomPath());
+        SpotlessCommandLineStream commandLineStream1 = commandLine(action, step1);
+        SpotlessCommandLineStream commandLineStream2 = commandLine(action, step2);
+
+        String checksum1 = checksumCalculator.calculateChecksum(commandLineStream1);
+        String checksum2 = checksumCalculator.calculateChecksum(commandLineStream2);
+
+        assertThat(checksum1).isNotEqualTo(checksum2);
+    }
+
+    private static Step step(
+            Path test1, String test2, StepArgGroup argGroup, StepArgGroup argGroup2, List<Path> parameters) {
+        return step(test1, test2, test1 + test2, argGroup, argGroup2, parameters);
+    }
+
+    private static Step step(
+            Path test1,
+            String test2,
+            String test3,
+            StepArgGroup argGroup,
+            StepArgGroup argGroup2,
+            List<Path> parameters) {
         Step step = new Step();
         step.test1 = test1;
         step.test2 = test2;
+        step.setTest5(test3);
         step.argGroup = argGroup;
+        step.setArgGroup2(argGroup2);
         step.parameters = parameters;
         return step;
     }
@@ -169,8 +239,25 @@ class ChecksumCalculatorTest {
         @CommandLine.Option(names = "--test2")
         String test2;
 
+        private String test5;
+
+        @CommandLine.Option(names = "--test5")
+        void setTest5(String test5) {
+            if (test5 == null) {
+                throw new NullPointerException("test5");
+            }
+            this.test5 = test5;
+        }
+
         @CommandLine.ArgGroup(exclusive = true)
         StepArgGroup argGroup;
+
+        private StepArgGroup argGroup2;
+
+        @CommandLine.ArgGroup(exclusive = true)
+        void setArgGroup2(StepArgGroup argGroup2) {
+            this.argGroup2 = argGroup2;
+        }
 
         @CommandLine.Parameters
         List<Path> parameters;

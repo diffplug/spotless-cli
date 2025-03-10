@@ -26,8 +26,6 @@ import com.diffplug.spotless.tag.NpmTest;
 @NpmTest
 public class PrettierTest extends CLIIntegrationHarness {
 
-    // TODO
-
     @Test
     void itRunsPrettierForTsFilesWithOptions() throws IOException {
         setFile("test.ts").toResource("npm/prettier/config/typescript.dirty");

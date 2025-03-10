@@ -17,6 +17,7 @@ package com.diffplug.spotless.cli.core;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -24,6 +25,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
+
+import org.jetbrains.annotations.Nullable;
 
 import com.diffplug.common.hash.Hashing;
 import com.diffplug.spotless.ThrowingEx;
@@ -93,15 +96,30 @@ public class ChecksumCalculator {
 
     private static Stream<FieldOnObject> expandOptionField(Field field, Object obj) {
         if (field.isAnnotationPresent(CommandLine.Option.class)
-                || field.isAnnotationPresent(CommandLine.Parameters.class)) {
+                || field.isAnnotationPresent(CommandLine.Parameters.class)
+                || isAnnotatedSetterPresent(CommandLine.Option.class, field, obj)
+                || isAnnotatedSetterPresent(CommandLine.Parameters.class, field, obj)) {
             return Stream.of(new FieldOnObject(field, obj));
         }
-        if (field.isAnnotationPresent(CommandLine.ArgGroup.class)) {
+        if (field.isAnnotationPresent(CommandLine.ArgGroup.class)
+                || isAnnotatedSetterPresent(CommandLine.ArgGroup.class, field, obj)) {
             Object fieldValue = new FieldOnObject(field, obj).getValue();
+            if (fieldValue == null) {
+                return Stream.empty();
+            }
             return Arrays.stream(fieldValue.getClass().getDeclaredFields())
                     .flatMap(subField -> expandOptionField(subField, fieldValue));
         }
         return Stream.empty(); // nothing to expand
+    }
+
+    private static <T extends Annotation> boolean isAnnotatedSetterPresent(
+            Class<T> annotation, Field field, Object obj) {
+        return Arrays.stream(obj.getClass().getDeclaredMethods())
+                .filter(method -> method.getName().startsWith("set"))
+                .filter(method -> method.getParameterCount() == 1)
+                .filter(method -> method.getParameterTypes()[0].equals(field.getType()))
+                .anyMatch(method -> method.isAnnotationPresent(annotation));
     }
 
     private static String toHashedHexBytes(byte[] bytes) {
@@ -122,7 +140,7 @@ public class ChecksumCalculator {
             this.obj = obj;
         }
 
-        Object getValue() {
+        @Nullable Object getValue() {
             ThrowingEx.run(() -> field.setAccessible(true));
             return ThrowingEx.get(() -> field.get(obj));
         }
