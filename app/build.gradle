@@ -10,7 +10,6 @@ version = rootProject.version
 
 dependencies {
 	implementation 'org.apache.commons:commons-text'
-	implementation project(':utilities')
 	testImplementation project(':testlib')
 	implementation libs.bundles.spotless.libs
 
