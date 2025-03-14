@@ -33,13 +33,13 @@ jobs:
         platform:
           - name: "linux-x86_64"
             runner: "ubuntu-latest"
-          - name: "linux-aarch64"
+          - name: "linux-aarch_64"
             runner: "ubuntu-24.04-arm"
           - name: "windows-x86_64"
             runner: "windows-latest"
-          - name: "macos-aaarch64"
+          - name: "osx-aarch_64"
             runner: "macos-latest"
-          - name: "macos-x86_64"
+          - name: "osx-x86_64"
             runner: "macos-13"
     runs-on: "${{ matrix.platform.runner }}"
     env:
