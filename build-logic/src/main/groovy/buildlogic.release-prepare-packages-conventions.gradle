@@ -1,5 +1,5 @@
 
-File releaseBinariesRootDir = project.file(project.findProperty('releaseBinariesRootDir') ?: 'build/release-binaries')
+File releaseBinariesRootDir = rootProject.file(project.findProperty('releaseBinariesRootDir') ?: 'app/build/release-binaries')
 def releaseBinariesSubdirectories = [] as List<File>
 File releaseBinariesZipDir = rootProject.file('app/build/prepared-release-zips')
 
@@ -31,10 +31,25 @@ if (releaseBinariesRootDir.exists()) {
 			description = "Creates a zip file for the release binary in ${subDir.name}"
 			def zipName = zipName(subDir)
 			dependsOn(cleanReleaseBinariesZipDir)
-			from subDir
-			into zipName
 			archiveFileName = "${zipName}.zip"
 			destinationDirectory.set(releaseBinariesZipDir)
+
+
+			// file content
+			// 1. add the binary into the zib under folder <zipName>/bin
+			into ("${zipName}/bin") {
+				from subDir
+			}
+
+			// 2. add everything from the distribution template into the zip under folder <zipName>
+			into ("${zipName}") {
+				from "${rootDir}/app/src/jreleaser/distributions/spotless-cli/release-zip"
+			}
+
+			// 3. copy the LICENSE into the zip under folder <zipName>
+			into ("${zipName}") {
+				from "${rootDir}/LICENSE"
+			}
 		}
 	}
 }

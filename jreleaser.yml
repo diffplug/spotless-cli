@@ -1,0 +1,48 @@
+---
+project:
+  name: "Spotless CLI"
+  description: "Keep your code Spotless from the command line"
+  longDescription: |
+    Spotless CLI is a command line tool that helps you keep your code Spotless.
+    It is a standalone tool that can be used in any project, regardless of the build system.
+    Or even without any build system at all, just once, or when you are working on a single file.
+  links:
+    homepage: https://github.com/diffplug/spotless-cli
+  license: Apache-2.0
+  copyright: Diffplug
+  authors:
+    - Diffplug
+  inceptionYear: "2025"
+
+distributions:
+  spotless-cli:
+    stereotype: CLI
+    type: BINARY
+    executable:
+      name: spotless
+    tags:
+      - spotless
+      - formatter
+      - code-style
+
+    artifacts:
+      - path: app/build/prepared-release-zips/spotless-{{projectVersion}}-osx-aarch_64.zip
+        platform: osx-aarch_64
+      - path: app/build/prepared-release-zips/spotless-{{projectVersion}}-osx-x86_64.zip
+        platform: osx-x86_64
+      - path: app/build/prepared-release-zips/spotless-{{projectVersion}}-linux-aarch_64.zip
+        platform: linux-aarch_64
+      - path: app/build/prepared-release-zips/spotless-{{projectVersion}}-linux-x86_64.zip
+        platform: linux-x86_64
+      - path: app/build/prepared-release-zips/spotless-{{projectVersion}}-windows-x86_64.zip
+        platform: windows-x86_64
+
+    brew:
+      active: RELEASE
+      templateDirectory: app/src/jreleaser/distributions/spotless-cli/brew
+      multiPlatform: true
+
+    chocolatey:
+      active: RELEASE
+      templateDirectory: app/src/jreleaser/distributions/spotless-cli/chocolatey
+
