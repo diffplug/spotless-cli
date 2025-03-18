@@ -94,6 +94,13 @@ jobs:
           cache-read-only: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/initial-version' }} # TODO remove when initial-version is removed
       - name: "Check if binary works"
         run: "./gradlew testAllCliNative"
+      - name: "upload binary" # for debugging
+        uses: actions/upload-artifact@v4
+        with:
+          name: "spotless-native-binary--${{ matrix.platform.name }}"
+          path: app/build/native/nativeCompile/spotless
+          retention-days: 7
+          if-no-files-found: "error"
       - name: "junit result"
         uses: "mikepenz/action-junit-report@v4"
         if: "always()"
