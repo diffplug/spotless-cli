@@ -20,3 +20,10 @@ spotlessChangelog {
 }
 
 version = spotlessChangelog.versionNext
+
+tasks.register('changelogPrintCurrentVersion') {
+	def versionToPrint = spotlessChangelog.versionNext
+	doLast {
+		println "${versionToPrint}"
+	}
+}

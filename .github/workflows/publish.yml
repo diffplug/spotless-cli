@@ -94,17 +94,19 @@ jobs:
           path: "app/build/collected-binaries"
       - name: "Create release"
         run: "./gradlew -Prelease=true -PreleaseBinariesRootDir=app/build/collected-binaries changelogPush"
+      - name: "Get version and set to output"
+        id: get_version
+        run: echo "VERSION=$(./gradlew changelogPrintCurrentVersion -Prelease=true --quiet)" >> "$GITHUB_OUTPUT"
       - name: "Publish distributions"
         uses: jreleaser/release-action@v2
         with:
           setup-java: false
           arguments: "publish"
         env:
-          JRELEASER_PROJECT_VERSION: TODO
+          JRELEASER_PROJECT_VERSION: ${{ steps.get_version.outputs.VERSION }}
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          JRELEASER_HOMEBREW_GITHUB_TOKEN: ${{ secrets.GH_PAT }}
-          JRELEASER_CHOCOLATEY_GITHUB_TOKEN: ${{ secrets.GH_PAT }}
-
+          JRELEASER_HOMEBREW_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN_HOMEBREW }} # TODO
+          JRELEASER_CHOCOLATEY_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN_CHOCOLATEY }} # TODO
       - name: "Persist jreleaser output"
         if: always()
         uses: actions/upload-artifact@v4
