@@ -10,6 +10,9 @@ spotless {
 		target '*.md'
 		// provide lib versions to freshmark
 		properties(new FreshmarkPropertiesAction(rootProject, project))
+		properties {
+			it.put('changeThisValueToForceCacheMiss', '9040f43e-a15b-40a4-a755-6742a2c03a27')
+		}
 		prettier() // prettier for markdown formatting
 		endWithNewline()
 	}
@@ -84,7 +87,7 @@ class UsageHelp implements Serializable {
 	}
 }
 
-tasks.named('spotlessFreshmark').configure {
-	dependsOn(':app:generateUsage') // to make sure usage files are generated before spotlessFreshmark
-	inputs.files(rootProject.project(':app').tasks.named('generateUsage').get().inputs.files)
-}
+//tasks.named('spotlessFreshmark').configure {
+//	dependsOn(':app:generateUsage') // to make sure usage files are generated before spotlessFreshmark
+//	inputs.files(rootProject.project(':app').tasks.named('generateUsage').get().inputs.files)
+//}
