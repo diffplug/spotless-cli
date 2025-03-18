@@ -6,7 +6,12 @@ on:
     branches:
       - "main"
       - "initial-version"
-  workflow_dispatch: null
+  workflow_dispatch:
+    inputs:
+      force_gradle_cache_clean:
+        description: "Force gradle cache clean"
+        required: false
+        default: "false"
 concurrency:
   group: "${{ github.workflow }}-${{ github.ref }}"
   cancel-in-progress: true
@@ -36,6 +41,9 @@ jobs:
         uses: "gradle/actions/setup-gradle@v4"
         with:
           cache-read-only: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/initial-version' }} # TODO remove when initial-version is removed
+      - name: "Nuke gradle cache"
+        if: "${{ github.event.inputs.force_gradle_cache_clean == 'true' }}"
+        run: "rm -rf ~/.gradle/caches"
       - name: "Run check on build-logic subproject"
         run: "./gradlew :build-logic:check --no-configuration-cache"
       - name: "Run check on project"
