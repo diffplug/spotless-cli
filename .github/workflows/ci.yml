@@ -98,7 +98,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: "spotless-native-binary--${{ matrix.platform.name }}"
-          path: app/build/native/nativeCompile/spotless
+          path: app/build/native/nativeCompile/spotless*
           retention-days: 7
           if-no-files-found: "error"
       - name: "junit result"
