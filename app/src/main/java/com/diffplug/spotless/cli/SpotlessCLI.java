@@ -40,7 +40,6 @@ import com.diffplug.spotless.cli.execution.FormatterStepsSupplier;
 import com.diffplug.spotless.cli.execution.SpotlessExecutionStrategy;
 import com.diffplug.spotless.cli.help.OptionConstants;
 import com.diffplug.spotless.cli.logging.output.LoggingConfigurer;
-import com.diffplug.spotless.cli.logging.output.Output;
 import com.diffplug.spotless.cli.steps.GoogleJavaFormat;
 import com.diffplug.spotless.cli.steps.LicenseHeader;
 import com.diffplug.spotless.cli.steps.Prettier;
@@ -173,9 +172,6 @@ public class SpotlessCLI implements SpotlessAction, SpotlessCommand, SpotlessAct
 
     @Override
     public Integer executeSpotlessAction(FormatterStepsSupplier formatterSteps) {
-        // Test output
-        Output.write("Executing Spotless action!!! {}", this);
-        LOGGER.info("Executing Spotless action!!! -- logger -- {}", this);
         validateTargets();
         TargetResolver targetResolver = targetResolver();
 
