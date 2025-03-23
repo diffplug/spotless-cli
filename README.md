@@ -255,6 +255,16 @@ spotless --target '**/src/**/*.java' license-header --header='/* (c) Diffplug $Y
 
 ### prettier
 
+<!---freshmark prettiershields
+output = [
+  link(shield('Default prettier version', '(default)-prettier', '{{libs.versions.bundled.prettier}}', 'blue'), 'https://www.npmjs.com/package/prettier/v/{{libs.versions.bundled.prettier}}'),
+  ].join('\n')
+-->
+
+[![Default prettier version](https://img.shields.io/badge/%28default%29--prettier-2.8.8-blue.svg)](https://www.npmjs.com/package/prettier/v/2.8.8)
+
+<!---freshmark /prettiershields -->
+
 [Prettier](https://prettier.io/) is an opinionated code formatter that supports many languages. Some are supported out of the box such as
 JavaScript, JSX, Angular, Vue, Flow, TypeScript, CSS, Less, SCSS, HTML, Ember/Handlebars, JSON, GraphQL, Markdown and YAML.
 
@@ -303,6 +313,60 @@ Example usage:
 ```shell
 spotless --target '**/*.json' prettier
 
-# or using a custom version and plugin
-TODO TODO TODO
+# or using a custom version and plugin (prettier <= 2)
+spotless --target='src/**/*.java' prettier \
+    --prettier-config-option='printWidth=120' \
+    --dev-dependency='prettier=2.8.7' \
+    --dev-dependency='prettier-plugin-java=2.1.0'
+
+# or using a custom version and plugin (prettier 3+)
+# → prettier 3 needs you to enable plugins explicitly (see 'plugins' config option)
+spotless --target='src/**/*.java' prettier \
+    --prettier-config-option='printWidth=120' \
+    --prettier-config-option='plugins=["prettier-plugin-java"]' \
+    --dev-dependency='prettier=3.0.3' \
+    --dev-dependency='prettier-plugin-java=2.3.0'
+```
+
+## Tipps & Tricks
+
+### Using a configuration file
+
+Since spotless-cli is based on `picocli`, you can use configuration files to store long or complex command lines
+(called @files in picocli terminology).
+
+:point_right: For details see [picocli documentation](https://picocli.info/#AtFiles)
+
+Example usage:
+
+Store a configuration file `/path/to/my/project/spotless-prettier-java.config` with the following content:
+
+```
+--target 'src/**/*.java'
+prettier
+--prettier-config-option 'printWidth=120'
+--prettier-config-option 'plugins=["prettier-plugin-java"]'
+--dev-dependency 'prettier=3.0.3'
+--dev-dependency 'prettier-plugin-java=2.3.0'
+license-header
+--header-file=/path/to/my/project/license-header.txt
+```
+
+Then you can run spotless-cli with just the following command:
+
+```shell
+spotless @/path/to/my/project/spotless-prettier-java.config
+```
+
+which behind the scenes will be expanded into:
+
+```shell
+spotless --target='src/**/*.java' \
+    prettier \
+        --prettier-config-option='printWidth=120' \
+        --prettier-config-option='plugins=["prettier-plugin-java"]' \
+        --dev-dependency='prettier=3.0.3' \
+        --dev-dependency='prettier-plugin-java=2.3.0' \
+    license-header \
+        --header-file='/path/to/my/project/license-header.txt'
 ```

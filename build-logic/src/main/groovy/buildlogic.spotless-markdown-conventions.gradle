@@ -37,11 +37,26 @@ class FreshmarkPropertiesAction implements Action<Map<String, Object>> {
 	}
 
 	Map<String, String> getVersionsCollected() {
+		Map<String, String> versionsCollected = [:]
+		def nativeVersions = getLibsNativeVersions()
+		versionsCollected.putAll(nativeVersions)
+		def bundledVersions = getBundledVersions()
+		versionsCollected.putAll(bundledVersions)
+		return versionsCollected
+	}
+
+	Map<String, String> getLibsNativeVersions() {
 		def versionCatalog = project.extensions.getByType(VersionCatalogsExtension).named("libs")
 		Map<String, String> versionsCollected = [:]
 		versionCatalog.versionAliases.each {versionAlias ->
 			versionsCollected.put('libs.versions.' + versionAlias, versionCatalog.findVersion(versionAlias).get().toString())
 		}
+		return versionsCollected
+	}
+
+	Map<String, String> getBundledVersions() {
+		Map<String, String> versionsCollected = [:]
+		versionsCollected.put('libs.versions.bundled.prettier', com.diffplug.spotless.npm.PrettierFormatterStep.DEFAULT_VERSION)
 		return versionsCollected
 	}
 
