@@ -95,8 +95,6 @@ public class Prettier extends SpotlessFormatterStep {
                 .withPrettierConfigPath(prettierConfigPath)
                 .build();
 
-        //		return List.of(adapt(prettierFormatterStep));
-
         return List.of(prettierFormatterStep);
     }
 
@@ -109,13 +107,13 @@ public class Prettier extends SpotlessFormatterStep {
             if (value == null) {
                 normalized.put(key, null);
             } else {
-                normalized.put(key, normalizePrettierOption(key, value));
+                normalized.put(key, normalizePrettierOption(value));
             }
         });
         return normalized;
     }
 
-    private Object normalizePrettierOption(String key, String value) {
+    private Object normalizePrettierOption(String value) {
         if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false")) {
             return Boolean.parseBoolean(value);
         }

@@ -222,7 +222,7 @@ public class SpotlessCLI implements SpotlessAction, SpotlessCommand, SpotlessAct
             return ResultType.CLEAN;
         }
         if (result.lintState().getDirtyState().didNotConverge()) {
-            LOGGER.warn("File did not converge: {}", result.target().toFile()); // maybe log to user facing?
+            LOGGER.warn("File did not converge: {}", result.target().toFile());
             return ResultType.DID_NOT_CONVERGE;
         }
         return this.spotlessMode.handleResult(result);
