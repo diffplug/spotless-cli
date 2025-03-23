@@ -134,7 +134,7 @@ Runs spotless
 Available formatting steps:
   license-header      Runs license header
   google-java-format  Runs google java format
-  prettier            Runs prettier
+  prettier            Runs prettier, the opinionated code formatter.
 ```
 
 <!---freshmark /usage_main -->
@@ -284,23 +284,27 @@ Usage: spotless prettier [-hV] [-C=<cacheDir>] [-n=<explicitNpmExecutable>]
                          [-N=<explicitNodeExecutable>]
                          [-P=<prettierConfigPath>] [-R=<explicitNpmrcFile>]
                          [-A=<additionalNpmrcLocations>]...
-                         [-c=<String=String>]... [-D=<String=String>]...
-Runs prettier
+                         [-c='OPTION=VALUE']... [-D='PACKAGE=VERSION']...
+Runs prettier, the opinionated code formatter.
   -A, --additional-npmrc-location=<additionalNpmrcLocations>
                   Additional locations to search for .npmrc files.
-  -c, --prettier-config-option=<String=String>
-                  The Prettier configuration options.
+  -c, --prettier-config-option='OPTION=VALUE'
+                  A prettier configuration options.
+                    The format is 'OPTION=VALUE'.
+                    example: 'printWidth=80'
   -C, --cache-dir=<cacheDir>
-                  The directory to use for caching Prettier.
-  -D, --dev-dependency=<String=String>
-                  The devDependencies to use for Prettier.
+                  The directory to use for caching prettier.
+  -D, --dev-dependency='PACKAGE=VERSION'
+                  An entry to add to the package.json for running prettier.
+                    The format is 'PACKAGE=VERSION'.
+                    example: 'prettier=2.8.7'
   -h, --help      Show this help message and exit.
   -n, --npm-exec=<explicitNpmExecutable>
                   The explicit path to the npm executable.
   -N, --node-exec=<explicitNodeExecutable>
                   The explicit path to the node executable.
   -P, --prettier-config-path=<prettierConfigPath>
-                  The path to the Prettier configuration file.
+                  The path to the prettier configuration file.
   -R, --npmrc-file=<explicitNpmrcFile>
                   The explicit path to the .npmrc file.
   -V, --version   Print version information and exit.

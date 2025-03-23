@@ -37,19 +37,22 @@ import picocli.CommandLine;
 import static com.diffplug.spotless.cli.core.FilePathUtil.asFile;
 import static com.diffplug.spotless.cli.core.FilePathUtil.asFiles;
 import static com.diffplug.spotless.cli.core.FilePathUtil.assertDirectoryExists;
+import static com.diffplug.spotless.cli.help.OptionConstants.NEW_LINE;
 import static com.diffplug.spotless.cli.steps.OptionDefaultUse.use;
 
-@CommandLine.Command(name = "prettier", description = "Runs prettier")
+@CommandLine.Command(name = "prettier", description = "Runs prettier, the opinionated code formatter.")
 public class Prettier extends SpotlessFormatterStep {
 
     @CommandLine.Option(
             names = {"--dev-dependency", "-D"},
-            description = "The devDependencies to use for Prettier.")
+            description = "An entry to add to the package.json for running prettier." + NEW_LINE
+                    + "The format is @|YELLOW 'PACKAGE=VERSION'|@." + NEW_LINE + "example: 'prettier=2.8.7'",
+            paramLabel = "'PACKAGE=VERSION'")
     Map<String, String> devDependencies;
 
     @CommandLine.Option(
             names = {"--cache-dir", "-C"},
-            description = "The directory to use for caching Prettier.")
+            description = "The directory to use for caching prettier.")
     Path cacheDir;
 
     @CommandLine.Option(
@@ -74,12 +77,14 @@ public class Prettier extends SpotlessFormatterStep {
 
     @CommandLine.Option(
             names = {"--prettier-config-path", "-P"},
-            description = "The path to the Prettier configuration file.")
+            description = "The path to the prettier configuration file.")
     Path prettierConfigPath;
 
     @CommandLine.Option(
             names = {"--prettier-config-option", "-c"},
-            description = "The Prettier configuration options.")
+            description = "A prettier configuration options." + NEW_LINE + "The format is @|YELLOW 'OPTION=VALUE'|@."
+                    + NEW_LINE + "example: 'printWidth=80'",
+            paramLabel = "'OPTION=VALUE'")
     Map<String, String> prettierConfigOptions;
 
     @NotNull @Override
