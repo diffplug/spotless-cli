@@ -126,10 +126,7 @@ Runs spotless
   -p, --parallelity=N        The number of parallel formatter threads to run.
                                (default: #cores * 0.5)
   -q, --quiet                Disable as much output as possible.
-  -q, --quiet                Disable as much output as possible.
   -t, --target=<targets>     The target files to format.
-  -v                         Enable verbose output. Multiple -v options
-                               increase the verbosity (max 5).
   -v                         Enable verbose output. Multiple -v options
                                increase the verbosity (max 5).
   -V, --version              Print version information and exit.
