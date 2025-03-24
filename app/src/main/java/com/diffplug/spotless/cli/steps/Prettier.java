@@ -50,30 +50,8 @@ public class Prettier extends SpotlessFormatterStep {
             paramLabel = "'PACKAGE=VERSION'")
     Map<String, String> devDependencies;
 
-    @CommandLine.Option(
-            names = {"--cache-dir", "-C"},
-            description = "The directory to use for caching prettier.")
-    Path cacheDir;
-
-    @CommandLine.Option(
-            names = {"--npm-exec", "-n"},
-            description = "The explicit path to the npm executable.")
-    Path explicitNpmExecutable;
-
-    @CommandLine.Option(
-            names = {"--node-exec", "-N"},
-            description = "The explicit path to the node executable.")
-    Path explicitNodeExecutable;
-
-    @CommandLine.Option(
-            names = {"--npmrc-file", "-R"},
-            description = "The explicit path to the .npmrc file.")
-    Path explicitNpmrcFile;
-
-    @CommandLine.Option(
-            names = {"--additional-npmrc-location", "-A"},
-            description = "Additional locations to search for .npmrc files.")
-    List<Path> additionalNpmrcLocations;
+    @CommandLine.Mixin
+    NpmOptions npmOptions;
 
     @CommandLine.Option(
             names = {"--prettier-config-path", "-P"},
@@ -91,10 +69,10 @@ public class Prettier extends SpotlessFormatterStep {
     public List<FormatterStep> prepareFormatterSteps(SpotlessActionContext context) {
         FormatterStep prettierFormatterStep = builder(context)
                 .withDevDependencies(devDependencies())
-                .withCacheDir(cacheDir)
-                .withExplicitNpmExecutable(explicitNpmExecutable)
-                .withExplicitNodeExecutable(explicitNodeExecutable)
-                .withExplicitNpmrcFile(explicitNpmrcFile)
+                .withCacheDir(npmOptions.npmInstallCacheDir)
+                .withExplicitNpmExecutable(npmOptions.explicitNpmExecutable)
+                .withExplicitNodeExecutable(npmOptions.explicitNodeExecutable)
+                .withExplicitNpmrcFile(npmOptions.explicitNpmrcFile)
                 .withAdditionalNpmrcLocations(additionalNpmrcLocations())
                 .withPrettierConfigOptions(prettierConfigOptions())
                 .withPrettierConfigPath(prettierConfigPath)
@@ -134,7 +112,7 @@ public class Prettier extends SpotlessFormatterStep {
     }
 
     private List<Path> additionalNpmrcLocations() {
-        return use(additionalNpmrcLocations).orIfNullGet(Collections::emptyList);
+        return use(npmOptions.additionalNpmrcLocations).orIfNullGet(Collections::emptyList);
     }
 
     private PrettierFormatterStepBuilder builder(@NotNull SpotlessActionContext context) {

@@ -280,7 +280,8 @@ output =
 -->
 
 ```
-Usage: spotless prettier [-hV] [-C=<cacheDir>] [-n=<explicitNpmExecutable>]
+Usage: spotless prettier [-hV] [-C=<npmInstallCacheDir>]
+                         [-n=<explicitNpmExecutable>]
                          [-N=<explicitNodeExecutable>]
                          [-P=<prettierConfigPath>] [-R=<explicitNpmrcFile>]
                          [-A=<additionalNpmrcLocations>]...
@@ -292,8 +293,9 @@ Runs prettier, the opinionated code formatter.
                   A prettier configuration options.
                     The format is 'OPTION=VALUE'.
                     example: 'printWidth=80'
-  -C, --cache-dir=<cacheDir>
-                  The directory to use for caching prettier.
+  -C, --npm-install-cache-dir=<npmInstallCacheDir>
+                  The directory to use for caching libraries retrieved by 'npm
+                    install'.
   -D, --dev-dependency='PACKAGE=VERSION'
                   An entry to add to the package.json for running prettier.
                     The format is 'PACKAGE=VERSION'.
