@@ -27,11 +27,9 @@ graalvmNative {
 		tasksToInstrumentPredicate = new java.util.function.Predicate<Task>() {
 					@Override
 					boolean test(Task task) {
-						//						if (project.hasProperty('agent')) {
-						println ("Instrumenting task: " + task.name + " " + task.name == 'test' + "proj: " + task.project.hasProperty('agent'))
-						return task.name == 'test' || task.name == 'testNpm'
-						//						}
-						//						return false
+						def instrument = task.name == 'test' || task.name == 'testNpm'
+						logger.debug("Instrumenting task ${task.name} = $instrument")
+						return instrument
 					}
 				}
 	}
