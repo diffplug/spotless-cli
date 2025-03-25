@@ -34,7 +34,7 @@ Example usage:
 ```shell
 spotless --target '**/src/**/*.java' \
     google-java-format \
-    license-header --header='/* (c) Diffplug $YEAR */'
+    license-header --header='/* (c) DiffPlug $YEAR */'
 ```
 
 This command formats all java files in any `src` folder with the [google-java-format](https://github.com/google/google-java-format) and adds (or updates an existing) license header.
@@ -45,13 +45,13 @@ Using the above command line you go
 output = [
   '| From this | to this |',
     '| --- | --- |',
-  '| ' + image('before', 'docs/examples/intro/resized/FormattingExample.java.png') + ' | ' + image('after', 'docs/examples/intro/resized/FormattingExampleFormatted.java.png') + ' |',
+  '| ' + image('before', 'docs/examples/intro/FormattingExample.png') + ' | ' + image('after', 'docs/examples/intro/FormattingExampleFormatted.png') + ' |',
   ].join('\n')
 -->
 
-| From this                                                         | to this                                                                   |
-| ----------------------------------------------------------------- | ------------------------------------------------------------------------- |
-| ![before](docs/examples/intro/resized/FormattingExample.java.png) | ![after](docs/examples/intro/resized/FormattingExampleFormatted.java.png) |
+| From this                                            | to this                                                      |
+| ---------------------------------------------------- | ------------------------------------------------------------ |
+| ![before](docs/examples/intro/FormattingExample.png) | ![after](docs/examples/intro/FormattingExampleFormatted.png) |
 
 <!---freshmark /example_usage_before_after -->
 
@@ -60,7 +60,11 @@ output = [
 To install with Homebrew on macOS or Linux:
 
 ```shell
-brew install ...
+brew install diffplug/tap/spotless-cli
+
+# or if you prefer
+brew tap diffplug/tap
+brew install spotless-cli
 ```
 
 To install with Chocolatey on Windows:
@@ -250,7 +254,7 @@ Runs license header
 Example usage:
 
 ```shell
-spotless --target '**/src/**/*.java' license-header --header='/* (c) Diffplug $YEAR */'
+spotless --target '**/src/**/*.java' license-header --header='/* (c) DiffPlug $YEAR */'
 ```
 
 ### prettier

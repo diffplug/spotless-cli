@@ -9,9 +9,9 @@ project:
   links:
     homepage: https://github.com/diffplug/spotless-cli
   license: Apache-2.0
-  copyright: Diffplug
+  copyright: DiffPlug
   authors:
-    - Diffplug
+    - DiffPlug
   inceptionYear: "2025"
 
 distributions:
@@ -45,4 +45,3 @@ distributions:
     chocolatey:
       active: RELEASE
       templateDirectory: app/src/jreleaser/distributions/spotless-cli/chocolatey
-

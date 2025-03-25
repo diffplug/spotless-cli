@@ -1,4 +1,4 @@
-/* (c) Diffplug 2025 */
+/* (c) DiffPlug 2025 */
 public class FormattingExample {
   public static void main(String[] args) {
     int x = 10;

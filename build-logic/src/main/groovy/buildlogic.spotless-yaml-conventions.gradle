@@ -4,7 +4,7 @@ plugins {
 
 spotless {
 	yaml {
-		target '.github/workflows/*.yml'
+		target '.github/workflows/*.yml', '*.yml'
 		prettier()
 	}
 }
