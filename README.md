@@ -154,15 +154,17 @@ Available formatting steps:
 
 Possible exit codes:
   0    Successful formatting.
-       In APPLY mode, this means all files were formatted.
-       In CHECK mode, this means all files are already formatted properly.
-  1    Some files need formatting.
+       In APPLY mode, this means all files were formatted successfully.
+       In CHECK mode, this means all files were already formatted properly.
+  1    Some files need to be formatted.
        In APPLY mode, this means some files failed to be formatted (see output
          for details).
-       In CHECK mode, this means some files are not formatted properly (and
-         might be fixed in APPLY mode).
+       In CHECK mode, this means some files are currently not formatted
+         properly (and might be fixed in APPLY mode).
   -1   Some files did not converge. This can happen when one formatter does not
          converge on the file content.
+       You can find more about this special case here:
+         <https://github.com/diffplug/spotless/blob/main/PADDEDCELL.md>
   -2   An exception occurred during execution.
 ```
 

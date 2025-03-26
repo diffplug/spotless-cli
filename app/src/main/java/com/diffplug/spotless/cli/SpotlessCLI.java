@@ -73,13 +73,16 @@ import picocli.CommandLine.Command;
         exitCodeList = {
             """
             0:Successful formatting.
-            In @|yellow APPLY|@ mode, this means all files were formatted.
-            In @|yellow CHECK|@ mode, this means all files are already formatted properly.""",
+            In @|yellow APPLY|@ mode, this means all files were formatted successfully.
+            In @|yellow CHECK|@ mode, this means all files were already formatted properly.""",
             """
-            1:Some files need formatting.
+            1:Some files need to be formatted.
             In @|yellow APPLY|@ mode, this means some files failed to be formatted (see output for details).
-            In @|yellow CHECK|@ mode, this means some files are not formatted properly (and might be fixed in APPLY mode).""",
-            "-1:Some files did not converge. This can happen when one formatter does not converge on the file content.",
+            In @|yellow CHECK|@ mode, this means some files are currently not formatted properly (and might be fixed in APPLY mode).""",
+            """
+            -1:Some files did not converge. This can happen when one formatter does not converge on the file content.
+            You can find more about this special case here:
+              <https://github.com/diffplug/spotless/blob/main/PADDEDCELL.md>""",
             "-2:An exception occurred during execution."
         },
         subcommandsRepeatable = true,
