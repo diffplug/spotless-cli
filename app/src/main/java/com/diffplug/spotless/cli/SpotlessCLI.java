@@ -53,7 +53,9 @@ import picocli.CommandLine.Command;
         mixinStandardHelpOptions = true,
         usageHelpAutoWidth = true,
         versionProvider = SpotlessCLIVersionProvider.class,
-        description = "Runs spotless",
+        description =
+                "%n@|magenta spotless|@ is a command line interface (CLI) for the spotless code formatter. "
+                        + "%nIt can either check if your files are formatted according to your configuration or apply the formatting to the files.%n",
         header =
                 """
                                  __  __             \s
@@ -108,7 +110,13 @@ public class SpotlessCLI implements SpotlessAction, SpotlessCommand, SpotlessAct
 
     @CommandLine.Option(
             names = {"--target", "-t"},
-            description = "The target files to format.")
+            description =
+                    """
+        The target files to format. Blobs are supported.
+        Examples:
+        -t 'src/**/*.java'
+        -t 'src/**/*.kt'
+        -t 'README.md'""")
     public List<String> targets;
 
     @CommandLine.Option(

@@ -113,7 +113,11 @@ output =
 Usage: spotless [-hV] [-e=<encoding>] [-l=<lineEnding>] [--log-file=<logFile>]
                 [-m=<spotlessMode>] [-p=N] [-t=<targets>]... [-q | -v [-v]...]
                 [FORMATTING_STEPS]
-Runs spotless
+
+spotless is a command line interface (CLI) for the spotless code formatter.
+It can either check if your files are formatted according to your configuration
+or apply the formatting to the files.
+
   -e, --encoding=<encoding>  The encoding of the files to format.
                              (default: UTF-8)
   -h, --help                 Show this help message and exit.
@@ -134,7 +138,11 @@ Runs spotless
   -p, --parallelity=N        The number of parallel formatter threads to run.
                              (default: #cores * 0.5)
   -q, --quiet                Disable as much output as possible.
-  -t, --target=<targets>     The target files to format.
+  -t, --target=<targets>     The target files to format. Blobs are supported.
+                             Examples:
+                             -t 'src/**/*.java'
+                             -t 'src/**/*.kt'
+                             -t 'README.md'
   -v                         Enable verbose output. Multiple -v options
                                increase the verbosity (max 5).
   -V, --version              Print version information and exit.
@@ -153,8 +161,8 @@ Possible exit codes:
          for details).
        In CHECK mode, this means some files are not formatted properly (and
          might be fixed in APPLY mode).
-  -1   Some files did not converge. This can happen in APPLY mode when the
-         formatter does not converge on the file content.
+  -1   Some files did not converge. This can happen when one formatter does not
+         converge on the file content.
   -2   An exception occurred during execution.
 ```
 
