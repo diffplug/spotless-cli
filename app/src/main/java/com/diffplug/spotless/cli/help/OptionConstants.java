@@ -17,7 +17,7 @@ package com.diffplug.spotless.cli.help;
 
 public final class OptionConstants {
 
-    public static final String NEW_LINE = "%n  ";
+    public static final String NEW_LINE = "%n";
 
     public static final String VALID_VALUES_SUFFIX = NEW_LINE + "One of: ${COMPLETION-CANDIDATES}";
 

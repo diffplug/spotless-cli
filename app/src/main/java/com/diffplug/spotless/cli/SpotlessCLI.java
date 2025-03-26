@@ -66,6 +66,20 @@ import picocli.CommandLine.Command;
             """,
         synopsisSubcommandLabel = "[FORMATTING_STEPS]",
         commandListHeading = "%nAvailable formatting steps:%n",
+        exitCodeListHeading = "%nPossible exit codes:%n",
+        exitCodeOnExecutionException = -2,
+        exitCodeList = {
+            """
+            0:Successful formatting.
+            In @|yellow APPLY|@ mode, this means all files were formatted.
+            In @|yellow CHECK|@ mode, this means all files are already formatted properly.""",
+            """
+            1:Some files need formatting.
+            In @|yellow APPLY|@ mode, this means some files failed to be formatted (see output for details).
+            In @|yellow CHECK|@ mode, this means some files are not formatted properly (and might be fixed in APPLY mode).""",
+            "-1:Some files did not converge. This can happen when one formatter does not converge on the file content.",
+            "-2:An exception occurred during execution."
+        },
         subcommandsRepeatable = true,
         subcommands = {LicenseHeader.class, GoogleJavaFormat.class, Prettier.class})
 public class SpotlessCLI implements SpotlessAction, SpotlessCommand, SpotlessActionContextProvider {
@@ -78,7 +92,12 @@ public class SpotlessCLI implements SpotlessAction, SpotlessCommand, SpotlessAct
     @CommandLine.Option(
             names = {"--mode", "-m"},
             defaultValue = "APPLY",
-            description = "The mode to run spotless in." + OptionConstants.VALID_AND_DEFAULT_VALUES_SUFFIX)
+            description =
+                    "The mode to run spotless in." + OptionConstants.VALID_AND_DEFAULT_VALUES_SUFFIX
+                            + OptionConstants.NEW_LINE
+                            + """
+                    APPLY: Apply the correct formatting where needed (replace file contents with formatted content).
+                    CHECK: Check if the files are formatted or show the diff of the formatting.""")
     SpotlessMode spotlessMode;
 
     @CommandLine.Option(

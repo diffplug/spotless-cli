@@ -115,20 +115,24 @@ Usage: spotless [-hV] [-e=<encoding>] [-l=<lineEnding>] [--log-file=<logFile>]
                 [FORMATTING_STEPS]
 Runs spotless
   -e, --encoding=<encoding>  The encoding of the files to format.
-                               (default: UTF-8)
+                             (default: UTF-8)
   -h, --help                 Show this help message and exit.
   -l, --line-ending=<lineEnding>
                              The line ending of the files to format.
-                               One of: GIT_ATTRIBUTES,
+                             One of: GIT_ATTRIBUTES,
                                GIT_ATTRIBUTES_FAST_ALLSAME, PLATFORM_NATIVE,
                                WINDOWS, UNIX, MAC_CLASSIC, PRESERVE
-                               (default: UNIX)
+                             (default: UNIX)
       --log-file=<logFile>   The log file to write the output to.
   -m, --mode=<spotlessMode>  The mode to run spotless in.
-                               One of: CHECK, APPLY
-                               (default: APPLY)
+                             One of: CHECK, APPLY
+                             (default: APPLY)
+                             APPLY: Apply the correct formatting where needed
+                               (replace file contents with formatted content).
+                             CHECK: Check if the files are formatted or show
+                               the diff of the formatting.
   -p, --parallelity=N        The number of parallel formatter threads to run.
-                               (default: #cores * 0.5)
+                             (default: #cores * 0.5)
   -q, --quiet                Disable as much output as possible.
   -t, --target=<targets>     The target files to format.
   -v                         Enable verbose output. Multiple -v options
@@ -139,6 +143,19 @@ Available formatting steps:
   license-header      Runs license header
   google-java-format  Runs google java format
   prettier            Runs prettier, the opinionated code formatter.
+
+Possible exit codes:
+  0    Successful formatting.
+       In APPLY mode, this means all files were formatted.
+       In CHECK mode, this means all files are already formatted properly.
+  1    Some files need formatting.
+       In APPLY mode, this means some files failed to be formatted (see output
+         for details).
+       In CHECK mode, this means some files are not formatted properly (and
+         might be fixed in APPLY mode).
+  -1   Some files did not converge. This can happen in APPLY mode when the
+         formatter does not converge on the file content.
+  -2   An exception occurred during execution.
 ```
 
 <!---freshmark /usage_main -->
@@ -179,15 +196,15 @@ Usage: spotless google-java-format [-hijrV] [-s=<style>]
 Runs google java format
   -h, --help              Show this help message and exit.
   -i, --reorder-imports   Reorder imports.
-                            (default: false)
+                          (default: false)
   -j, --format-javadoc    Format javadoc.
-                            (default: true)
+                          (default: true)
   -r, --reflow-long-strings
                           Reflow long strings.
-                            (default: false)
+                          (default: false)
   -s, --style=<style>     The style to use for the google java format.
-                            One of: AOSP, GOOGLE
-                            (default: GOOGLE)
+                          One of: AOSP, GOOGLE
+                          (default: GOOGLE)
   -V, --version           Print version information and exit.
 ```
 
@@ -237,8 +254,8 @@ Runs license header
   -m, --year-mode=<yearMode>
                           How and if the year in the copyright header should be
                             updated.
-                            One of: PRESERVE, UPDATE_TO_TODAY, SET_FROM_GIT
-                            (default: PRESERVE)
+                          One of: PRESERVE, UPDATE_TO_TODAY, SET_FROM_GIT
+                          (default: PRESERVE)
   -s, --skip-lines-matching=<skipLinesMatching>
                           Skip lines matching the given regex pattern before
                             inserting the licence header.
@@ -246,7 +263,7 @@ Runs license header
   -Y, --year-separator=<yearSeparator>
                           The separator to use for the year range in the
                             license header.
-                            (default: -)
+                          (default: -)
 ```
 
 <!---freshmark /usage_license_header -->
@@ -295,15 +312,15 @@ Runs prettier, the opinionated code formatter.
                   Additional locations to search for .npmrc files.
   -c, --prettier-config-option='OPTION=VALUE'
                   A prettier configuration options.
-                    The format is 'OPTION=VALUE'.
-                    example: 'printWidth=80'
+                  The format is 'OPTION=VALUE'.
+                  example: 'printWidth=80'
   -C, --npm-install-cache-dir=<npmInstallCacheDir>
                   The directory to use for caching libraries retrieved by 'npm
                     install'.
   -D, --dev-dependency='PACKAGE=VERSION'
                   An entry to add to the package.json for running prettier.
-                    The format is 'PACKAGE=VERSION'.
-                    example: 'prettier=2.8.7'
+                  The format is 'PACKAGE=VERSION'.
+                  example: 'prettier=2.8.7'
   -h, --help      Show this help message and exit.
   -n, --npm-exec=<explicitNpmExecutable>
                   The explicit path to the npm executable.
