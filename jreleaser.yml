@@ -38,10 +38,8 @@ distributions:
         platform: windows-x86_64
 
     brew:
-      active: RELEASE
       templateDirectory: app/src/jreleaser/distributions/spotless-cli/brew
       multiPlatform: true
 
     chocolatey:
-      active: RELEASE
       templateDirectory: app/src/jreleaser/distributions/spotless-cli/chocolatey
