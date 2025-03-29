@@ -12,6 +12,7 @@ dependencies {
 	implementation 'org.apache.commons:commons-text'
 	testImplementation project(':testlib')
 	implementation libs.bundles.spotless.libs
+	implementation libs.diff.utils
 
 	// these are fixed versions of the otherwise dynamic dependencies for spotless
 	// this is necessary to allow for native compilation where reflective access to dynamic jars is not possible

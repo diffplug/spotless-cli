@@ -1,6 +1,7 @@
 [versions]
 annotations = "26.0.2"
 assertj-core = "3.27.3"
+diff-utils = "1.3.0"
 durian = "1.2.0"
 junit = "5.8.1"
 native-include-googleJavaFormat = "1.24.0"
@@ -11,6 +12,7 @@ spotless-lib = "3.1.0"
 [libraries]
 annotations = { module = "org.jetbrains:annotations", version.ref = "annotations" }
 assertj-core = { module = "org.assertj:assertj-core", version.ref = "assertj-core" }
+diff-utils = { module = "com.googlecode.java-diff-utils:diffutils", version.ref = "diff-utils" }
 durian-core = { module = "com.diffplug.durian:durian-core", version.ref = "durian" }
 durian-io = { module = "com.diffplug.durian:durian-io", version.ref = "durian" }
 durian-collect = { module = "com.diffplug.durian:durian-collect", version.ref = "durian" }

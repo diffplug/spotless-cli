@@ -53,7 +53,11 @@ public class LogfmtFormatter extends Formatter {
 
         Map<String, String> attributes = new LinkedHashMap<>();
         intoMap(record, attributes);
-        return toString(attributes);
+        String logLine = toString(attributes);
+        if (logLine != null && !logLine.isEmpty()) {
+            return logLine + "\n";
+        }
+        return logLine;
     }
 
     private void intoMap(LogRecord record, Map<String, String> attributes) {

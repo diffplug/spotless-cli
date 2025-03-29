@@ -28,6 +28,8 @@ import org.jetbrains.annotations.Nullable;
 
 import com.diffplug.spotless.ThrowingEx;
 
+import picocli.CommandLine;
+
 public final class LoggingConfigurer {
 
     public static void configureLogging(@NotNull CLIOutputLevel cliOutputLevel, @Nullable File logFile) {
@@ -40,43 +42,68 @@ public final class LoggingConfigurer {
         LogManager.getLogManager().reset();
 
         // Create a new console handler
-        Handler rootHandler = createRootHandler(logFile);
+        final Handler rootHandler = createRootHandler(logFile);
 
         // Set the root logger level to OFF
-        Logger rootLogger = Logger.getLogger("");
+        final Logger rootLogger = Logger.getLogger("");
         rootLogger.setLevel(Level.OFF); // only enable specifics
         rootLogger.addHandler(rootHandler); // Add the configured handler
 
-        Logger spotlessLibLogger = Logger.getLogger("com.diffplug.spotless");
-        Logger spotlessCliLogger = Logger.getLogger("com.diffplug.spotless.cli");
+        final Logger spotlessLibLogger = Logger.getLogger("com.diffplug.spotless");
+        final Logger spotlessCliLogger = Logger.getLogger("com.diffplug.spotless.cli");
 
-        ConsoleHandler outputConsoleHandler = new ConsoleHandler();
-        outputConsoleHandler.setLevel(Level.ALL); // Set logging level
+        final ConsoleHandler outputConsoleHandler = new ConsoleHandler();
+        outputConsoleHandler.setLevel(Level.ALL); // make sure everything is logged
         outputConsoleHandler.setFormatter(new PlainMessageFormatter()); // Set formatter
 
-        Logger outputLogger = Logger.getLogger(Output.OUTPUT_LOGGER_NAME);
-        outputLogger.setLevel(Level.ALL);
+        final Logger outputLogger = Logger.getLogger(Output.OUTPUT_LOGGER_NAME);
         outputLogger.setUseParentHandlers(false);
         outputLogger.addHandler(outputConsoleHandler);
 
-        if (cliOutputLevel == CLIOutputLevel.VVVVV) {
-            rootLogger.setLevel(Level.ALL);
-        } else if (cliOutputLevel == CLIOutputLevel.VVVV) {
-            rootLogger.setLevel(Level.INFO);
-            spotlessLibLogger.setLevel(Level.ALL);
-        } else if (cliOutputLevel == CLIOutputLevel.VVV) {
-            spotlessLibLogger.setLevel(Level.ALL);
-        } else if (cliOutputLevel == CLIOutputLevel.VV) {
-            spotlessLibLogger.setLevel(Level.INFO);
-        } else if (cliOutputLevel == CLIOutputLevel.V) {
-            //            spotlessLibLogger.setLevel(Level.OFF);
-            spotlessCliLogger.setLevel(Level.INFO);
-        } else if (cliOutputLevel == CLIOutputLevel.DEFAULT) {
-            //            spotlessLibLogger.setLevel(Level.OFF);
-            spotlessCliLogger.setLevel(Level.WARNING);
-        } else if (cliOutputLevel == CLIOutputLevel.QUIET) {
-            //            spotlessLibLogger.setLevel(Level.OFF);
-            spotlessCliLogger.setLevel(Level.SEVERE);
+        // set the logging level per logger
+        switch (cliOutputLevel) {
+            case QUIET -> {
+                outputLogger.setLevel(Level.SEVERE);
+                spotlessCliLogger.setLevel(Level.SEVERE);
+                spotlessLibLogger.setLevel(Level.SEVERE);
+                rootLogger.setLevel(Level.SEVERE);
+            }
+            case DEFAULT -> {
+                outputLogger.setLevel(Level.INFO);
+                spotlessCliLogger.setLevel(Level.WARNING);
+                spotlessLibLogger.setLevel(Level.WARNING);
+                rootLogger.setLevel(Level.SEVERE);
+            }
+            case V -> {
+                outputLogger.setLevel(Level.INFO);
+                spotlessCliLogger.setLevel(Level.INFO);
+                spotlessLibLogger.setLevel(Level.WARNING);
+                rootLogger.setLevel(Level.SEVERE);
+            }
+            case VV -> {
+                outputLogger.setLevel(Level.INFO);
+                spotlessLibLogger.setLevel(Level.INFO);
+                spotlessCliLogger.setLevel(Level.INFO);
+                rootLogger.setLevel(Level.SEVERE);
+            }
+            case VVV -> {
+                outputLogger.setLevel(Level.ALL);
+                spotlessCliLogger.setLevel(Level.ALL);
+                spotlessLibLogger.setLevel(Level.ALL);
+                rootLogger.setLevel(Level.SEVERE);
+            }
+            case VVVV -> {
+                outputLogger.setLevel(Level.ALL);
+                spotlessCliLogger.setLevel(Level.ALL);
+                spotlessLibLogger.setLevel(Level.ALL);
+                rootLogger.setLevel(Level.INFO);
+            }
+            case VVVVV -> {
+                outputLogger.setLevel(Level.ALL);
+                spotlessCliLogger.setLevel(Level.ALL);
+                spotlessLibLogger.setLevel(Level.ALL);
+                rootLogger.setLevel(Level.ALL);
+            }
         }
     }
 
@@ -84,7 +111,10 @@ public final class LoggingConfigurer {
         if (logFile == null) {
             ConsoleHandler consoleHandler = new ConsoleHandler();
             consoleHandler.setLevel(Level.ALL); // Set logging level
-            consoleHandler.setFormatter(new LogfmtFormatter(LogfmtFormatter.KeyDecorator.MULTI_COLOR)); // Set formatter
+            LogfmtFormatter.KeyDecorator keyDecorator = CommandLine.Help.Ansi.AUTO.enabled()
+                    ? LogfmtFormatter.KeyDecorator.MULTI_COLOR
+                    : LogfmtFormatter.KeyDecorator.NONE;
+            consoleHandler.setFormatter(new LogfmtFormatter(keyDecorator)); // Set formatter
             return consoleHandler;
         }
         FileHandler fileHandler = ThrowingEx.get(() -> new FileHandler(logFile.getAbsolutePath(), false));

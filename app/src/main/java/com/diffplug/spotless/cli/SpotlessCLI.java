@@ -152,7 +152,10 @@ public class SpotlessCLI implements SpotlessAction, SpotlessCommand, SpotlessAct
     @CommandLine.ArgGroup(exclusive = true, multiplicity = "0..1")
     LoggingLevelOptions loggingLevelOptions;
 
-    class LoggingLevelOptions {
+    public static class LoggingLevelOptions {
+
+        @CommandLine.Spec
+        CommandLine.Model.CommandSpec spec; // injected by picocli
 
         private boolean[] verbosity;
 
@@ -172,7 +175,7 @@ public class SpotlessCLI implements SpotlessAction, SpotlessCommand, SpotlessAct
                 names = {"--quiet", "-q"},
                 description = "Disable as much output as possible.",
                 arity = "0")
-        boolean quiet;
+        public boolean quiet;
 
         LoggingConfigurer.CLIOutputLevel toCliOutputLevel() {
             if (quiet) {
@@ -193,11 +196,24 @@ public class SpotlessCLI implements SpotlessAction, SpotlessCommand, SpotlessAct
 
     @Override
     public void setupLogging() {
-        LoggingConfigurer.configureLogging(
-                loggingLevelOptions != null
-                        ? loggingLevelOptions.toCliOutputLevel()
-                        : LoggingConfigurer.CLIOutputLevel.DEFAULT,
-                logFile);
+        LoggingConfigurer.CLIOutputLevel outputLevel = loggingLevelOptions != null
+                ? loggingLevelOptions.toCliOutputLevel()
+                : LoggingConfigurer.CLIOutputLevel.DEFAULT;
+        LoggingConfigurer.configureLogging(outputLevel, logFile);
+        // the following logs are to make sure that the logging is configured correctly
+        logMetaStatements();
+    }
+
+    private static void logMetaStatements() {
+        Logger spotlessCliLogger = LoggerFactory.getLogger("com.diffplug.spotless.cli.meta");
+        spotlessCliLogger.info("Meta: spotless cli loggers on level info enabled.");
+        spotlessCliLogger.debug("Meta: spotless cli loggers on level debug enabled.");
+        Logger spotlessLibLogger = LoggerFactory.getLogger("com.diffplug.spotless.meta");
+        spotlessLibLogger.info("Meta: spotless loggers on level info enabled.");
+        spotlessLibLogger.debug("Meta: spotless loggers on level debug enabled.");
+        Logger nonSpotlessLogger = LoggerFactory.getLogger("meta");
+        nonSpotlessLogger.info("Meta: non-spotless loggers on level info enabled.");
+        nonSpotlessLogger.debug("Meta: non-spotless loggers on level debug enabled.");
     }
 
     @Override

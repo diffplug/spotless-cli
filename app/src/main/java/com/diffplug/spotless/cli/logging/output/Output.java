@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 
 public final class Output {
 
-    public static final String OUTPUT_LOGGER_NAME = "com.diffplug.spotless.cli.outputs.FORCED_OUTPUT";
+    public static final String OUTPUT_LOGGER_NAME = "CLI_OUTPUT";
     static final Logger CLI_OUTPUT = LoggerFactory.getLogger(OUTPUT_LOGGER_NAME);
 
     public static void write(String message, Object... args) {
@@ -52,12 +52,14 @@ public final class Output {
         @Override
         public void write() {
             if (CLI_OUTPUT.isDebugEnabled()) {
-                MessageWithArgs messageWithArgs = defaultMessageWithArgs.get();
+                MessageWithArgs messageWithArgs = detailMessageWithArgs.get();
                 CLI_OUTPUT.debug(messageWithArgs.message(), messageWithArgs.args());
                 return;
             }
-            MessageWithArgs messageWithArgs = detailMessageWithArgs.get();
-            CLI_OUTPUT.info(messageWithArgs.message(), messageWithArgs.args());
+            if (CLI_OUTPUT.isInfoEnabled()) {
+                MessageWithArgs messageWithArgs = defaultMessageWithArgs.get();
+                CLI_OUTPUT.info(messageWithArgs.message(), messageWithArgs.args());
+            }
         }
     }
 

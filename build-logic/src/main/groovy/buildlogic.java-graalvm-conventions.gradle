@@ -45,7 +45,8 @@ graalvmNative {
 
 			if (project.hasProperty('release') && project.release == 'true') {
 				// optimizations, see https://www.graalvm.org/latest/reference-manual/native-image/optimizations-and-performance/
-				buildArgs.add('-O3') // on production builds: Aims for the best performance at the cost of longer build times.
+				buildArgs.add('-O3')
+				// on production builds: Aims for the best performance at the cost of longer build times.
 			} else {
 				buildArgs.add('-Ob') // Quick build mode
 			}
@@ -66,8 +67,14 @@ graalvmNative {
 	}
 }
 
-tasks.named('metadataCopy') {
-	dependsOn('test', 'testNpm')
+if (!project.hasProperty('skipGraalAgent')) {
+	tasks.named('metadataCopy') {
+		dependsOn('test', 'testNpm')
+	}
+} else {
+	tasks.named('metadataCopy') {
+		enabled = false
+	}
 }
 
 tasks.named('nativeCompile') {

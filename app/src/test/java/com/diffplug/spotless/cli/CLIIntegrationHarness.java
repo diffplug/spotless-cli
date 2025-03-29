@@ -50,7 +50,7 @@ public abstract class CLIIntegrationHarness extends ResourceHarness {
         return createRunnerForTag().withWorkingDir(rootFolder());
     }
 
-    private SpotlessCLIRunner createRunnerForTag() {
+    protected SpotlessCLIRunner createRunnerForTag() {
         CliProcessTest cliProcessTest = getClass().getAnnotation(CliProcessTest.class);
         CliProcessNpmTest cliProcessNpmTest = getClass().getAnnotation(CliProcessNpmTest.class);
         if (cliProcessTest != null || cliProcessNpmTest != null) {

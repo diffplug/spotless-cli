@@ -15,10 +15,16 @@
  */
 package com.diffplug.spotless.cli;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.diffplug.spotless.ThrowingEx;
+import com.diffplug.spotless.cli.core.Diff;
 import com.diffplug.spotless.cli.logging.output.Output;
 
 enum SpotlessMode {
@@ -28,7 +34,6 @@ enum SpotlessMode {
         @Override
         ResultType handleResult(Result result) {
             if (result.lintState().isHasLints()) {
-
                 Output.eitherDefault(() -> new Output.MessageWithArgs(
                                 "File has lints: {} -- {}",
                                 result.target().toFile().getPath(),
@@ -40,10 +45,38 @@ enum SpotlessMode {
                                 result.lintState()
                                         .asStringDetailed(result.target().toFile(), result.formatter())))
                         .write();
-            } else {
-                LOGGER.debug(
-                        "Check-Result - File is clean: {}",
-                        result.target().toFile().getPath());
+                return ResultType.DIRTY;
+            }
+
+            try (ByteArrayOutputStream cleanedOutputStream = new ByteArrayOutputStream()) {
+                result.lintState().getDirtyState().writeCanonicalTo(cleanedOutputStream);
+                String cleaned = cleanedOutputStream.toString(StandardCharsets.UTF_8);
+                String original = Files.readString(result.target(), StandardCharsets.UTF_8);
+
+                final int diffs = Diff.countLineDifferences(original, cleaned);
+                Output.eitherDefault(() -> {
+                            if (diffs > 0) {
+                                return new Output.MessageWithArgs(
+                                        "File needs reformatting: {} -- {} differences", result.target(), diffs);
+                            }
+                            return new Output.MessageWithArgs("File is clean: {}", result.target());
+                        })
+                        .orDetail(() -> {
+                            String diffString = Diff.createDiffString(original, cleaned, result.target());
+                            String delim = "*".repeat(80);
+                            if (diffs > 0) {
+                                return new Output.MessageWithArgs(
+                                        "File needs reformatting: {}\n{}\n{}\n{}",
+                                        result.target(),
+                                        delim,
+                                        diffString,
+                                        delim);
+                            }
+                            return new Output.MessageWithArgs("File is clean: {}", result.target());
+                        })
+                        .write();
+            } catch (IOException e) {
+                throw ThrowingEx.asRuntime(e);
             }
             return ResultType.DIRTY;
         }
