@@ -34,6 +34,7 @@ import java.util.function.UnaryOperator;
 
 import org.assertj.core.api.AbstractCharSequenceAssert;
 import org.assertj.core.util.CheckReturnValue;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.io.TempDir;
 
 import com.diffplug.common.base.Errors;
@@ -52,6 +53,13 @@ public class ResourceHarness {
     @TempDir
     File folderDontUseDirectly;
 
+    SelfieExpectations selfieExpectations;
+
+    @BeforeEach
+    void initSelfie() {
+        selfieExpectations = SelfieExpectations.create(rootFolder());
+    }
+
     /** Returns the root folder (canonicalized to fix OS X issue) */
     public File rootFolder() {
         return Errors.rethrow().get(() -> folderDontUseDirectly.getCanonicalFile());
@@ -69,6 +77,10 @@ public class ResourceHarness {
             throw new IOException("Failed to create " + targetDir);
         }
         return targetDir;
+    }
+
+    public SelfieExpectations selfie() {
+        return selfieExpectations;
     }
 
     /**

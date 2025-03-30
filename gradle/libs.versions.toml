@@ -6,6 +6,7 @@ durian = "1.2.0"
 junit = "5.8.1"
 native-include-googleJavaFormat = "1.24.0"
 picocli = "4.7.6"
+selfie = "2.5.1"
 slf4j = "2.0.17"
 spotless-lib = "3.1.0"
 
@@ -21,6 +22,7 @@ junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", vers
 native-include-googleJavaFormat = { module = "com.google.googlejavaformat:google-java-format", version.ref = "native-include-googleJavaFormat" }
 picocli = { module = "info.picocli:picocli", version.ref = "picocli" }
 picocli-codegen = { module = "info.picocli:picocli-codegen", version.ref = "picocli" }
+selfie = { module = "com.diffplug.selfie:selfie-runner-junit5", version.ref = "selfie" }
 slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
 slf4j-binding = { module = "org.slf4j:slf4j-jdk14", version.ref = "slf4j" }
 spotless-lib = { module = "com.diffplug.spotless:spotless-lib", version.ref = "spotless-lib" }
@@ -32,4 +34,4 @@ native-includes = [
     "native-include-googleJavaFormat"
 ]
 spotless-libs = ["spotless-lib", "spotless-lib-extra"]
-test-libs = ["assertj-core", "junit-jupiter-api"]
+test-libs = ["assertj-core", "junit-jupiter-api", "selfie"]

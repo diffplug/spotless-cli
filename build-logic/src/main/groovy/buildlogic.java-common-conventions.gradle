@@ -8,6 +8,7 @@ plugins {
 	// Apply the java Plugin to add support for Java.
 	id 'java'
 	id 'buildlogic.spotless-java-conventions'
+	id 'buildlogic.java-selfie-tests-conventions'
 }
 
 repositories {
