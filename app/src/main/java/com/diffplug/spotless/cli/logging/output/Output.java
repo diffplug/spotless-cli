@@ -15,7 +15,9 @@
  */
 package com.diffplug.spotless.cli.logging.output;
 
+import java.util.Objects;
 import java.util.function.Supplier;
+import java.util.logging.Level;
 
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -23,18 +25,32 @@ import org.slf4j.LoggerFactory;
 
 public final class Output {
 
-    public static final String OUTPUT_LOGGER_NAME = "CLI_OUTPUT";
-    static final Logger CLI_OUTPUT = LoggerFactory.getLogger(OUTPUT_LOGGER_NAME);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Output.class);
 
-    public static void write(String message, Object... args) {
-        CLI_OUTPUT.info(message, args);
+    private static volatile Level _level = Level.INFO;
+
+    public static void setLevel(Level level) {
+        Output._level = level;
     }
 
-    public static DefaultOrDetailOutputBuilder eitherDefault(Supplier<MessageWithArgs> defaultMessageSupplier) {
+    public static void output(@NotNull String message, Object... args) {
+        Objects.requireNonNull(message);
+        System.err.printf(slf4jMessageToPrintfMessage(message), args);
+        LOGGER.info(message, args);
+    }
+
+    private static @NotNull String slf4jMessageToPrintfMessage(@NotNull String message) {
+        Objects.requireNonNull(message);
+        return message.replace("{}", "%s") + "%n";
+    }
+
+    public static DefaultOrDetailOutputBuilder eitherDefault(
+            @NotNull Supplier<MessageWithArgs> defaultMessageSupplier) {
+        Objects.requireNonNull(defaultMessageSupplier);
         return new DefaultOrDetailOutputBuilder(defaultMessageSupplier);
     }
 
-    public static class DefaultOrDetailOutputBuilder implements ToOutputWriter {
+    public static class DefaultOrDetailOutputBuilder {
 
         @NotNull private final Supplier<MessageWithArgs> defaultMessageWithArgs;
 
@@ -44,31 +60,30 @@ public final class Output {
             this.defaultMessageWithArgs = defaultMessageWithArgs;
         }
 
-        public ToOutputWriter orDetail(@NotNull Supplier<MessageWithArgs> detailMessageWithArgs) {
+        public void orDetail(@NotNull Supplier<MessageWithArgs> detailMessageWithArgs) {
+            Objects.requireNonNull(detailMessageWithArgs);
             this.detailMessageWithArgs = detailMessageWithArgs;
-            return this;
+            write();
         }
 
-        @Override
-        public void write() {
-            if (CLI_OUTPUT.isDebugEnabled()) {
+        private void write() {
+            if (_level.intValue() <= Level.FINE.intValue()) {
                 MessageWithArgs messageWithArgs = detailMessageWithArgs.get();
-                CLI_OUTPUT.debug(messageWithArgs.message(), messageWithArgs.args());
+                System.err.printf(slf4jMessageToPrintfMessage(messageWithArgs.message()), messageWithArgs.args());
+                LOGGER.debug(messageWithArgs.message(), messageWithArgs.args());
                 return;
             }
-            if (CLI_OUTPUT.isInfoEnabled()) {
-                MessageWithArgs messageWithArgs = defaultMessageWithArgs.get();
-                CLI_OUTPUT.info(messageWithArgs.message(), messageWithArgs.args());
+            MessageWithArgs messageWithArgs = defaultMessageWithArgs.get();
+            if (_level.intValue() <= Level.INFO.intValue()) {
+                System.err.printf(slf4jMessageToPrintfMessage(messageWithArgs.message()), messageWithArgs.args());
+            }
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info(messageWithArgs.message(), messageWithArgs.args());
             }
         }
-    }
-
-    public interface ToOutputWriter {
-        void write();
     }
 
     public record MessageWithArgs(String message, Object... args) {
-
         static MessageWithArgs create(String message, Object... args) {
             return new MessageWithArgs(message, args);
         }

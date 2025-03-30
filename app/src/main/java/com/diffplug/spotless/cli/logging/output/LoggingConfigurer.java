@@ -52,54 +52,46 @@ public final class LoggingConfigurer {
         final Logger spotlessLibLogger = Logger.getLogger("com.diffplug.spotless");
         final Logger spotlessCliLogger = Logger.getLogger("com.diffplug.spotless.cli");
 
-        final ConsoleHandler outputConsoleHandler = new ConsoleHandler();
-        outputConsoleHandler.setLevel(Level.ALL); // make sure everything is logged
-        outputConsoleHandler.setFormatter(new PlainMessageFormatter()); // Set formatter
-
-        final Logger outputLogger = Logger.getLogger(Output.OUTPUT_LOGGER_NAME);
-        outputLogger.setUseParentHandlers(false);
-        outputLogger.addHandler(outputConsoleHandler);
-
         // set the logging level per logger
         switch (cliOutputLevel) {
             case QUIET -> {
-                outputLogger.setLevel(Level.SEVERE);
+                Output.setLevel(Level.SEVERE);
                 spotlessCliLogger.setLevel(Level.SEVERE);
                 spotlessLibLogger.setLevel(Level.SEVERE);
                 rootLogger.setLevel(Level.SEVERE);
             }
             case DEFAULT -> {
-                outputLogger.setLevel(Level.INFO);
+                Output.setLevel(Level.INFO);
                 spotlessCliLogger.setLevel(Level.WARNING);
                 spotlessLibLogger.setLevel(Level.WARNING);
                 rootLogger.setLevel(Level.SEVERE);
             }
             case V -> {
-                outputLogger.setLevel(Level.INFO);
+                Output.setLevel(Level.INFO);
                 spotlessCliLogger.setLevel(Level.INFO);
                 spotlessLibLogger.setLevel(Level.WARNING);
                 rootLogger.setLevel(Level.SEVERE);
             }
             case VV -> {
-                outputLogger.setLevel(Level.INFO);
+                Output.setLevel(Level.INFO);
                 spotlessLibLogger.setLevel(Level.INFO);
                 spotlessCliLogger.setLevel(Level.INFO);
                 rootLogger.setLevel(Level.SEVERE);
             }
             case VVV -> {
-                outputLogger.setLevel(Level.ALL);
+                Output.setLevel(Level.ALL);
                 spotlessCliLogger.setLevel(Level.ALL);
                 spotlessLibLogger.setLevel(Level.ALL);
                 rootLogger.setLevel(Level.SEVERE);
             }
             case VVVV -> {
-                outputLogger.setLevel(Level.ALL);
+                Output.setLevel(Level.ALL);
                 spotlessCliLogger.setLevel(Level.ALL);
                 spotlessLibLogger.setLevel(Level.ALL);
                 rootLogger.setLevel(Level.INFO);
             }
             case VVVVV -> {
-                outputLogger.setLevel(Level.ALL);
+                Output.setLevel(Level.ALL);
                 spotlessCliLogger.setLevel(Level.ALL);
                 spotlessLibLogger.setLevel(Level.ALL);
                 rootLogger.setLevel(Level.ALL);

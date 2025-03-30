@@ -43,8 +43,7 @@ enum SpotlessMode {
                                 "File has lints: {}\n\t{}",
                                 result.target().toFile().getPath(),
                                 result.lintState()
-                                        .asStringDetailed(result.target().toFile(), result.formatter())))
-                        .write();
+                                        .asStringDetailed(result.target().toFile(), result.formatter())));
                 return ResultType.DIRTY;
             }
 
@@ -73,8 +72,7 @@ enum SpotlessMode {
                                         delim);
                             }
                             return new Output.MessageWithArgs("File is clean: {}", result.target());
-                        })
-                        .write();
+                        });
             } catch (IOException e) {
                 throw ThrowingEx.asRuntime(e);
             }
@@ -106,8 +104,7 @@ enum SpotlessMode {
                                 "File has lints: {}\n\t{}",
                                 result.target().toFile().getPath(),
                                 result.lintState()
-                                        .asStringDetailed(result.target().toFile(), result.formatter())))
-                        .write();
+                                        .asStringDetailed(result.target().toFile(), result.formatter())));
                 return ResultType.DIRTY;
             } else {
                 LOGGER.debug(

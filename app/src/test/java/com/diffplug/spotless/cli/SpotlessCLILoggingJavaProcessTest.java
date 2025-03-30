@@ -16,6 +16,7 @@
 package com.diffplug.spotless.cli;
 
 import java.util.function.Function;
+import java.util.regex.Pattern;
 
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
@@ -29,7 +30,7 @@ public class SpotlessCLILoggingJavaProcessTest extends CLIIntegrationHarness {
     public static final String NEEDS_REFORMATTING_STATEMENT = "needs reformatting";
     public static final String FILE_NAME = "Java.java";
     public static final String LOGFMT_KEYWORD = "timestamp=";
-    public static final String FILE_DIFF_MARKER = "****";
+    public static final Pattern FILE_DIFF_MARKER_PATTERN = Pattern.compile("^\\Q******\\E", Pattern.MULTILINE);
     public static final String LOGGER_SOURCE_NAME_FROM_SPOTLESS_CLI_PACKAGE =
             "source.logger.name=com.diffplug.spotless.cli";
     public static final String LOGGER_SOURCE_NAME_SPOTLESS_BUT_NOT_CLI_PACKAGE_PATTERN =
@@ -62,7 +63,7 @@ public class SpotlessCLILoggingJavaProcessTest extends CLIIntegrationHarness {
                     .contains(NEEDS_REFORMATTING_STATEMENT)
                     .contains(FILE_NAME)
                     .doesNotContain(LOGFMT_KEYWORD)
-                    .doesNotContain(FILE_DIFF_MARKER);
+                    .doesNotContainPattern(FILE_DIFF_MARKER_PATTERN);
             softly.assertThat(result.exitCode()).isEqualTo(1);
         });
     }
@@ -84,7 +85,7 @@ public class SpotlessCLILoggingJavaProcessTest extends CLIIntegrationHarness {
                     .doesNotContainPattern(LOGGER_SOURCE_NAME_SPOTLESS_BUT_NOT_CLI_PACKAGE_PATTERN)
                     .doesNotContainPattern(LOGGER_SOURCE_NAME_OUTSIDE_SPOTLESS_PATTERN)
                     .doesNotContain(LOGFMT_DEBUG_LOG_LEVEL)
-                    .doesNotContain(FILE_DIFF_MARKER);
+                    .doesNotContainPattern(FILE_DIFF_MARKER_PATTERN);
             softly.assertThat(result.exitCode()).isEqualTo(1);
         });
     }
@@ -101,7 +102,7 @@ public class SpotlessCLILoggingJavaProcessTest extends CLIIntegrationHarness {
                     .doesNotContainPattern(LOGGER_SOURCE_NAME_SPOTLESS_BUT_NOT_CLI_PACKAGE_PATTERN)
                     .doesNotContainPattern(LOGGER_SOURCE_NAME_OUTSIDE_SPOTLESS_PATTERN)
                     .doesNotContain(LOGFMT_DEBUG_LOG_LEVEL)
-                    .doesNotContain(FILE_DIFF_MARKER); // no diffs
+                    .doesNotContainPattern(FILE_DIFF_MARKER_PATTERN); // no diffs
             softly.assertThat(result.exitCode()).isEqualTo(1);
         });
     }
@@ -117,7 +118,7 @@ public class SpotlessCLILoggingJavaProcessTest extends CLIIntegrationHarness {
                     .containsPattern(LOGGER_SOURCE_NAME_SPOTLESS_BUT_NOT_CLI_PACKAGE_PATTERN)
                     .doesNotContainPattern(LOGGER_SOURCE_NAME_OUTSIDE_SPOTLESS_PATTERN)
                     .doesNotContain(LOGFMT_DEBUG_LOG_LEVEL)
-                    .doesNotContain(FILE_DIFF_MARKER); // no diffs
+                    .doesNotContainPattern(FILE_DIFF_MARKER_PATTERN); // no diffs
             softly.assertThat(result.exitCode()).isEqualTo(1);
         });
     }
@@ -133,7 +134,7 @@ public class SpotlessCLILoggingJavaProcessTest extends CLIIntegrationHarness {
                     .containsPattern(LOGGER_SOURCE_NAME_SPOTLESS_BUT_NOT_CLI_PACKAGE_PATTERN)
                     .doesNotContainPattern(LOGGER_SOURCE_NAME_OUTSIDE_SPOTLESS_PATTERN)
                     .contains(LOGFMT_DEBUG_LOG_LEVEL)
-                    .contains(FILE_DIFF_MARKER);
+                    .containsPattern(FILE_DIFF_MARKER_PATTERN);
             softly.assertThat(result.exitCode()).isEqualTo(1);
         });
     }
@@ -149,7 +150,7 @@ public class SpotlessCLILoggingJavaProcessTest extends CLIIntegrationHarness {
                     .containsPattern(LOGGER_SOURCE_NAME_OUTSIDE_SPOTLESS_ON_INFO_LEVEL_PATTERN)
                     .doesNotContainPattern(LOGGER_SOURCE_NAME_OUTSIDE_SPOTLESS_ON_DEBUG_LEVEL_PATTERN)
                     .contains(LOGFMT_DEBUG_LOG_LEVEL)
-                    .contains(FILE_DIFF_MARKER);
+                    .containsPattern(FILE_DIFF_MARKER_PATTERN);
             softly.assertThat(result.exitCode()).isEqualTo(1);
         });
     }
@@ -165,7 +166,7 @@ public class SpotlessCLILoggingJavaProcessTest extends CLIIntegrationHarness {
                     .containsPattern(LOGGER_SOURCE_NAME_OUTSIDE_SPOTLESS_ON_INFO_LEVEL_PATTERN)
                     .containsPattern(LOGGER_SOURCE_NAME_OUTSIDE_SPOTLESS_ON_DEBUG_LEVEL_PATTERN)
                     .contains(LOGFMT_DEBUG_LOG_LEVEL)
-                    .contains(FILE_DIFF_MARKER);
+                    .containsPattern(FILE_DIFF_MARKER_PATTERN);
             softly.assertThat(result.exitCode()).isEqualTo(1);
         });
     }
