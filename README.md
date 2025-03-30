@@ -301,6 +301,9 @@ JavaScript, JSX, Angular, Vue, Flow, TypeScript, CSS, Less, SCSS, HTML, Ember/Ha
 
 Even more languages can be supported by including [prettier-plugins](https://prettier.io/docs/plugins).
 
+> [!IMPORTANT]
+> Running a prettier formatter step requires a working installation of [Node.js](https://nodejs.org/en/) and [npm](https://www.npmjs.com/).
+
 To see usage instructions for the prettier formatter, run: `spotless prettier --help`
 
 <!---freshmark usage_prettier
