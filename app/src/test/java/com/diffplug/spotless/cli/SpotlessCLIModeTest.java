@@ -34,7 +34,7 @@ public class SpotlessCLIModeTest extends CLIIntegrationHarness {
                 .withStep(GoogleJavaFormat.class)
                 .run();
 
-        assertFile("Java.java").sameAsResource("java/googlejavaformat/JavaCodeFormatted.test");
+        selfie().expectResource("Java.java").toMatchDisk();
         assertThat(result.exitCode()).isEqualTo(0);
     }
 
@@ -48,7 +48,7 @@ public class SpotlessCLIModeTest extends CLIIntegrationHarness {
                 .withStep(GoogleJavaFormat.class)
                 .runAndFail();
 
-        assertFile("Java.java").sameAsResource("java/googlejavaformat/JavaCodeUnformatted.test");
+        selfie().expectResource("Java.java").toMatchDisk();
         assertThat(result.exitCode()).isEqualTo(1);
     }
 }

@@ -37,7 +37,7 @@ public class PrettierTest extends CLIIntegrationHarness {
                 .withOption("--prettier-config-option", "parser=typescript")
                 .run();
 
-        assertFile("test.ts").sameAsResource("npm/prettier/config/typescript.configfile_prettier_2.clean");
+        selfie().expectResource("test.ts").toMatchDisk();
     }
 
     @Test
@@ -51,6 +51,6 @@ public class PrettierTest extends CLIIntegrationHarness {
                 .withOption("--prettier-config-path", ".prettierrc.yml")
                 .run();
 
-        assertFile("test.ts").sameAsResource("npm/prettier/config/typescript.configfile_prettier_2.clean");
+        selfie().expectResource("test.ts").toMatchDisk();
     }
 }

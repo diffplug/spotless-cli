@@ -18,7 +18,4 @@ package com.diffplug.spotless.cli.steps;
 import com.diffplug.spotless.tag.CliNativeTest;
 
 @CliNativeTest
-public class GoogleJavaFormatNativeProcessTest extends GoogleJavaFormatTest {
-
-    // TODO include the correct google-java-format class to be available in native
-}
+public class GoogleJavaFormatNativeProcessTest extends GoogleJavaFormatTest {}

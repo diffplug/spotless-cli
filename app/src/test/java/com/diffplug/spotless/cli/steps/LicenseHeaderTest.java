@@ -47,7 +47,9 @@ public class LicenseHeaderTest extends CLIIntegrationHarness {
                 .withOption("--header", "/* License */")
                 .run();
 
-        assertFile("TestFile.java").hasContent("/* License */\npublic class TestFile {}");
+        selfie().expectResource("TestFile.java").toBe("""
+/* License */
+public class TestFile {}""");
     }
 
     @Test
@@ -61,7 +63,9 @@ public class LicenseHeaderTest extends CLIIntegrationHarness {
                 .withOption("--header-file", "header.txt")
                 .run();
 
-        assertFile("TestFile.java").hasContent("/* License */\npublic class TestFile {}");
+        selfie().expectResource("TestFile.java").toBe("""
+/* License */
+public class TestFile {}""");
     }
 
     @Test
@@ -75,7 +79,10 @@ public class LicenseHeaderTest extends CLIIntegrationHarness {
                 .withOption("--delimiter", "\\/\\* keep me")
                 .run();
 
-        assertFile("TestFile.java").hasContent("/* License */\n/* keep me */\npublic class TestFile {}");
+        selfie().expectResource("TestFile.java").toBe("""
+/* License */
+/* keep me */
+public class TestFile {}""");
     }
 
     @Test
@@ -120,7 +127,11 @@ public class LicenseHeaderTest extends CLIIntegrationHarness {
                 .withOption("--skip-lines-matching", ".*skip me.*")
                 .run();
 
-        assertFile("TestFile.java").hasContent("/* skip me */\n/* License */\npublic class TestFile {}");
+        selfie().expectResource("TestFile.java").toBe("""
+/* skip me */
+/* License */
+public class TestFile {}
+""");
     }
 
     @Test
@@ -134,7 +145,9 @@ public class LicenseHeaderTest extends CLIIntegrationHarness {
                 .withOption("--year-mode", LicenseHeaderStep.YearMode.PRESERVE.toString())
                 .run();
 
-        assertFile("TestFile.java").hasContent("/* License (c) 2022 */\npublic class TestFile {}");
+        selfie().expectResource("TestFile.java").toBe("""
+/* License (c) 2022 */
+public class TestFile {}""");
     }
 
     @Test
@@ -148,7 +161,9 @@ public class LicenseHeaderTest extends CLIIntegrationHarness {
                 .withOption("--content-pattern", ".*TestFile.*")
                 .run();
 
-        assertFile("TestFile.java").hasContent("/* License */\npublic class TestFile {}");
+        selfie().expectResource("TestFile.java").toBe("""
+/* License */
+public class TestFile {}""");
     }
 
     @Test
@@ -162,6 +177,6 @@ public class LicenseHeaderTest extends CLIIntegrationHarness {
                 .withOption("--content-pattern", ".*NonExistent.*")
                 .run();
 
-        assertFile("TestFile.java").hasContent("public class TestFile {}");
+        selfie().expectResource("TestFile.java").toBe("public class TestFile {}");
     }
 }
