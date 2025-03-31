@@ -23,7 +23,7 @@ import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.diffplug.spotless.cli.steps.SpotlessCLIFormatterStep;
+import com.diffplug.spotless.ThrowingEx;
 
 import picocli.CommandLine;
 
@@ -76,12 +76,25 @@ public abstract class SpotlessCLIRunner {
         return this;
     }
 
-    public SpotlessCLIRunner withStep(@NotNull Class<? extends SpotlessCLIFormatterStep> stepClass) {
+    /**
+     * Adds a step to the command line arguments.
+     * The step class must implement {@link SpotlessCLIFormatterStep}.
+     *
+     * @param stepClass the class of the step to add
+     * @return this instance for method chaining
+     * @throws IllegalArgumentException if the step class does not implement {@link SpotlessCLIFormatterStep}
+     */
+    public SpotlessCLIRunner withStep(@NotNull Class<?> stepClass) {
+        // use reflection to allow having this class in testlib
+        if (!ThrowingEx.get(() -> Class.forName("com.diffplug.spotless.cli.steps.SpotlessCLIFormatterStep"))
+                .isAssignableFrom(stepClass)) {
+            throw new IllegalArgumentException("Step class must implement SpotlessCLIFormatterStep");
+        }
         String stepName = determineStepName(stepClass);
         return withStep(stepName);
     }
 
-    private String determineStepName(Class<? extends SpotlessCLIFormatterStep> stepClass) {
+    private String determineStepName(Class<?> stepClass) {
         CommandLine.Command annotation = stepClass.getAnnotation(CommandLine.Command.class);
         if (annotation == null) {
             throw new IllegalArgumentException("Step class must be annotated with @CommandLine.Command");

@@ -19,6 +19,8 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.List;
 
+import com.diffplug.spotless.ThrowingEx;
+
 import picocli.CommandLine;
 
 public class SpotlessCLIRunnerInSameThread extends SpotlessCLIRunner {
@@ -26,8 +28,7 @@ public class SpotlessCLIRunnerInSameThread extends SpotlessCLIRunner {
     static final String SPOTLESS_CLI_IN_SAME_THREAD = "spotless.cli.inSameThread";
 
     protected Result executeCommand(List<String> args) {
-        SpotlessCLI cli = SpotlessCLI.createInstance();
-        CommandLine commandLine = SpotlessCLI.createCommandLine(cli);
+        CommandLine commandLine = createCommandLine();
 
         StringWriter out = new StringWriter();
         StringWriter err = new StringWriter();
@@ -49,6 +50,15 @@ public class SpotlessCLIRunnerInSameThread extends SpotlessCLIRunner {
             errWriter.flush();
             return new Result(exitCode, executionException, out.toString(), err.toString());
         }
+    }
+
+    private static CommandLine createCommandLine() {
+        return ThrowingEx.get(() -> {
+            Class<?> cliClass = Class.forName("com.diffplug.spotless.cli.SpotlessCLI");
+            Object cliInstance = cliClass.getDeclaredMethod("createInstance").invoke(null);
+            return (CommandLine)
+                    cliClass.getDeclaredMethod("createCommandLine", cliClass).invoke(null, cliClass.cast(cliInstance));
+        });
     }
 
     private String[] argsWithBaseDir(List<String> args) {

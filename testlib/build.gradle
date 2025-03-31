@@ -5,4 +5,5 @@ plugins {
 dependencies {
 	implementation libs.bundles.test.libs
 	implementation libs.bundles.durian.libs
+	implementation libs.picocli
 }
