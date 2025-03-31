@@ -53,7 +53,7 @@ jobs:
         if: "always()"
         with:
           check_name: "JUnit Report"
-          report_paths: "**/build/test-results/test/*.xml"
+          report_paths: "**/build/test-results/tes*/*.xml" # multiple test tasks
   nativeCompile:
     name: "${{ matrix.platform.name }} nativeCompile testing"
     needs: "gradleCheck"
