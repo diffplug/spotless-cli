@@ -23,6 +23,8 @@ import picocli.CommandLine;
 
 public class SpotlessCLIRunnerInSameThread extends SpotlessCLIRunner {
 
+    static final String SPOTLESS_CLI_IN_SAME_THREAD = "spotless.cli.inSameThread";
+
     protected Result executeCommand(List<String> args) {
         SpotlessCLI cli = SpotlessCLI.createInstance();
         CommandLine commandLine = SpotlessCLI.createCommandLine(cli);

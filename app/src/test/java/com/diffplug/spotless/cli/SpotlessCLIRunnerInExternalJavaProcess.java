@@ -23,7 +23,7 @@ import com.diffplug.spotless.ThrowingEx;
 
 public class SpotlessCLIRunnerInExternalJavaProcess extends SpotlessCLIRunner {
 
-    private static final String SPOTLESS_CLI_SHADOW_JAR_SYSPROP = "spotless.cli.shadowJar";
+    static final String SPOTLESS_CLI_SHADOW_JAR_SYSPROP = "spotless.cli.shadowJar";
 
     public SpotlessCLIRunnerInExternalJavaProcess() {
         super();

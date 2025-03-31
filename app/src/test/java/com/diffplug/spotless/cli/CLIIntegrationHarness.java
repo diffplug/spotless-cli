@@ -16,16 +16,25 @@
 package com.diffplug.spotless.cli;
 
 import java.io.IOException;
+import java.util.Set;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.condition.EnabledIf;
 
 import com.diffplug.spotless.ResourceHarness;
-import com.diffplug.spotless.tag.CliNativeNpmTest;
-import com.diffplug.spotless.tag.CliNativeTest;
-import com.diffplug.spotless.tag.CliProcessNpmTest;
-import com.diffplug.spotless.tag.CliProcessTest;
 
+@EnabledIf("testEnvIsMatching")
 public abstract class CLIIntegrationHarness extends ResourceHarness {
+    protected static final String SYSPROP_CLI_NATIVE =
+            SpotlessCLIRunnerInNativeExternalProcess.SPOTLESS_CLI_NATIVE_IMAGE_SYSPROP;
+    protected static final String SYSPROP_CLI_SHADOW_JAR =
+            SpotlessCLIRunnerInExternalJavaProcess.SPOTLESS_CLI_SHADOW_JAR_SYSPROP;
+    protected static final String SYSPROP_CLI_IN_SAME_THREAD =
+            SpotlessCLIRunnerInSameThread.SPOTLESS_CLI_IN_SAME_THREAD;
+
+    protected static final Set<String> SYS_PROPS =
+            Set.of(SYSPROP_CLI_NATIVE, SYSPROP_CLI_SHADOW_JAR, SYSPROP_CLI_IN_SAME_THREAD);
 
     /**
      * Each test gets its own temp folder, and we create a gradle
@@ -47,20 +56,32 @@ public abstract class CLIIntegrationHarness extends ResourceHarness {
     }
 
     protected SpotlessCLIRunner cliRunner() {
-        return createRunnerForTag().withWorkingDir(rootFolder());
+        return createRunnerBasedOnSysprop().withWorkingDir(rootFolder());
     }
 
-    protected SpotlessCLIRunner createRunnerForTag() {
-        CliProcessTest cliProcessTest = getClass().getAnnotation(CliProcessTest.class);
-        CliProcessNpmTest cliProcessNpmTest = getClass().getAnnotation(CliProcessNpmTest.class);
-        if (cliProcessTest != null || cliProcessNpmTest != null) {
-            return SpotlessCLIRunner.createExternalProcess();
-        }
-        CliNativeTest cliNativeTest = getClass().getAnnotation(CliNativeTest.class);
-        CliNativeNpmTest cliNativeNpmTest = getClass().getAnnotation(CliNativeNpmTest.class);
-        if (cliNativeTest != null || cliNativeNpmTest != null) {
+    protected SpotlessCLIRunner createRunnerBasedOnSysprop() {
+        if (System.getProperties().containsKey(SYSPROP_CLI_NATIVE)) {
             return SpotlessCLIRunner.createNative();
         }
-        return SpotlessCLIRunner.create();
+        if (System.getProperties().containsKey(SYSPROP_CLI_SHADOW_JAR)) {
+            return SpotlessCLIRunner.createExternalProcess();
+        }
+        if (System.getProperties().containsKey(SYSPROP_CLI_IN_SAME_THREAD)) {
+            return SpotlessCLIRunner.create();
+        }
+        throw new IllegalStateException("Runner created without specifying mode, this is a setup issue.");
+    }
+
+    static boolean testEnvIsMatching() {
+        return SYS_PROPS.stream().anyMatch(p -> System.getProperties().containsKey(p));
+    }
+
+    protected static boolean isInExternalProcess() {
+        return Stream.of(SYSPROP_CLI_NATIVE, SYSPROP_CLI_SHADOW_JAR)
+                .anyMatch(p -> System.getProperties().containsKey(p));
+    }
+
+    protected static boolean isInSameThread() {
+        return System.getProperties().containsKey(SYSPROP_CLI_IN_SAME_THREAD);
     }
 }

@@ -22,9 +22,13 @@ import org.junit.jupiter.api.Test;
 import com.diffplug.spotless.cli.CLIIntegrationHarness;
 import com.diffplug.spotless.cli.SpotlessCLIRunner;
 import com.diffplug.spotless.generic.LicenseHeaderStep;
+import com.diffplug.spotless.tag.CliNativeTest;
+import com.diffplug.spotless.tag.CliProcessTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@CliProcessTest
+@CliNativeTest
 public class LicenseHeaderTest extends CLIIntegrationHarness {
 
     @Test

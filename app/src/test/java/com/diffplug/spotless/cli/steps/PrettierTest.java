@@ -21,9 +21,13 @@ import org.junit.jupiter.api.Test;
 
 import com.diffplug.spotless.cli.CLIIntegrationHarness;
 import com.diffplug.spotless.cli.SpotlessCLIRunner;
+import com.diffplug.spotless.tag.CliNativeNpmTest;
+import com.diffplug.spotless.tag.CliProcessNpmTest;
 import com.diffplug.spotless.tag.NpmTest;
 
 @NpmTest
+@CliProcessNpmTest
+@CliNativeNpmTest
 public class PrettierTest extends CLIIntegrationHarness {
 
     @Test

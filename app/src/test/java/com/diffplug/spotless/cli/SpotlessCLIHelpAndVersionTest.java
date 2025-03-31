@@ -17,8 +17,13 @@ package com.diffplug.spotless.cli;
 
 import org.junit.jupiter.api.Test;
 
+import com.diffplug.spotless.tag.CliNativeTest;
+import com.diffplug.spotless.tag.CliProcessTest;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
+@CliProcessTest
+@CliNativeTest
 public class SpotlessCLIHelpAndVersionTest extends CLIIntegrationHarness {
 
     @Test

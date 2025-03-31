@@ -23,7 +23,7 @@ import com.diffplug.spotless.ThrowingEx;
 
 public class SpotlessCLIRunnerInNativeExternalProcess extends SpotlessCLIRunner {
 
-    private static final String SPOTLESS_CLI_NATIVE_IMAGE_SYSPROP = "spotless.cli.nativeImage";
+    static final String SPOTLESS_CLI_NATIVE_IMAGE_SYSPROP = "spotless.cli.nativeImage";
 
     public SpotlessCLIRunnerInNativeExternalProcess() {
         super();

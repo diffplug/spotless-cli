@@ -14,13 +14,15 @@ def special = [
 
 tasks.named('test').configure {
 	useJUnitPlatform {
-		excludeTags special as String[]
 	}
 }
 
 special.forEach { tag ->
 	tasks.register("test${tag.capitalize()}", Test) {
-		useJUnitPlatform { includeTags tag }
+		useJUnitPlatform {
+			includeTags tag
+			excludeTags 'none()'
+		}
 	}
 }
 

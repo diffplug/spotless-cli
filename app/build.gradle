@@ -40,6 +40,7 @@ tasks.withType(Test).configureEach {
 		if (project.hasProperty('agent')) {
 			it.inputs.property('agent', project.property('agent')) // make sure to re-run tests if agent changes
 		}
+		it.systemProperty 'spotless.cli.inSameThread', 'true' //mark tests
 	}
 	if (it.name == 'testCliProcess' || it.name == 'testCliProcessNpm') {
 		it.dependsOn('shadowJar')
