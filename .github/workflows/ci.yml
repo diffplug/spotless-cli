@@ -101,11 +101,5 @@ jobs:
           path: app/build/native/nativeCompile/spotless*
           retention-days: 7
           if-no-files-found: "error"
-      - name: "junit result"
-        uses: "mikepenz/action-junit-report@v4"
-        if: "always()"
-        with:
-          check_name: "JUnit Report"
-          report_paths: "**/build/test-results/test/*.xml"
 # TODO add job to check if jrelease distribute would be working
 # eg using `JRELEASER_GITHUB_TOKEN=123 jreleaser -Djreleaser.project.version=0.1.0 publish --dry-run`
