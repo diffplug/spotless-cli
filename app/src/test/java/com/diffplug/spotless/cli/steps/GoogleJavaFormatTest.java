@@ -39,4 +39,56 @@ public class GoogleJavaFormatTest extends CLIIntegrationHarness {
 
         selfie().expectResource("Java.java").toMatchDisk();
     }
+
+    @Test
+    void formattingWithAOSPStyleWorks() throws IOException {
+        setFile("Java.java").toResource("java/googlejavaformat/JavaCodeUnformatted.test");
+
+        SpotlessCLIRunner.Result result = cliRunner()
+                .withTargets("*.java")
+                .withStep(GoogleJavaFormat.class)
+                .withOption("--style=aosp")
+                .run();
+
+        selfie().expectResource("Java.java").toMatchDisk();
+    }
+
+    @Test
+    void disablingFormattingJavadocWithGoogleJavaFormatWorks() throws IOException {
+        setFile("Java.java").toResource("java/googlejavaformat/JavaCodeUnformatted.test");
+
+        SpotlessCLIRunner.Result result = cliRunner()
+                .withTargets("*.java")
+                .withStep(GoogleJavaFormat.class)
+                .withOption("--format-javadoc=false")
+                .run();
+
+        selfie().expectResource("Java.java").toMatchDisk();
+    }
+
+    @Test
+    void reflowLongStringsWithGoogleJavaFormatWorks() throws IOException {
+        setFile("Java.java").toResource("java/googlejavaformat/JavaCodeUnformatted.test");
+
+        SpotlessCLIRunner.Result result = cliRunner()
+                .withTargets("*.java")
+                .withStep(GoogleJavaFormat.class)
+                .withOption("--reflow-long-strings=true")
+                .run();
+
+        selfie().expectResource("Java.java").toMatchDisk();
+    }
+
+    @Test
+    void reorderImportsWithGoogleJavaFormatWorks() throws IOException {
+        setFile("Java.java").toResource("java/googlejavaformat/JavaCodeUnformatted.test");
+
+        SpotlessCLIRunner.Result result = cliRunner()
+                .withTargets("*.java")
+                .withStep(GoogleJavaFormat.class)
+                .withOption("--reorder-imports=true")
+                .run();
+
+        selfie().expectResource("Java.java").toMatchDisk();
+    }
 }

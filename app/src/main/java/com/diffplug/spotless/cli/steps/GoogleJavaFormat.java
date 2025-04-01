@@ -29,7 +29,6 @@ public class GoogleJavaFormat extends SpotlessFormatterStep {
 
     @CommandLine.Option(
             names = {"--style", "-s"},
-            required = false,
             defaultValue = "GOOGLE",
             description =
                     "The style to use for the google java format." + OptionConstants.VALID_AND_DEFAULT_VALUES_SUFFIX)
@@ -37,21 +36,18 @@ public class GoogleJavaFormat extends SpotlessFormatterStep {
 
     @CommandLine.Option(
             names = {"--reflow-long-strings", "-r"},
-            required = false,
             defaultValue = "false",
             description = "Reflow long strings." + OptionConstants.DEFAULT_VALUE_SUFFIX)
     boolean reflowLongStrings;
 
     @CommandLine.Option(
             names = {"--reorder-imports", "-i"},
-            required = false,
             defaultValue = "false",
             description = "Reorder imports." + OptionConstants.DEFAULT_VALUE_SUFFIX)
     boolean reorderImports;
 
     @CommandLine.Option(
             names = {"--format-javadoc", "-j"},
-            required = false,
             defaultValue = "true",
             description = "Format javadoc." + OptionConstants.DEFAULT_VALUE_SUFFIX)
     boolean formatJavadoc;
