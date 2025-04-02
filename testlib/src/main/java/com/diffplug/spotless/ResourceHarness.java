@@ -235,30 +235,41 @@ public class ResourceHarness {
             this.file = file;
         }
 
-        public File toLines(String... lines) {
+        public WriteAsserter toLines(String... lines) {
             return toContent(String.join("\n", Arrays.asList(lines)));
         }
 
-        public File toContent(String content) {
+        public WriteAsserter toContent(String content) {
             return toContent(content, StandardCharsets.UTF_8);
         }
 
-        public File toContent(String content, Charset charset) {
+        public WriteAsserter toContent(String content, Charset charset) {
             ThrowingEx.run(() -> {
                 Files.write(file.toPath(), content.getBytes(charset));
             });
-            return file;
+            return this;
         }
 
-        public File toResource(String path) {
+        public WriteAsserter toResource(String path) {
             ThrowingEx.run(() -> {
                 Files.write(file.toPath(), getTestResource(path).getBytes(StandardCharsets.UTF_8));
             });
-            return file;
+            return this;
         }
 
-        public File deleted() throws IOException {
+        public WriteAsserter deleted() throws IOException {
             Files.delete(file.toPath());
+            return this;
+        }
+
+        public WriteAsserter makeExecutable() {
+            if (!file.setExecutable(true)) {
+                throw ThrowingEx.asRuntime(new IOException("Failed to set executable flag on " + file));
+            }
+            return this;
+        }
+
+        public File getFile() {
             return file;
         }
     }
