@@ -16,7 +16,8 @@
 package com.diffplug.spotless.cli.logging.output;
 
 import java.io.File;
-import java.util.logging.ConsoleHandler;
+import java.io.PrintWriter;
+import java.util.function.Supplier;
 import java.util.logging.FileHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -32,17 +33,27 @@ import picocli.CommandLine;
 
 public final class LoggingConfigurer {
 
-    public static void configureLogging(@NotNull CLIOutputLevel cliOutputLevel, @Nullable File logFile) {
-        configureJdkLogging(cliOutputLevel, logFile);
+    public static Output configureLogging(
+            @NotNull CLIOutputLevel cliOutputLevel,
+            @Nullable File logFile,
+            @NotNull Supplier<PrintWriter> stdErr,
+            @NotNull Supplier<PrintWriter> stdOut) {
+        return configureJdkLogging(cliOutputLevel, logFile, stdErr, stdOut);
     }
 
-    private static void configureJdkLogging(@NotNull CLIOutputLevel cliOutputLevel, @Nullable File logFile) {
+    private static Output configureJdkLogging(
+            @NotNull CLIOutputLevel cliOutputLevel,
+            @Nullable File logFile,
+            @NotNull Supplier<PrintWriter> stdErr,
+            @NotNull Supplier<PrintWriter> stdOut) {
+        // Set the output to Output
+        Output output = new Output().with(stdErr.get());
 
         // Reset the logging configuration to remove any default handlers
         LogManager.getLogManager().reset();
 
         // Create a new console handler
-        final Handler rootHandler = createRootHandler(logFile);
+        final Handler rootHandler = createRootHandler(logFile, stdErr);
 
         // Set the root logger level to OFF
         final Logger rootLogger = Logger.getLogger("");
@@ -55,53 +66,52 @@ public final class LoggingConfigurer {
         // set the logging level per logger
         switch (cliOutputLevel) {
             case QUIET -> {
-                Output.setLevel(Level.SEVERE);
+                output = output.with(Level.SEVERE);
                 spotlessCliLogger.setLevel(Level.SEVERE);
                 spotlessLibLogger.setLevel(Level.SEVERE);
                 rootLogger.setLevel(Level.SEVERE);
             }
             case DEFAULT -> {
-                Output.setLevel(Level.INFO);
                 spotlessCliLogger.setLevel(Level.WARNING);
                 spotlessLibLogger.setLevel(Level.WARNING);
                 rootLogger.setLevel(Level.SEVERE);
             }
             case V -> {
-                Output.setLevel(Level.INFO);
                 spotlessCliLogger.setLevel(Level.INFO);
                 spotlessLibLogger.setLevel(Level.WARNING);
                 rootLogger.setLevel(Level.SEVERE);
             }
             case VV -> {
-                Output.setLevel(Level.INFO);
                 spotlessLibLogger.setLevel(Level.INFO);
                 spotlessCliLogger.setLevel(Level.INFO);
                 rootLogger.setLevel(Level.SEVERE);
             }
             case VVV -> {
-                Output.setLevel(Level.ALL);
+                output = output.with(Level.ALL);
                 spotlessCliLogger.setLevel(Level.ALL);
                 spotlessLibLogger.setLevel(Level.ALL);
                 rootLogger.setLevel(Level.SEVERE);
             }
             case VVVV -> {
-                Output.setLevel(Level.ALL);
+                output = output.with(Level.ALL);
                 spotlessCliLogger.setLevel(Level.ALL);
                 spotlessLibLogger.setLevel(Level.ALL);
                 rootLogger.setLevel(Level.INFO);
             }
             case VVVVV -> {
-                Output.setLevel(Level.ALL);
+                output = output.with(Level.ALL);
                 spotlessCliLogger.setLevel(Level.ALL);
                 spotlessLibLogger.setLevel(Level.ALL);
                 rootLogger.setLevel(Level.ALL);
             }
         }
+
+        return output;
     }
 
-    private static @NotNull Handler createRootHandler(@Nullable File logFile) {
+    private static @NotNull Handler createRootHandler(@Nullable File logFile, @NotNull Supplier<PrintWriter> stdErr) {
         if (logFile == null) {
-            ConsoleHandler consoleHandler = new ConsoleHandler();
+            PicocliConsoleHandler consoleHandler = new PicocliConsoleHandler(stdErr);
             consoleHandler.setLevel(Level.ALL); // Set logging level
             LogfmtFormatter.KeyDecorator keyDecorator = CommandLine.Help.Ansi.AUTO.enabled()
                     ? LogfmtFormatter.KeyDecorator.MULTI_COLOR

@@ -15,6 +15,7 @@
  */
 package com.diffplug.spotless.cli.logging.output;
 
+import java.io.PrintWriter;
 import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.logging.Level;
@@ -27,15 +28,32 @@ public final class Output {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Output.class);
 
-    private static volatile Level _level = Level.INFO;
+    private final Level level;
 
-    public static void setLevel(Level level) {
-        Output._level = level;
+    private final PrintWriter stdErr;
+
+    public Output() {
+        this(Level.INFO, new PrintWriter(System.err, true));
     }
 
-    public static void output(@NotNull String message, Object... args) {
+    public Output(@NotNull Level level, @NotNull PrintWriter stdErr) {
+        this.level = Objects.requireNonNull(level);
+        this.stdErr = Objects.requireNonNull(stdErr);
+    }
+
+    public Output with(@NotNull PrintWriter writer) {
+        Objects.requireNonNull(writer);
+        return new Output(this.level, writer);
+    }
+
+    public Output with(@NotNull Level newLevel) {
+        Objects.requireNonNull(newLevel);
+        return new Output(newLevel, this.stdErr);
+    }
+
+    public void output(@NotNull String message, Object... args) {
         Objects.requireNonNull(message);
-        System.err.printf(slf4jMessageToPrintfMessage(message), args);
+        stdErr.printf(slf4jMessageToPrintfMessage(message), args);
         LOGGER.info(message, args);
     }
 
@@ -44,20 +62,28 @@ public final class Output {
         return message.replace("{}", "%s") + "%n";
     }
 
-    public static DefaultOrDetailOutputBuilder eitherDefault(
-            @NotNull Supplier<MessageWithArgs> defaultMessageSupplier) {
+    public DefaultOrDetailOutputBuilder eitherDefault(@NotNull Supplier<MessageWithArgs> defaultMessageSupplier) {
         Objects.requireNonNull(defaultMessageSupplier);
-        return new DefaultOrDetailOutputBuilder(defaultMessageSupplier);
+        return new DefaultOrDetailOutputBuilder(level, stdErr, defaultMessageSupplier);
     }
 
     public static class DefaultOrDetailOutputBuilder {
+
+        @NotNull private final Level level;
+
+        @NotNull private final PrintWriter out;
 
         @NotNull private final Supplier<MessageWithArgs> defaultMessageWithArgs;
 
         private Supplier<MessageWithArgs> detailMessageWithArgs;
 
-        public DefaultOrDetailOutputBuilder(@NotNull Supplier<MessageWithArgs> defaultMessageWithArgs) {
-            this.defaultMessageWithArgs = defaultMessageWithArgs;
+        public DefaultOrDetailOutputBuilder(
+                @NotNull Level level,
+                @NotNull PrintWriter out,
+                @NotNull Supplier<MessageWithArgs> defaultMessageWithArgs) {
+            this.level = Objects.requireNonNull(level);
+            this.out = Objects.requireNonNull(out);
+            this.defaultMessageWithArgs = Objects.requireNonNull(defaultMessageWithArgs);
         }
 
         public void orDetail(@NotNull Supplier<MessageWithArgs> detailMessageWithArgs) {
@@ -67,15 +93,15 @@ public final class Output {
         }
 
         private void write() {
-            if (_level.intValue() <= Level.FINE.intValue()) {
+            if (level.intValue() <= Level.FINE.intValue()) {
                 MessageWithArgs messageWithArgs = detailMessageWithArgs.get();
-                System.err.printf(slf4jMessageToPrintfMessage(messageWithArgs.message()), messageWithArgs.args());
+                out.printf(slf4jMessageToPrintfMessage(messageWithArgs.message()), messageWithArgs.args());
                 LOGGER.debug(messageWithArgs.message(), messageWithArgs.args());
                 return;
             }
             MessageWithArgs messageWithArgs = defaultMessageWithArgs.get();
-            if (_level.intValue() <= Level.INFO.intValue()) {
-                System.err.printf(slf4jMessageToPrintfMessage(messageWithArgs.message()), messageWithArgs.args());
+            if (level.intValue() <= Level.INFO.intValue()) {
+                out.printf(slf4jMessageToPrintfMessage(messageWithArgs.message()), messageWithArgs.args());
             }
             if (LOGGER.isInfoEnabled()) {
                 LOGGER.info(messageWithArgs.message(), messageWithArgs.args());

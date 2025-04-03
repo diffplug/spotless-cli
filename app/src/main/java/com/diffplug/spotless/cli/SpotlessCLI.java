@@ -19,6 +19,7 @@ import java.io.File;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -40,6 +41,7 @@ import com.diffplug.spotless.cli.execution.FormatterStepsSupplier;
 import com.diffplug.spotless.cli.execution.SpotlessExecutionStrategy;
 import com.diffplug.spotless.cli.help.OptionConstants;
 import com.diffplug.spotless.cli.logging.output.LoggingConfigurer;
+import com.diffplug.spotless.cli.logging.output.Output;
 import com.diffplug.spotless.cli.steps.GoogleJavaFormat;
 import com.diffplug.spotless.cli.steps.LicenseHeader;
 import com.diffplug.spotless.cli.steps.Prettier;
@@ -195,13 +197,16 @@ public class SpotlessCLI implements SpotlessAction, SpotlessCommand, SpotlessAct
     File logFile;
 
     @Override
-    public void setupLogging() {
+    public @NotNull Output setupLogging() {
+        CommandLine commandLine = spec.commandLine();
         LoggingConfigurer.CLIOutputLevel outputLevel = loggingLevelOptions != null
                 ? loggingLevelOptions.toCliOutputLevel()
                 : LoggingConfigurer.CLIOutputLevel.DEFAULT;
-        LoggingConfigurer.configureLogging(outputLevel, logFile);
+        Output output =
+                LoggingConfigurer.configureLogging(outputLevel, logFile, commandLine::getErr, commandLine::getOut);
         // the following logs are to make sure that the logging is configured correctly
         logMetaStatements();
+        return output;
     }
 
     private static void logMetaStatements() {
@@ -217,7 +222,10 @@ public class SpotlessCLI implements SpotlessAction, SpotlessCommand, SpotlessAct
     }
 
     @Override
-    public Integer executeSpotlessAction(FormatterStepsSupplier formatterSteps) {
+    public @NotNull Integer executeSpotlessAction(
+            @NotNull Output output, @NotNull FormatterStepsSupplier formatterSteps) {
+        Objects.requireNonNull(output);
+        Objects.requireNonNull(formatterSteps);
         validateTargets();
         TargetResolver targetResolver = targetResolver();
 
@@ -240,7 +248,7 @@ public class SpotlessCLI implements SpotlessAction, SpotlessCommand, SpotlessAct
                     .toList();
             ResultType resultType = stepResults.stream()
                     .map(future -> ThrowingEx.get(future::get))
-                    .map(this::handleResult)
+                    .map(result -> this.handleResult(output, result))
                     .reduce(ResultType.CLEAN, ResultType::combineWith);
             return spotlessMode.translateResultTypeToExitCode(resultType);
         }
@@ -262,7 +270,7 @@ public class SpotlessCLI implements SpotlessAction, SpotlessCommand, SpotlessAct
         }
     }
 
-    private ResultType handleResult(Result result) {
+    private ResultType handleResult(Output output, Result result) {
         if (result.lintState().isClean()) {
             LOGGER.debug("File is clean: {}", result.target().toFile());
             return ResultType.CLEAN;
@@ -271,7 +279,7 @@ public class SpotlessCLI implements SpotlessAction, SpotlessCommand, SpotlessAct
             LOGGER.warn("File did not converge: {}", result.target().toFile());
             return ResultType.DID_NOT_CONVERGE;
         }
-        return this.spotlessMode.handleResult(result);
+        return this.spotlessMode.handleResult(output, result);
     }
 
     private TargetResolver targetResolver() {

@@ -32,9 +32,9 @@ enum SpotlessMode {
         private static final Logger LOGGER = LoggerFactory.getLogger(SpotlessMode.class);
 
         @Override
-        ResultType handleResult(Result result) {
+        ResultType handleResult(Output output, Result result) {
             if (result.lintState().isHasLints()) {
-                Output.eitherDefault(() -> new Output.MessageWithArgs(
+                output.eitherDefault(() -> new Output.MessageWithArgs(
                                 "File has lints: {} -- {}",
                                 result.target().toFile().getPath(),
                                 result.lintState()
@@ -53,7 +53,7 @@ enum SpotlessMode {
                 String original = Files.readString(result.target(), StandardCharsets.UTF_8);
 
                 final int diffs = Diff.countLineDifferences(original, cleaned);
-                Output.eitherDefault(() -> {
+                output.eitherDefault(() -> {
                             if (diffs > 0) {
                                 return new Output.MessageWithArgs(
                                         "File needs reformatting: {} -- {} differences", result.target(), diffs);
@@ -92,10 +92,10 @@ enum SpotlessMode {
         private static final Logger LOGGER = LoggerFactory.getLogger(SpotlessMode.class);
 
         @Override
-        ResultType handleResult(Result result) {
+        ResultType handleResult(Output output, Result result) {
             if (result.lintState().isHasLints()) {
                 // something went wrong, we should not apply the changes
-                Output.eitherDefault(() -> new Output.MessageWithArgs(
+                output.eitherDefault(() -> new Output.MessageWithArgs(
                                 "File has lints: {} -- {}",
                                 result.target().toFile().getPath(),
                                 result.lintState()
@@ -127,7 +127,7 @@ enum SpotlessMode {
         }
     };
 
-    abstract ResultType handleResult(Result result);
+    abstract ResultType handleResult(Output output, Result result);
 
     abstract Integer translateResultTypeToExitCode(ResultType resultType);
 }
