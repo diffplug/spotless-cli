@@ -45,7 +45,7 @@ public class SelfieExpectations {
     private static final Camera<Resource> RESOURCE_CAMERA = (Resource resource) -> {
         File file = new File(resource.rootFolder(), resource.resourcePath());
         if (!file.exists()) {
-            throw new IllegalArgumentException("Resource not found: " + file);
+            return Snapshot.of("");
         }
         return Snapshot.of(ThrowingEx.get(() -> Files.readString(file.toPath())));
     };
@@ -54,5 +54,9 @@ public class SelfieExpectations {
 
     public StringSelfie expectResource(String resourcePath) {
         return Selfie.expectSelfie(new Resource(rootFolder, resourcePath), RESOURCE_CAMERA);
+    }
+
+    public StringSelfie expectFile(File file) {
+        return Selfie.expectSelfie(new Resource(file.getParentFile(), file.getName()), RESOURCE_CAMERA);
     }
 }
