@@ -1,0 +1,17 @@
+plugins {
+	id 'java'
+}
+
+configurations {
+	mockitoAgent
+}
+dependencies {
+	testImplementation(libs.mockito)
+	mockitoAgent(libs.mockito) {
+		transitive = false
+	}
+}
+
+tasks.withType(Test).configureEach { Test task ->
+	task.jvmArgs("-javaagent:${configurations.mockitoAgent.asPath}")
+}

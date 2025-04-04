@@ -9,6 +9,7 @@ plugins {
 	id 'java'
 	id 'buildlogic.spotless-java-conventions'
 	id 'buildlogic.java-selfie-tests-conventions'
+	id 'buildlogic.java-test-mockito-conventions'
 }
 
 repositories {

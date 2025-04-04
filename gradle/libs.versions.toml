@@ -4,6 +4,7 @@ assertj-core = "3.27.3"
 diff-utils = "1.3.0"
 durian = "1.2.0"
 junit = "5.8.1"
+mockito = "5.17.0"
 native-include-googleJavaFormat = "1.24.0"
 picocli = "4.7.6"
 selfie = "2.5.1"
@@ -19,6 +20,7 @@ durian-io = { module = "com.diffplug.durian:durian-io", version.ref = "durian" }
 durian-collect = { module = "com.diffplug.durian:durian-collect", version.ref = "durian" }
 junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
 junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
+mockito = { module = "org.mockito:mockito-core", version.ref = "mockito" }
 native-include-googleJavaFormat = { module = "com.google.googlejavaformat:google-java-format", version.ref = "native-include-googleJavaFormat" }
 picocli = { module = "info.picocli:picocli", version.ref = "picocli" }
 picocli-codegen = { module = "info.picocli:picocli-codegen", version.ref = "picocli" }
@@ -34,4 +36,4 @@ native-includes = [
     "native-include-googleJavaFormat"
 ]
 spotless-libs = ["spotless-lib", "spotless-lib-extra"]
-test-libs = ["assertj-core", "junit-jupiter-api", "selfie"]
+test-libs = ["assertj-core", "junit-jupiter-api", "selfie", "mockito"]
