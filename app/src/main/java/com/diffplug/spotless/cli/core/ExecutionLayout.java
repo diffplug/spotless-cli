@@ -17,17 +17,21 @@ package com.diffplug.spotless.cli.core;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.diffplug.spotless.cli.steps.BuildDirGloballyReusable;
 import com.diffplug.spotless.cli.steps.SpotlessCLIFormatterStep;
 
 public class ExecutionLayout {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExecutionLayout.class);
 
     private final FileResolver fileResolver;
     private final SpotlessCommandLineStream commandLineStream;
@@ -76,18 +80,23 @@ public class ExecutionLayout {
     }
 
     public Path buildDir() {
-        // gradle?
         if (isGradleDirectory()) {
-            return gradleBuildDir();
+            Path gradleBuildDir = gradleBuildDir();
+            LOGGER.info("Using Gradle build directory as buildDir: {}", gradleBuildDir);
+            return gradleBuildDir;
         }
         if (isMavenDirectory()) {
-            return mavenBuildDir();
+            Path mavenBuildDir = mavenBuildDir();
+            LOGGER.info("Using Maven build directory as buildDir: {}", mavenBuildDir);
+            return mavenBuildDir;
         }
-        return tempBuildDir();
+        Path tempBuildDir = tempBuildDir();
+        LOGGER.info("Using temporary build directory as buildDir: {}", tempBuildDir);
+        return tempBuildDir;
     }
 
     private boolean isGradleDirectory() {
-        return List.of("build.gradle", "build.gradle.kts", "settings.gradle", "settings.gradle.kts").stream()
+        return Stream.of("build.gradle", "build.gradle.kts", "settings.gradle", "settings.gradle.kts")
                 .map(Paths::get)
                 .map(this::find)
                 .anyMatch(Optional::isPresent);
@@ -98,7 +107,7 @@ public class ExecutionLayout {
     }
 
     private boolean isMavenDirectory() {
-        return List.of("pom.xml").stream().map(Paths::get).map(this::find).anyMatch(Optional::isPresent);
+        return Stream.of("pom.xml").map(Paths::get).map(this::find).anyMatch(Optional::isPresent);
     }
 
     private Path mavenBuildDir() {
@@ -107,7 +116,9 @@ public class ExecutionLayout {
 
     private Path tempBuildDir() {
         String tmpDir = System.getProperty("java.io.tmpdir");
-        return Path.of(tmpDir, "spotless-cli", String.valueOf(deriveId));
+        String baseDirHash =
+                checksumCalculator.calculateChecksum(baseDir().toAbsolutePath().toString());
+        return Path.of(tmpDir, "spotless-cli", baseDirHash, String.valueOf(deriveId));
     }
 
     public Path buildDirFor(@NotNull SpotlessCLIFormatterStep step) {
