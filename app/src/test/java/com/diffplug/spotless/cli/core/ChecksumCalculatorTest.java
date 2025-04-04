@@ -193,12 +193,12 @@ class ChecksumCalculatorTest {
 
     @Test
     void itCalculatesChecksumForFilePath() {
-        Path testPath = Path.of("var", "tmp", "test.txt");
 
-        String checksum =
-                checksumCalculator.calculateChecksum(testPath.toAbsolutePath().toString());
+        String testPath = "/var/tmp/test.txt";
 
-        Selfie.expectSelfie(checksum).toBe("ef184d3abbb8db0a9867f9abaae87397");
+        String checksum = checksumCalculator.calculateChecksum(testPath);
+
+        Selfie.expectSelfie(checksum).toBe("5a45f2c50e9f68ca4ef1d41e8fea6d12");
     }
 
     private static Step step(
