@@ -243,6 +243,9 @@ public class SpotlessCLI implements SpotlessAction, SpotlessCommand, SpotlessAct
     public @NotNull Integer executeSpotlessAction(@NotNull FormatterStepsSupplier formatterSteps) {
         Objects.requireNonNull(output);
         Objects.requireNonNull(formatterSteps);
+        LOGGER.info(
+                "Running spotless cli command line: {}",
+                spec.commandLine().getParseResult().originalArgs());
         validateTargets();
         TargetResolver targetResolver = targetResolver();
 
