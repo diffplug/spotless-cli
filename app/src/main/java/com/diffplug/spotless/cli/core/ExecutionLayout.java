@@ -69,9 +69,6 @@ public class ExecutionLayout {
         if (found.toFile().canRead()) {
             return Optional.of(found);
         }
-        if (searchPath.toFile().canRead()) {
-            return Optional.of(searchPath);
-        }
         return Optional.empty();
     }
 
@@ -92,6 +89,7 @@ public class ExecutionLayout {
         }
         Path tempBuildDir = tempBuildDir();
         LOGGER.info("Using temporary build directory as buildDir: {}", tempBuildDir);
+        SpotlessRunCleanup.INSTANCE.deleteDirOnCleanup(commandLineStream, tempBuildDir);
         return tempBuildDir;
     }
 

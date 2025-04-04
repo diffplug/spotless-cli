@@ -35,6 +35,7 @@ import com.diffplug.spotless.ThrowingEx;
 import com.diffplug.spotless.cli.core.FileResolver;
 import com.diffplug.spotless.cli.core.SpotlessActionContext;
 import com.diffplug.spotless.cli.core.SpotlessCommandLineStream;
+import com.diffplug.spotless.cli.core.SpotlessRunCleanup;
 import com.diffplug.spotless.cli.core.TargetFileTypeInferer;
 import com.diffplug.spotless.cli.core.TargetResolver;
 import com.diffplug.spotless.cli.execution.FormatterStepsSupplier;
@@ -97,6 +98,8 @@ public class SpotlessCLI implements SpotlessAction, SpotlessCommand, SpotlessAct
     CommandLine.Model.CommandSpec spec; // injected by picocli
 
     private @NotNull Output output;
+
+    private final SpotlessRunCleanup spotlessRunCleanup = SpotlessRunCleanup.INSTANCE; // just keep a reference here
 
     @CommandLine.Option(
             names = {"--mode", "-m"},
