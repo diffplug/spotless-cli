@@ -26,6 +26,16 @@ special.forEach { tag ->
 	}
 }
 
+// any test task that does not end with Npm should exclude all the npm tests
+tasks.withType(Test).configureEach { Test task ->
+	if (!task.name.toLowerCase().endsWith('npm')) {
+		def toExclude = special.findAll { it.toLowerCase().endsWith('npm') }.join('|')
+		task.useJUnitPlatform {
+			excludeTags toExclude
+		}
+	}
+}
+
 tasks.register('testAll') {
 	dependsOn tasks.matching { it.name.startsWith('test') && it.name != 'testAll' }
 }
