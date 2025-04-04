@@ -19,7 +19,9 @@ import java.lang.ref.Cleaner;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Comparator;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
+import org.jetbrains.annotations.VisibleForTesting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,9 +32,21 @@ public enum SpotlessRunCleanup {
 
     private static final Cleaner CLEANER = Cleaner.create();
 
+    private static final ConcurrentLinkedQueue<Cleaner.Cleanable> CLEANABLES = new ConcurrentLinkedQueue<>();
+
     public void deleteDirOnCleanup(Object reference, Path path) {
         LOGGER.debug("Registering cleanup for directory: {} -- reference: {}", path, reference);
-        CLEANER.register(reference, new PathCleanup(path));
+        CLEANABLES.add(CLEANER.register(reference, new PathCleanup(path)));
+    }
+
+    @VisibleForTesting
+    public void clearCleanables() {
+        while (!CLEANABLES.isEmpty()) {
+            Cleaner.Cleanable cleanable = CLEANABLES.poll();
+            if (cleanable != null) {
+                cleanable.clean();
+            }
+        }
     }
 
     private record PathCleanup(Path path) implements Runnable {

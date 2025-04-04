@@ -15,8 +15,12 @@
  */
 package com.diffplug.spotless.cli.core;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -25,6 +29,19 @@ import com.diffplug.spotless.ResourceHarness;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ExecutionLayoutTest extends ResourceHarness {
+
+    SpotlessRunCleanup cleanup;
+
+    @BeforeEach
+    void setUp() throws IOException {
+        cleanup = SpotlessRunCleanup.INSTANCE;
+    }
+
+    @AfterEach
+    void cleanup() {
+        cleanup.clearCleanables();
+        cleanup = null;
+    }
 
     @Test
     void itResolvesGradleBuildDir() {
@@ -63,6 +80,19 @@ class ExecutionLayoutTest extends ResourceHarness {
         assertThat(buildDir.toString())
                 .doesNotStartWith(rootFolder().toPath().toString())
                 .startsWith(System.getProperty("java.io.tmpdir"));
+    }
+
+    @Test
+    void itCleansUpTmpBuildDir() throws IOException {
+        ExecutionLayout layout = ExecutionLayout.create(fileResolver(), commandLineStream());
+        Path buildDir = layout.buildDir();
+        buildDir.toFile().mkdirs(); // make sure it's ready
+        Path tmpFile = buildDir.resolve("tmpFile.txt");
+        Files.writeString(tmpFile, "Test %s".formatted(buildDir));
+
+        cleanup.clearCleanables();
+
+        assertThat(Files.exists(buildDir)).isFalse();
     }
 
     private FileResolver fileResolver() {
