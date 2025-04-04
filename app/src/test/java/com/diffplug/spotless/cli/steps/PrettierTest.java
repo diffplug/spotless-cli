@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
 
 import com.diffplug.spotless.cli.CLIIntegrationHarness;
 import com.diffplug.spotless.cli.SpotlessCLIRunner;
@@ -27,6 +28,7 @@ import com.diffplug.spotless.tag.CliProcessNpmTest;
 import com.diffplug.spotless.tag.NpmTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.condition.OS.WINDOWS;
 
 @NpmTest
 @CliProcessNpmTest
@@ -101,6 +103,7 @@ public class PrettierTest extends CLIIntegrationHarness {
     }
 
     @Test
+    @DisabledOnOs(WINDOWS)
     void itUsesNpmExec() {
         setFile("test.ts").toResource("npm/prettier/config/typescript.dirty");
         File npmOut = newFile("npmoutput.txt");
@@ -139,6 +142,7 @@ npm exec
     }
 
     @Test
+    @DisabledOnOs(WINDOWS)
     void itUsesNodeExec() {
         setFile("test.ts").toResource("npm/prettier/config/typescript.dirty");
         File npmOut = newFile("npmoutput.txt");
