@@ -20,7 +20,6 @@ import java.util.regex.Pattern;
 
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIf;
 
 import com.diffplug.spotless.cli.steps.GoogleJavaFormat;
 import com.diffplug.spotless.tag.CliNativeTest;
@@ -28,7 +27,6 @@ import com.diffplug.spotless.tag.CliProcessTest;
 
 @CliProcessTest
 @CliNativeTest
-@DisabledIf(value = "isInSameThread", disabledReason = "Only run as external process")
 public class SpotlessCLILoggingJavaProcessTest extends CLIIntegrationHarness {
 
     public static final String NEEDS_REFORMATTING_STATEMENT = "needs reformatting";
