@@ -25,6 +25,7 @@ import java.util.stream.Stream;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
+import com.diffplug.selfie.Selfie;
 import com.diffplug.spotless.FormatterStep;
 import com.diffplug.spotless.cli.SpotlessAction;
 import com.diffplug.spotless.cli.SpotlessActionContextProvider;
@@ -188,6 +189,16 @@ class ChecksumCalculatorTest {
         String checksum2 = checksumCalculator.calculateChecksum(commandLineStream2);
 
         assertThat(checksum1).isNotEqualTo(checksum2);
+    }
+
+    @Test
+    void itCalculatesChecksumForFilePath() {
+        Path testPath = Path.of("var", "tmp", "test.txt");
+
+        String checksum =
+                checksumCalculator.calculateChecksum(testPath.toAbsolutePath().toString());
+
+        Selfie.expectSelfie(checksum).toBe("ef184d3abbb8db0a9867f9abaae87397");
     }
 
     private static Step step(

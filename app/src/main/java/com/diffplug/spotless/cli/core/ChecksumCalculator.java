@@ -37,6 +37,11 @@ import picocli.CommandLine;
 
 public class ChecksumCalculator {
 
+    public String calculateChecksum(String text) {
+        byte[] bytes = text.getBytes(StandardCharsets.UTF_8);
+        return toHashedHexBytes(bytes);
+    }
+
     public String calculateChecksum(SpotlessCLIFormatterStep step) {
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             writeObjectDataTo(step, out);
