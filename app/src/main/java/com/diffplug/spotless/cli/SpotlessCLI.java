@@ -96,6 +96,8 @@ public class SpotlessCLI implements SpotlessAction, SpotlessCommand, SpotlessAct
     @CommandLine.Spec
     CommandLine.Model.CommandSpec spec; // injected by picocli
 
+    private @NotNull Output output;
+
     @CommandLine.Option(
             names = {"--mode", "-m"},
             defaultValue = "APPLY",
@@ -196,8 +198,20 @@ public class SpotlessCLI implements SpotlessAction, SpotlessCommand, SpotlessAct
             description = "The log file to write the output to.")
     File logFile;
 
-    @Override
-    public @NotNull Output setupLogging() {
+    @CommandLine.Option(
+            names = {"--zzz"},
+            hidden = true,
+            defaultValue = "true",
+            description = "Just a hook to be able to initialize logging.")
+    void setFinal(boolean finalFlag) {
+        // this is a hack to make sure that the logging is initialized before any processing occurs outside of parsing
+        // the command line.
+        // Maybe there is a picocli hook I've missed for this?
+        this.output = setupLogging(spec, loggingLevelOptions, logFile);
+    }
+
+    private static @NotNull Output setupLogging(
+            CommandLine.Model.CommandSpec spec, LoggingLevelOptions loggingLevelOptions, File logFile) {
         CommandLine commandLine = spec.commandLine();
         LoggingConfigurer.CLIOutputLevel outputLevel = loggingLevelOptions != null
                 ? loggingLevelOptions.toCliOutputLevel()
@@ -221,9 +235,12 @@ public class SpotlessCLI implements SpotlessAction, SpotlessCommand, SpotlessAct
         nonSpotlessLogger.debug("Meta: non-spotless loggers on level debug enabled.");
     }
 
+    public @NotNull Output output() {
+        return this.output;
+    }
+
     @Override
-    public @NotNull Integer executeSpotlessAction(
-            @NotNull Output output, @NotNull FormatterStepsSupplier formatterSteps) {
+    public @NotNull Integer executeSpotlessAction(@NotNull FormatterStepsSupplier formatterSteps) {
         Objects.requireNonNull(output);
         Objects.requireNonNull(formatterSteps);
         validateTargets();
@@ -248,7 +265,7 @@ public class SpotlessCLI implements SpotlessAction, SpotlessCommand, SpotlessAct
                     .toList();
             ResultType resultType = stepResults.stream()
                     .map(future -> ThrowingEx.get(future::get))
-                    .map(result -> this.handleResult(output, result))
+                    .map(this::handleResult)
                     .reduce(ResultType.CLEAN, ResultType::combineWith);
             return spotlessMode.translateResultTypeToExitCode(resultType);
         }
@@ -270,7 +287,7 @@ public class SpotlessCLI implements SpotlessAction, SpotlessCommand, SpotlessAct
         }
     }
 
-    private ResultType handleResult(Output output, Result result) {
+    private ResultType handleResult(Result result) {
         if (result.lintState().isClean()) {
             LOGGER.debug("File is clean: {}", result.target().toFile());
             return ResultType.CLEAN;

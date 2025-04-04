@@ -18,10 +18,7 @@ package com.diffplug.spotless.cli;
 import org.jetbrains.annotations.NotNull;
 
 import com.diffplug.spotless.cli.execution.FormatterStepsSupplier;
-import com.diffplug.spotless.cli.logging.output.Output;
 
 public interface SpotlessAction extends SpotlessCommand {
-    @NotNull Integer executeSpotlessAction(@NotNull Output output, @NotNull FormatterStepsSupplier formatterSteps);
-
-    @NotNull Output setupLogging();
+    @NotNull Integer executeSpotlessAction(@NotNull FormatterStepsSupplier formatterSteps);
 }

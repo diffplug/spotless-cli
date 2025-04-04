@@ -29,7 +29,6 @@ import com.diffplug.spotless.FormatterStep;
 import com.diffplug.spotless.cli.SpotlessAction;
 import com.diffplug.spotless.cli.SpotlessActionContextProvider;
 import com.diffplug.spotless.cli.execution.FormatterStepsSupplier;
-import com.diffplug.spotless.cli.logging.output.Output;
 import com.diffplug.spotless.cli.steps.SpotlessCLIFormatterStep;
 import com.diffplug.spotless.cli.steps.SpotlessFormatterStep;
 
@@ -289,14 +288,8 @@ class ChecksumCalculatorTest {
         Path baseDir;
 
         @Override
-        public @NotNull Integer executeSpotlessAction(
-                @NotNull Output output, @NotNull FormatterStepsSupplier formatterSteps) {
+        public @NotNull Integer executeSpotlessAction(@NotNull FormatterStepsSupplier formatterSteps) {
             return 0;
-        }
-
-        @Override
-        public @NotNull Output setupLogging() {
-            return new Output();
         }
     }
 

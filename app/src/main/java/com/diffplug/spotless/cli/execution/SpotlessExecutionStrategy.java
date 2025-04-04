@@ -15,10 +15,8 @@
  */
 package com.diffplug.spotless.cli.execution;
 
-import com.diffplug.spotless.cli.SpotlessAction;
 import com.diffplug.spotless.cli.core.SpotlessActionContext;
 import com.diffplug.spotless.cli.core.SpotlessCommandLineStream;
-import com.diffplug.spotless.cli.logging.output.Output;
 
 import picocli.CommandLine;
 
@@ -35,13 +33,6 @@ public class SpotlessExecutionStrategy implements CommandLine.IExecutionStrategy
     }
 
     private Integer runSpotlessActions(SpotlessCommandLineStream commandLineStream) {
-        // 0. setup logging
-        Output output = commandLineStream
-                .actions()
-                .findFirst()
-                .map(SpotlessAction::setupLogging)
-                .orElseThrow();
-
         // 1. prepare context
         SpotlessActionContext context = provideSpotlessActionContext(commandLineStream);
 
@@ -51,7 +42,7 @@ public class SpotlessExecutionStrategy implements CommandLine.IExecutionStrategy
                 stepsSupplierFactory.createFormatterStepsSupplier(commandLineStream, context);
 
         // 3. run spotless steps
-        return executeSpotlessAction(output, commandLineStream, stepsSupplier);
+        return executeSpotlessAction(commandLineStream, stepsSupplier);
     }
 
     private SpotlessActionContext provideSpotlessActionContext(SpotlessCommandLineStream commandLineStream) {
@@ -63,11 +54,11 @@ public class SpotlessExecutionStrategy implements CommandLine.IExecutionStrategy
     }
 
     private Integer executeSpotlessAction(
-            Output output, SpotlessCommandLineStream commandLineStream, FormatterStepsSupplier stepsSupplier) {
+            SpotlessCommandLineStream commandLineStream, FormatterStepsSupplier stepsSupplier) {
         return commandLineStream
                 .actions()
                 .findFirst()
-                .map(spotlessAction -> spotlessAction.executeSpotlessAction(output, stepsSupplier))
+                .map(spotlessAction -> spotlessAction.executeSpotlessAction(stepsSupplier))
                 .orElse(-1);
     }
 }
