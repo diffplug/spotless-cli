@@ -5,6 +5,7 @@ enum DocumentedUsages {
 	MAIN(""),
 	GOOGLE_JAVA_FORMAT(),
 	LICENSE_HEADER(),
+	PALANTIR_JAVA_FORMAT(),
 	PRETTIER()
 
 	private final String fileName

@@ -34,6 +34,11 @@ public class GoogleJavaFormat extends SpotlessFormatterStep {
                     "The style to use for the google java format." + OptionConstants.VALID_AND_DEFAULT_VALUES_SUFFIX)
     Style style;
 
+    public enum Style {
+        AOSP,
+        GOOGLE
+    }
+
     @CommandLine.Option(
             names = {"--reflow-long-strings", "-r"},
             defaultValue = "false",
@@ -62,10 +67,5 @@ public class GoogleJavaFormat extends SpotlessFormatterStep {
                 reflowLongStrings,
                 reorderImports,
                 formatJavadoc));
-    }
-
-    public enum Style {
-        AOSP,
-        GOOGLE
     }
 }
