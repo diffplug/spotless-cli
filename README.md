@@ -148,9 +148,10 @@ or apply the formatting to the files.
   -V, --version              Print version information and exit.
 
 Available formatting steps:
-  license-header      Runs license header
-  google-java-format  Runs google java format
-  prettier            Runs prettier, the opinionated code formatter.
+  license-header        Runs license header
+  google-java-format    Runs google java format
+  palantir-java-format  Runs palantir java format
+  prettier              Runs prettier, the opinionated code formatter.
 
 Possible exit codes:
   0    Successful formatting.
@@ -282,6 +283,50 @@ Example usage:
 
 ```shell
 spotless --target '**/src/**/*.java' license-header --header='/* (c) DiffPlug $YEAR */'
+```
+
+### palantir-java-format
+
+<!---freshmark pjfshields
+output = [
+  link(shield('Palantir Java Format version', 'palantir-java-format', '{{libs.versions.native.include.palantirJavaFormat}}', 'blue'), 'https://github.com/palantir/palantir-java-format'),
+  ].join('\n')
+-->
+
+[![Palantir Java Format version](https://img.shields.io/badge/palantir--java--format-2.61.0-blue.svg)](https://github.com/palantir/palantir-java-format)
+
+<!---freshmark /pjfshields -->
+
+Formats java files according to the [palantir-java-format](https://github.com/palantir/palantir-java-format) style guide. Palantir Java Format is a modern, lambda-friendly,
+120 character Java formatter. It is based on the Google Java Format project.
+
+To see usage instructions for the palantir-java-format formatter, run `spotless palantir-java-format --help`
+
+<!---freshmark usage_palantir_java_format
+output =
+   '```\n' +
+   {{usage.palantir-java-format.array}}.join('\n') +
+    '\n```';
+-->
+
+```
+Usage: spotless palantir-java-format [-hjV] [-s=<style>]
+Runs palantir java format
+  -h, --help             Show this help message and exit.
+  -j, --format-javadoc   Format javadoc.
+                         (default: false)
+  -s, --style=<style>    The style to use for the palantir java format.
+                         One of: PALANTIR, AOSP, GOOGLE
+                         (default: PALANTIR)
+  -V, --version          Print version information and exit.
+```
+
+<!---freshmark /usage_palantir_java_format -->
+
+Example usage:
+
+```shell
+spotless --target '**/src/**/*.java' palantir-java-format --format-javadoc=true
 ```
 
 ### prettier
