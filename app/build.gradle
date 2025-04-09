@@ -4,6 +4,7 @@ plugins {
 	id 'buildlogic.picocli-conventions'
 	id 'buildlogic.java-special-tests-conventions'
 	id 'buildlogic.java-graalvm-conventions'
+	id 'buildlogic.spotless-json-conventions'
 }
 
 version = rootProject.version
