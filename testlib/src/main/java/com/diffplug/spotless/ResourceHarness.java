@@ -205,16 +205,28 @@ public class ResourceHarness {
             hasContent(expected, StandardCharsets.UTF_8);
         }
 
+        public void hasNotContent(String notExpected) {
+            notHasContent(notExpected, StandardCharsets.UTF_8);
+        }
+
         public void hasContent(String expected, Charset charset) {
             assertThat(file).usingCharset(charset).hasContent(expected);
+        }
+
+        public void notHasContent(String notExpected, Charset charset) {
+            assertThat(file).usingCharset(charset).content().isNotEqualTo(notExpected);
         }
 
         public void hasLines(String... lines) {
             hasContent(String.join("\n", Arrays.asList(lines)));
         }
 
-        public void sameAsResource(String resource) throws IOException {
+        public void sameAsResource(String resource) {
             hasContent(getTestResource(resource));
+        }
+
+        public void notSameSasResource(String resource) {
+            hasNotContent(getTestResource(resource));
         }
 
         public void matches(Consumer<AbstractCharSequenceAssert<?, String>> conditions) throws IOException {

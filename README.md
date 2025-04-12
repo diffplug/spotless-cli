@@ -148,6 +148,7 @@ or apply the formatting to the files.
   -V, --version              Print version information and exit.
 
 Available formatting steps:
+  clang-format          Runs clang-format
   license-header        Runs license header
   google-java-format    Runs google java format
   palantir-java-format  Runs palantir java format
@@ -175,9 +176,49 @@ Possible exit codes:
 
 Spotless CLI supports the following formatter steps in alphabetical order:
 
+- [clang-format](#clang-format)
 - [google-java-format](#google-java-format)
 - [license-header](#license-header)
+- [palantir-java-format](#palantir-java-format)
 - [prettier](#prettier)
+
+### clang-format
+
+Formats C/C++/Objective-C and more files according to the [clang-format](https://clang.llvm.org/docs/ClangFormat.html) style guide.
+
+To see usage instructions for the clang-format formatter, run: `spotless clang-format --help`
+
+<!---freshmark usage_clang_format
+output =
+   '```\n' +
+   {{usage.clang-format.array}}.join('\n') +
+    '\n```';
+-->
+
+```
+Usage: spotless clang-format [-hV] [-p=<pathToExe>] [-s=<style>] [-v=<version>]
+Runs clang-format
+  -h, --help            Show this help message and exit.
+  -p, --path-to-exe=<pathToExe>
+                        The path to the clang-format executable.
+                        (default: looks on your PATH)
+  -s, --style=<style>   The style to use for clang-format.
+  -v, --clang-version=<version>
+                        The version of clang-format to use.
+                        (default: 10.0.1)
+  -V, --version         Print version information and exit.
+```
+
+<!---freshmark /usage_clang_format -->
+
+Example usage:
+
+```shell
+spotless --target '**/src/**/*.cpp' clang-format --clang-version=20.1.2 --style=Google
+```
+
+> [!IMPORTANT]
+> Running a clang-format step requires a working installation of the clang-format binary.
 
 ### google-java-format
 

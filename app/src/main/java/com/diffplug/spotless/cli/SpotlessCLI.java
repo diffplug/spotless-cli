@@ -43,6 +43,7 @@ import com.diffplug.spotless.cli.execution.SpotlessExecutionStrategy;
 import com.diffplug.spotless.cli.help.OptionConstants;
 import com.diffplug.spotless.cli.logging.output.LoggingConfigurer;
 import com.diffplug.spotless.cli.logging.output.Output;
+import com.diffplug.spotless.cli.steps.ClangFormat;
 import com.diffplug.spotless.cli.steps.GoogleJavaFormat;
 import com.diffplug.spotless.cli.steps.LicenseHeader;
 import com.diffplug.spotless.cli.steps.PalantirJavaFormat;
@@ -90,7 +91,13 @@ import picocli.CommandLine.Command;
             "-2:An exception occurred during execution."
         },
         subcommandsRepeatable = true,
-        subcommands = {LicenseHeader.class, GoogleJavaFormat.class, PalantirJavaFormat.class, Prettier.class})
+        subcommands = {
+            ClangFormat.class,
+            LicenseHeader.class,
+            GoogleJavaFormat.class,
+            PalantirJavaFormat.class,
+            Prettier.class
+        })
 public class SpotlessCLI implements SpotlessAction, SpotlessCommand, SpotlessActionContextProvider {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SpotlessCLI.class);

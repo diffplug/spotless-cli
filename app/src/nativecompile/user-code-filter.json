@@ -5,7 +5,7 @@
     { "excludeClasses": "org.junit.**" },
     { "excludeClasses": "org.assertj.**" },
     { "excludeClasses": "com.diffplug.selfie.**" },
-    { "excludeClasses":  "net.bytebuddy.**" },
+    { "excludeClasses": "net.bytebuddy.**" },
 
     { "excludeClasses": "org.gradle.**" },
     { "excludeClasses": "worker.org.gradle.**" }
