@@ -10,7 +10,6 @@ plugins {
 version = rootProject.version
 
 dependencies {
-	implementation 'org.apache.commons:commons-text'
 	testImplementation project(':testlib')
 	implementation libs.bundles.spotless.libs
 	implementation libs.diff.utils

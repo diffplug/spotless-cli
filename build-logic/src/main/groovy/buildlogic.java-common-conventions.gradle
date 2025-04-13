@@ -23,10 +23,6 @@ repositories {
 }
 
 dependencies {
-	constraints {
-		// Define dependency versions as constraints
-		implementation 'org.apache.commons:commons-text:1.12.0'
-	}
 	implementation libs.annotations
 	implementation libs.bundles.spotless.libs
 	implementation libs.bundles.durian.libs
