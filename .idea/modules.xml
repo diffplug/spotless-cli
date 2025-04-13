@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/spotless-cli.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/spotless-cli.app.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/testlib/spotless-cli.testlib.main.iml" filepath="$PROJECT_DIR$/.idea/modules/testlib/spotless-cli.testlib.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/testlib/spotless-cli.testlib.test.iml" filepath="$PROJECT_DIR$/.idea/modules/testlib/spotless-cli.testlib.test.iml" />
     </modules>
   </component>
 </project>
