@@ -32,7 +32,7 @@ public class ForeignExeMock {
         WINDOWS {
             @Override
             protected ForeignExeMockWriter mockWriter(PrintWriter output) {
-                return new UnixForeignExeMockWriter(output); // TODO
+                return new WindowsForeignExeMockWriter(output);
             }
 
             @Override
@@ -327,6 +327,147 @@ public class ForeignExeMock {
         @Override
         public ForeignExeMockWriter writeExitCode(int exitCode) {
             output.printf("exit %d\n", exitCode);
+            return this;
+        }
+    }
+
+    private static class WindowsForeignExeMockWriter implements ForeignExeMockWriter {
+
+        private final PrintWriter output;
+
+        WindowsForeignExeMockWriter(@NotNull PrintWriter output) {
+            this.output = Objects.requireNonNull(output);
+        }
+
+        private String asVarName(String optionName) {
+            return optionName.replaceAll("[^a-zA-Z0-9]", "_").toUpperCase();
+        }
+
+        // ───────────────────────── intro ─────────────────────────
+        @Override
+        public ForeignExeMockWriter writeIntro(@NotNull Map<String, String> optionDefaults) {
+            output.println("@echo off");
+            output.println("rem --------------- AUTO‑GENERATED MOCK ---------------");
+            output.println("setlocal EnableDelayedExpansion");
+            output.println();
+
+            optionDefaults.forEach((k, v) -> output.printf("set \"%s=%s\"%n", asVarName(k), v));
+
+            output.println("set \"stdin_file=%TEMP%\\foreign_mock_%RANDOM%%RANDOM%.tmp\"");
+            output.println();
+            return this;
+        }
+
+        // ───────────────────── option parser ─────────────────────
+        @Override
+        public ForeignExeMockWriter writeOptionParserIntro() {
+            output.println(":parse_args");
+            output.println("if \"%~1\"==\"\" goto end_parse_args");
+            output.println("set \"arg=%~1\"");
+            output.println();
+            return this;
+        }
+
+        @Override
+        public ForeignExeMockWriter writeStringReturningOption(String optionName, @NotNull String optionValue) {
+            output.printf("if /i \"!arg!\"==\"%s\" (%n", optionName);
+            output.printf("    echo %s%n", optionValue.replace("\"", "\"\""));
+            output.println("    exit /b 0");
+            output.println(")");
+            output.println();
+            return this;
+        }
+
+        @Override
+        public ForeignExeMockWriter writeStringConsumingOption(String optionName) {
+            consumeOption(optionName, null);
+            return this;
+        }
+
+        @Override
+        public ForeignExeMockWriter writeStringConsumingOption(String optionName, @NotNull List<String> validValues) {
+            consumeOption(optionName, validValues);
+            return this;
+        }
+
+        /* ── helper ──────────────────────────────────────────── */
+        private void consumeOption(String optionName, List<String> validValues) {
+            final String var = asVarName(optionName);
+            final int len = optionName.length() + 1; // option + '='
+
+            /* --opt=value --------------------------------------------------------- */
+            output.printf("if /i \"!arg:~0,%d!\"==\"%s=\" (%n", len, optionName);
+            output.printf("    set \"%1$s=!arg:~%2$d!\"%n", var, len);
+            writeValidation(var, validValues);
+            output.println("    shift");
+            output.println("    goto parse_args");
+            output.println(")");
+            output.println();
+
+            /* --opt  value -------------------------------------------------------- */
+            output.printf("if /i \"!arg!\"==\"%s\" (%n", optionName);
+            output.printf("    set \"%1$s=%%~2\"%n", var);
+            writeValidation(var, validValues);
+            output.println("    shift & shift");
+            output.println("    goto parse_args");
+            output.println(")");
+            output.println();
+        }
+
+        private void writeValidation(String var, List<String> validValues) {
+            if (validValues == null || validValues.isEmpty()) return;
+
+            output.println("    set \"_valid=0\"");
+            output.printf(
+                    "    for %%%%v in (%s) do if /i \"!%s!\"==\"%%%%v\" set \"_valid=1\"%n",
+                    String.join(" ", validValues), var);
+            output.println("    if \"!_valid!\"==\"0\" (");
+            output.printf("        echo Unknown %s: !%s!%n", var.toLowerCase(), var);
+            output.println("        exit /b 1");
+            output.println("    )");
+        }
+
+        // ───────────────────── parser outro ─────────────────────
+        @Override
+        public ForeignExeMockWriter writeOptionParserOutro() {
+            output.println("echo Unknown parameter: !arg!");
+            output.println("exit /b 1");
+            output.println();
+            output.println(":end_parse_args");
+            output.println();
+            return this;
+        }
+
+        // ───────────────────── stdin → file ─────────────────────
+        @Override
+        public ForeignExeMockWriter writeReadFromStdin() {
+            output.println("rem -- read everything the caller pipes into us ------------");
+            output.println("more > \"!stdin_file!\"");
+            output.println();
+            return this;
+        }
+
+        // ─────────────── file → stdout (pad lines) ──────────────
+        @Override
+        public ForeignExeMockWriter writeWriteToStdout() {
+            output.println("for /f \"usebackq delims=\" %%L in (\"!stdin_file!\") do (");
+            output.println("    set \"line=%%L\"");
+            output.println("    echo(!line!| findstr /r \"    $\" >nul");
+            output.println("    if errorlevel 1 (");
+            output.println("        echo(!line!    ");
+            output.println("    ) else (");
+            output.println("        echo(!line!");
+            output.println("    )");
+            output.println(")");
+            output.println("del \"!stdin_file!\" >nul 2>&1");
+            output.println();
+            return this;
+        }
+
+        // ───────────────────────── exit ─────────────────────────
+        @Override
+        public ForeignExeMockWriter writeExitCode(int exitCode) {
+            output.printf("exit /b %d%n", exitCode);
             return this;
         }
     }

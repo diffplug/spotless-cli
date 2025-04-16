@@ -18,6 +18,7 @@ package com.diffplug.spotless.cli;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
@@ -112,13 +113,25 @@ return 0;   \s
         }
     }
 
-    private @NotNull File createClangFormatForeignExeMock() {
+    @Test
+    void itWritesAWindowsBatFile() throws IOException, InterruptedException {
+        File mock = createClangFormatForeignExeMock(ForeignExeMock.TargetOs.WINDOWS);
+        String mockContent = Files.readString(mock.toPath());
+        assertThat(mockContent).contains("--version");
+    }
+
+    private @NotNull File createClangFormatForeignExeMock() throws IOException {
+        return createClangFormatForeignExeMock(ForeignExeMock.TargetOs.current());
+    }
+
+    private @NotNull File createClangFormatForeignExeMock(@NotNull ForeignExeMock.TargetOs targetOs)
+            throws IOException {
         ForeignExeMock mock = ForeignExeMock.builder("clang-format", "11.0.1")
                 .withStringConsumingOption("--style", List.of("LLVM", "Chrome", "Google", "Mozilla", "WebKit"))
                 .withStringReturningOption("--help", "This is the help text")
                 .withReadFromStdin()
                 .withWriteToStdout()
-                .build();
+                .build(targetOs);
 
         return setFile(mock.getFileName())
                 .toContent(mock.getContent())
