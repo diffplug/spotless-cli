@@ -16,47 +16,40 @@
 package com.diffplug.spotless.cli.steps;
 
 import java.io.File;
-import java.util.regex.Pattern;
+import java.util.List;
 import java.util.stream.Stream;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIf;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import com.diffplug.spotless.ProcessRunner;
 import com.diffplug.spotless.cli.CLIIntegrationHarness;
+import com.diffplug.spotless.cli.ForeignExeMock;
+import com.diffplug.spotless.cpp.ClangFormatStep;
 import com.diffplug.spotless.tag.CliNativeTest;
 import com.diffplug.spotless.tag.CliProcessTest;
 
 @CliProcessTest
 @CliNativeTest
-@EnabledIf("isClangFormatExecAvailable")
 class ClangFormatTest extends CLIIntegrationHarness {
 
-    static boolean isClangFormatExecAvailable() {
-        try (ProcessRunner processRunner = new ProcessRunner()) {
-            ProcessRunner.Result result = processRunner.exec("clang-format", "--version");
-            return result.exitCode() == 0;
-        } catch (Exception e) {
-            return false;
-        }
-    }
+    File clangFormatExec;
 
-    static String clangFormatVersion() throws Exception {
-        try (ProcessRunner processRunner = new ProcessRunner()) {
-            ProcessRunner.Result result = processRunner.exec("clang-format", "--version");
-            // extract semver from output
-            String versionOut = result.stdOutUtf8();
-            Pattern semVerPattern = Pattern.compile("\\d+\\.\\d+\\.\\d+");
-            java.util.regex.Matcher matcher = semVerPattern.matcher(versionOut);
-            if (matcher.find()) {
-                return matcher.group();
-            } else {
-                throw new IllegalStateException("Could not find version in output: " + versionOut);
-            }
-        }
+    @BeforeEach
+    void prepareClangFormatExecMock() {
+        ForeignExeMock mock = ForeignExeMock.builder("clang-format", ClangFormatStep.defaultVersion())
+                .withStringConsumingOption("--style", List.of("LLVM", "Google", "Mozilla"))
+                .withStringConsumingOption("--assume-filename")
+                .withReadFromStdin()
+                .withWriteToStdout()
+                .build();
+
+        clangFormatExec = setFile(mock.getFileName())
+                .toContent(mock.getContent())
+                .makeExecutable()
+                .getFile();
     }
 
     @ParameterizedTest
@@ -67,7 +60,8 @@ class ClangFormatTest extends CLIIntegrationHarness {
         cliRunner()
                 .withTargets(testFileName)
                 .withStep(ClangFormat.class)
-                .withOption("--clang-version", clangFormatVersion())
+                .withOption("--clang-version", ClangFormatStep.defaultVersion())
+                .withOption("--path-to-exec", clangFormatExec.getAbsolutePath())
                 .run();
 
         assertFile(testFile).notSameSasResource(resourceName);
@@ -92,8 +86,9 @@ class ClangFormatTest extends CLIIntegrationHarness {
         cliRunner()
                 .withTargets("Test.java")
                 .withStep(ClangFormat.class)
-                .withOption("--clang-version", clangFormatVersion())
+                .withOption("--clang-version", ClangFormatStep.defaultVersion())
                 .withOption("--style", "Google")
+                .withOption("--path-to-exec", clangFormatExec.getAbsolutePath())
                 .run();
 
         assertFile(testFile).notSameSasResource("clang/example.java.dirty");

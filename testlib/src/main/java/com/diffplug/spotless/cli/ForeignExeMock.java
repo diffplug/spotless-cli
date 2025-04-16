@@ -89,7 +89,7 @@ public class ForeignExeMock {
         return targetOs.asFileName(name);
     }
 
-    static Builder builder(@NotNull String name, @NotNull String version) {
+    public static Builder builder(@NotNull String name, @NotNull String version) {
         return new Builder(Objects.requireNonNull(name), Objects.requireNonNull(version));
     }
 
@@ -155,7 +155,7 @@ public class ForeignExeMock {
                 ForeignExeMockWriter writer = os.mockWriter(printWriter);
                 writer = writer.writeIntro(optionDefaults())
                         .writeOptionParserIntro()
-                        .writeStringReturningOption("--version", version);
+                        .writeStringReturningOption("--version", "version " + version);
                 for (Map.Entry<String, String> entry : stringReturningOptions.entrySet()) {
                     writer = writer.writeStringReturningOption(entry.getKey(), entry.getValue());
                 }
@@ -220,14 +220,8 @@ public class ForeignExeMock {
             this.output = Objects.requireNonNull(output);
         }
 
-        private String nonPrefixed(String optionName) {
-            if (optionName.startsWith("--")) {
-                return optionName.substring(2);
-            } else if (optionName.startsWith("-")) {
-                return optionName.substring(1);
-            } else {
-                return optionName;
-            }
+        private String asVarName(String optionName) {
+            return optionName.replaceAll("[^a-zA-Z0-9]", "_");
         }
 
         @Override
@@ -235,7 +229,7 @@ public class ForeignExeMock {
             Objects.requireNonNull(optionDefaults);
             output.println("#!/bin/bash");
             output.println();
-            optionDefaults.forEach((k, v) -> output.printf("%s=\"%s\"\n", nonPrefixed(k), v));
+            optionDefaults.forEach((k, v) -> output.printf("%s=\"%s\"\n", asVarName(k), v));
             // collect value from stdin
             output.println("stdin_value=\"\"");
             return this;
@@ -259,8 +253,12 @@ public class ForeignExeMock {
 
         @Override
         public ForeignExeMockWriter writeStringConsumingOption(String optionName) {
+            output.printf("    %s=*)\n", optionName);
+            output.printf("      %s=\"${1#%s=}\"\n", asVarName(optionName), optionName);
+            output.println("      shift");
+            output.println("      ;;");
             output.printf("    %s)\n", optionName);
-            output.printf("      %s=\"$2\"\n", nonPrefixed(optionName));
+            output.printf("      %s=\"$2\"\n", asVarName(optionName));
             output.println("      shift 2");
             output.println("      ;;");
             return this;
@@ -269,19 +267,30 @@ public class ForeignExeMock {
         @Override
         public ForeignExeMockWriter writeStringConsumingOption(String optionName, @NotNull List<String> validValues) {
             // same as above, but with a list of valid values which are checked and failed if wrong
+            output.println("# check for --x=y writing variant");
+            output.printf("    %s=*)\n", optionName);
+            output.printf("      %s=\"${1#%s=}\"\n", asVarName(optionName), optionName);
+            writeValidValuesSubCheck(optionName, validValues);
+            output.println("      shift");
+            output.println("      ;;");
+            output.println("#check for --x y writing variant");
             output.printf("    %s)\n", optionName);
-            output.printf("      %s=\"$2\"\n", nonPrefixed(optionName));
-            output.println("      case \"$2\" in");
-            output.printf("        %s)\n", validValues.stream().collect(Collectors.joining("|")));
-            output.println("          ;;");
-            output.println("        *)");
-            output.printf("          echo \"Unknown %s: $2\"\n", nonPrefixed(optionName));
-            output.println("          exit 1");
-            output.println("          ;;");
-            output.println("      esac");
+            output.printf("      %s=\"$2\"\n", asVarName(optionName));
+            writeValidValuesSubCheck(optionName, validValues);
             output.println("      shift 2");
             output.println("      ;;");
             return this;
+        }
+
+        private void writeValidValuesSubCheck(String optionName, @NotNull List<String> validValues) {
+            output.printf("      case \"$%s\" in\n", asVarName(optionName));
+            output.printf("        %s)\n", validValues.stream().collect(Collectors.joining("|")));
+            output.println("          ;;");
+            output.println("        *)");
+            output.printf("          echo \"Unknown %s: $2\"\n", asVarName(optionName));
+            output.println("          exit 1");
+            output.println("          ;;");
+            output.println("      esac");
         }
 
         @Override
@@ -308,8 +317,10 @@ public class ForeignExeMock {
 
         @Override
         public ForeignExeMockWriter writeWriteToStdout() {
-            // write the stdin_value to stdout but add 4 spaces at the end of each line
-            output.println("echo \"${stdin_value}\" | sed 's/$/    /'");
+            // write the stdin_value to stdout but add 4 spaces at the end of each line that does not already end with 4
+            // spaces
+            //            output.println("echo \"${stdin_value}\" | sed '/    $/! s/$/    /'");
+            output.println("printf \"%s\" \"$stdin_value\" | sed '/    $/! s/$/    /'");
             return this;
         }
 

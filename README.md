@@ -196,10 +196,10 @@ output =
 -->
 
 ```
-Usage: spotless clang-format [-hV] [-p=<pathToExe>] [-s=<style>] [-v=<version>]
+Usage: spotless clang-format [-hV] [-p=<pathToExec>] [-s=<style>] [-v=<version>]
 Runs clang-format
   -h, --help            Show this help message and exit.
-  -p, --path-to-exe=<pathToExe>
+  -p, --path-to-exec=<pathToExec>
                         The path to the clang-format executable.
                         (default: looks on your PATH)
   -s, --style=<style>   The style to use for clang-format.

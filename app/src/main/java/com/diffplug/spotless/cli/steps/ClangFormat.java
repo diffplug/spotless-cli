@@ -37,10 +37,10 @@ public class ClangFormat extends SpotlessFormatterStep {
     String version;
 
     @CommandLine.Option(
-            names = {"--path-to-exe", "-p"},
+            names = {"--path-to-exec", "-p"},
             description = "The path to the clang-format executable." + OptionConstants.DEFAULT_VALUE_SUFFIX_BEGIN
                     + "looks on your PATH" + OptionConstants.DEFAULT_VALUE_SUFFIX_END)
-    Path pathToExe;
+    Path pathToExec;
 
     @CommandLine.Option(
             names = {"--style", "-s"},
@@ -50,8 +50,8 @@ public class ClangFormat extends SpotlessFormatterStep {
     @Override
     public @NotNull List<FormatterStep> prepareFormatterSteps() {
         ClangFormatStep clangFormatStep = ClangFormatStep.withVersion(version);
-        if (pathToExe != null) {
-            clangFormatStep = clangFormatStep.withPathToExe(pathToExe.toString());
+        if (pathToExec != null) {
+            clangFormatStep = clangFormatStep.withPathToExe(pathToExec.toString());
         }
         if (style != null) {
             clangFormatStep = clangFormatStep.withStyle(style);
