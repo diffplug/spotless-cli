@@ -56,7 +56,8 @@ class ForeignExeMockTest extends ResourceHarness {
         File mock = createClangFormatForeignExeMock();
 
         try (ProcessRunner runner = new ProcessRunner()) {
-            ProcessRunner.Result result = runner.exec(rootFolder(), null, null, List.of(mock.getName(), "--version"));
+            ProcessRunner.Result result =
+                    runner.exec(rootFolder(), null, null, List.of(mock.getAbsolutePath(), "--version"));
             String output = result.assertExitZero(StandardCharsets.UTF_8);
             assertThat(output).contains("11.0.1");
         }
@@ -67,8 +68,8 @@ class ForeignExeMockTest extends ResourceHarness {
         File mock = createClangFormatForeignExeMock();
 
         try (ProcessRunner runner = new ProcessRunner()) {
-            ProcessRunner.Result result =
-                    runner.exec(rootFolder(), null, null, List.of(mock.getName(), "--style", "invalid_style_value"));
+            ProcessRunner.Result result = runner.exec(
+                    rootFolder(), null, null, List.of(mock.getAbsolutePath(), "--style", "invalid_style_value"));
             assertThat(result.exitCode()).isNotEqualTo(0);
             assertThat(result.stdOutUtf8()).contains("invalid_style_value");
         }
@@ -80,7 +81,7 @@ class ForeignExeMockTest extends ResourceHarness {
 
         try (ProcessRunner runner = new ProcessRunner()) {
             ProcessRunner.Result result =
-                    runner.exec(rootFolder(), null, null, List.of(mock.getName(), "--style", "LLVM"));
+                    runner.exec(rootFolder(), null, null, List.of(mock.getAbsolutePath(), "--style", "LLVM"));
             String output = result.assertExitZero(StandardCharsets.UTF_8);
         }
     }
@@ -102,13 +103,12 @@ class ForeignExeMockTest extends ResourceHarness {
                     rootFolder(),
                     null,
                     input.getBytes(StandardCharsets.UTF_8),
-                    List.of(mock.getName(), "--style", "LLVM"));
+                    List.of(mock.getAbsolutePath(), "--style", "LLVM"));
             String output = result.assertExitZero(StandardCharsets.UTF_8);
             Selfie.expectSelfie(output).toBe("""
 int main(){   \s
 return 0;   \s
 }   \s
-   \s
 """);
         }
     }

@@ -450,14 +450,22 @@ public class ForeignExeMock {
         // ─────────────── file → stdout (pad lines) ──────────────
         @Override
         public ForeignExeMockWriter writeWriteToStdout() {
-            output.println("for /f \"usebackq delims=\" %%L in (\"!stdin_file!\") do (");
-            output.println("    set \"line=%%L\"");
-            output.println("    echo(!line!| findstr /r \"    $\" >nul");
-            output.println("    if errorlevel 1 (");
-            output.println("        echo(!line!    ");
+            /*
+               - findstr /n /R ".*"  prefixes every line (even empty ones) with  N:
+               - we read each raw line (trailing blanks intact) into %%L
+               - strip everything up to the first colon:   set "line=%%L" & set "line=!line:*:=!"
+               - preserve / append four blanks with   <nul set /p   (echo would cut them)
+            */
+
+            output.println("for /f \"usebackq delims=\" %%L in (`findstr /n /R \".*\" \"!stdin_file!\"`) do (");
+            output.println("    set \"raw=%%L\"");
+            output.println("    set \"line=!raw:*:=!\""); // throw away leading  N:
+            output.println("    if \"!line:~-4!\"==\"    \" (");
+            output.println("        <nul set /p \"=!line!\""); // already padded
             output.println("    ) else (");
-            output.println("        echo(!line!");
+            output.println("        <nul set /p \"=!line!    \""); // add 4 blanks
             output.println("    )");
+            output.println("    echo("); // newline
             output.println(")");
             output.println("del \"!stdin_file!\" >nul 2>&1");
             output.println();
