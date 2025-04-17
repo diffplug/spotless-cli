@@ -22,8 +22,10 @@ import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 
 import com.diffplug.selfie.Camera;
+import com.diffplug.selfie.Lens;
 import com.diffplug.selfie.Selfie;
 import com.diffplug.selfie.Snapshot;
+import com.diffplug.selfie.SnapshotValue;
 import com.diffplug.selfie.StringSelfie;
 
 public class SelfieExpectations {
@@ -42,12 +44,31 @@ public class SelfieExpectations {
         return new SelfieExpectations(rootFolder);
     }
 
+    private static String normalizeLineEndings(String content) {
+        return content.replace("\r\n", "\n");
+    }
+
     private static final Camera<Resource> RESOURCE_CAMERA = (Resource resource) -> {
         File file = new File(resource.rootFolder(), resource.resourcePath());
         if (!file.exists()) {
             return Snapshot.of("");
         }
         return Snapshot.of(ThrowingEx.get(() -> Files.readString(file.toPath())));
+    };
+
+    private static final Lens NORMALIZE_LINE_ENDINGS = (Snapshot snapshot) -> {
+        String subject = snapshot.getSubject().valueString();
+        if (subject.contains("\r\n")) {
+            // the facet "" is another name for the subject
+            return snapshot.plusOrReplace("", SnapshotValue.Companion.of(normalizeLineEndings(subject)));
+        } else {
+            return snapshot;
+        }
+    };
+
+    private static final Camera<String> CRLF_TO_LF_CAMERA = (String content) -> {
+        String normalizedContent = content.replace("\r\n", "\n");
+        return Snapshot.of(normalizedContent);
     };
 
     record Resource(File rootFolder, String resourcePath) {}
@@ -58,5 +79,14 @@ public class SelfieExpectations {
 
     public StringSelfie expectFile(File file) {
         return Selfie.expectSelfie(new Resource(file.getParentFile(), file.getName()), RESOURCE_CAMERA);
+    }
+
+    public StringSelfie expectFileWithNormalizedLineEndings(File file) {
+        return Selfie.expectSelfie(
+                new Resource(file.getParentFile(), file.getName()), RESOURCE_CAMERA.withLens(NORMALIZE_LINE_ENDINGS));
+    }
+
+    public static StringSelfie expectNormalizedContent(String content) {
+        return Selfie.expectSelfie(content, CRLF_TO_LF_CAMERA);
     }
 }
