@@ -450,31 +450,72 @@ public class ForeignExeMock {
         // ─────────────── file → stdout (pad lines) ──────────────
         @Override
         public ForeignExeMockWriter writeWriteToStdout() {
-            /*
-               - findstr /n /R ".*"  prefixes every line (even empty ones) with  N:
-               - we read each raw line (trailing blanks intact) into %%L
-               - strip everything up to the first colon:   set "line=%%L" & set "line=!line:*:=!"
-               - preserve / append four blanks with   <nul set /p   (echo would cut them)
-            */
 
+            // rolling buffer
+            output.println("set \"prev_line=\"");
+            output.println("set \"have_prev=0\"");
+
+            /*
+                read each physical record (trailing blanks intact)
+                findstr /n /R ".*" prefixes lines with  N:   (even empty ones)
+            */
             output.println("for /f \"usebackq delims=\" %%L in (`findstr /n /R \".*\" \"!stdin_file!\"`) do (");
             output.println("    set \"raw=%%L\"");
-            output.println("    set \"line=!raw:*:=!\""); // throw away leading  N:
-            output.println("    if \"!line:~-4!\"==\"    \" (");
-            output.println("        <nul set /p \"=!line!\""); // already padded
-            output.println("    ) else (");
-            output.println("        <nul set /p \"=!line!    \""); // add 4 blanks
+            output.println("    set \"curr_line=!raw:*:=!\""); // strip N:
+            output.println("    if \"!have_prev!\"==\"1\" (");
+            output.println("        call :emit_with_nl"); // print previous line + NL
             output.println("    )");
-            output.println("    echo("); // newline
+            output.println("    set \"prev_line=!curr_line!\"");
+            output.println("    set \"have_prev=1\"");
             output.println(")");
+
+            /*
+                After the loop prev_line holds LAST record.
+                If that record is empty, the input *did* end with an EOL, so nothing more
+                to print.  If it is non‑empty, the input lacked a final EOL — print the
+                line *without* adding a new one.
+            */
+            output.println("if \"!prev_line!\"==\"\" (");
+            output.println("    rem input ended with newline – nothing left to write");
+            output.println(") else (");
+            output.println("    call :emit_no_nl"); // print last line, no NL
+            output.println(")");
+
             output.println("del \"!stdin_file!\" >nul 2>&1");
+            output.println("goto :finish");
             output.println();
+
+            /* ---------- helpers --------------------------------------- */
+
+            // prev_line → stdout, padding rule, WITH trailing newline
+            output.println(":emit_with_nl");
+            output.println("if \"!prev_line:~-4!\"==\"    \" (");
+            output.println("    <nul set /p \"=!prev_line!\"");
+            output.println(") else (");
+            output.println("    <nul set /p \"=!prev_line!    \"");
+            output.println(")");
+            output.println("echo("); // newline
+            output.println("exit /b");
+            output.println();
+
+            // prev_line → stdout, padding rule, NO trailing newline
+            output.println(":emit_no_nl");
+            output.println("if \"!prev_line:~-4!\"==\"    \" (");
+            output.println("    <nul set /p \"=!prev_line!\"");
+            output.println(") else (");
+            output.println("    <nul set /p \"=!prev_line!    \"");
+            output.println(")");
+            output.println("exit /b");
+            output.println();
+
             return this;
         }
-
         // ───────────────────────── exit ─────────────────────────
+        /* writeExitCode – central, always‑reached exit point */
         @Override
         public ForeignExeMockWriter writeExitCode(int exitCode) {
+            output.println();
+            output.println(":finish");
             output.printf("exit /b %d%n", exitCode);
             return this;
         }
