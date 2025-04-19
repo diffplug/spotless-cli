@@ -31,8 +31,8 @@ public class ForeignExeMock {
     enum TargetOs {
         WINDOWS {
             @Override
-            protected ForeignExeMockWriter mockWriter(PrintWriter output) {
-                return new WindowsForeignExeMockWriter(output);
+            protected ForeignExeMockWriter mockWriter(PrintWriter output, String name) {
+                return new WindowsForeignExeMockWriter(output, "output written by " + name);
             }
 
             @Override
@@ -42,8 +42,8 @@ public class ForeignExeMock {
         },
         UNIX {
             @Override
-            protected ForeignExeMockWriter mockWriter(PrintWriter output) {
-                return new UnixForeignExeMockWriter(output);
+            protected ForeignExeMockWriter mockWriter(PrintWriter output, String name) {
+                return new UnixForeignExeMockWriter(output, "output written by " + name);
             }
 
             @Override
@@ -60,7 +60,7 @@ public class ForeignExeMock {
             }
         }
 
-        protected abstract ForeignExeMockWriter mockWriter(PrintWriter output);
+        protected abstract ForeignExeMockWriter mockWriter(PrintWriter output, String name);
 
         protected abstract String asFileName(String name);
     }
@@ -149,10 +149,10 @@ public class ForeignExeMock {
             return defaults;
         }
 
-        private String content(TargetOs os) {
+        private String content(TargetOs os, String name) {
             try (StringWriter stringWriter = new StringWriter();
                     PrintWriter printWriter = new PrintWriter(stringWriter)) {
-                ForeignExeMockWriter writer = os.mockWriter(printWriter);
+                ForeignExeMockWriter writer = os.mockWriter(printWriter, name);
                 writer = writer.writeIntro(optionDefaults())
                         .writeOptionParserIntro()
                         .writeStringReturningOption("--version", "version " + version);
@@ -188,7 +188,7 @@ public class ForeignExeMock {
         }
 
         ForeignExeMock build(TargetOs os) {
-            return new ForeignExeMock(name, content(os), os);
+            return new ForeignExeMock(name, content(os, name), os);
         }
     }
 
@@ -215,23 +215,26 @@ public class ForeignExeMock {
     private static class UnixForeignExeMockWriter implements ForeignExeMockWriter {
 
         private final PrintWriter output;
+        private final String constantOut; // text we always emit to stdout
 
-        UnixForeignExeMockWriter(@NotNull PrintWriter output) {
+        UnixForeignExeMockWriter(@NotNull PrintWriter output, @NotNull String constantOut) {
             this.output = Objects.requireNonNull(output);
+            this.constantOut = Objects.requireNonNull(constantOut);
         }
 
         private String asVarName(String optionName) {
             return optionName.replaceAll("[^a-zA-Z0-9]", "_");
         }
 
+        /* ───────────────────────── intro ───────────────────────── */
         @Override
         public ForeignExeMockWriter writeIntro(@NotNull Map<String, String> optionDefaults) {
             Objects.requireNonNull(optionDefaults);
-            output.println("#!/bin/bash");
+            output.println("#!/usr/bin/env bash");
+            output.println("set -euo pipefail");
             output.println();
-            optionDefaults.forEach((k, v) -> output.printf("%s=\"%s\"\n", asVarName(k), v));
-            // collect value from stdin
-            output.println("stdin_value=\"\"");
+            optionDefaults.forEach((k, v) -> output.printf("%s=\"%s\"%n", asVarName(k), v));
+            output.println();
             return this;
         }
 
@@ -305,38 +308,44 @@ public class ForeignExeMock {
             return this;
         }
 
+        /* ─────────────────── stdin → /dev/null (drain) ─────────────────── */
         @Override
         public ForeignExeMockWriter writeReadFromStdin() {
-            // collect the stdin to stdin_value
-            output.println("while IFS= read -r line; do");
-            output.println("  stdin_value+=\"${line}\"$'\\n'");
-            output.println("done");
+            output.println("# consume everything the caller pipes into us -------------");
+            output.println("cat > /dev/null");
             output.println();
             return this;
         }
 
-        @Override
-        public ForeignExeMockWriter writeWriteToStdout() {
-            // write the stdin_value to stdout but add 4 spaces at the end of each line that does not already end with 4
-            // spaces
-            //            output.println("echo \"${stdin_value}\" | sed '/    $/! s/$/    /'");
-            output.println("printf \"%s\" \"$stdin_value\" | sed '/    $/! s/$/    /'");
-            return this;
+        /* ─────────────── constant text → stdout ─────────────── */
+        /** Quote a literal for POSIX shells using single‑quotes. */
+        private static String shQuote(String s) {
+            // close quote, insert escaped single‑quote, reopen quote:  '  -->  '\''
+            return "'" + s.replace("'", "'\"'\"'") + "'";
         }
 
         @Override
+        public ForeignExeMockWriter writeWriteToStdout() {
+            output.printf("echo %s%n", shQuote(constantOut));
+            output.println();
+            return this;
+        }
+
+        /* ─────────────────────── exit ─────────────────────── */
+        @Override
         public ForeignExeMockWriter writeExitCode(int exitCode) {
-            output.printf("exit %d\n", exitCode);
+            output.printf("exit %d%n", exitCode);
             return this;
         }
     }
 
     private static class WindowsForeignExeMockWriter implements ForeignExeMockWriter {
-
         private final PrintWriter output;
+        private final String constantOut; // what we will echo to stdout
 
-        WindowsForeignExeMockWriter(@NotNull PrintWriter output) {
+        WindowsForeignExeMockWriter(@NotNull PrintWriter output, @NotNull String constantOut) {
             this.output = Objects.requireNonNull(output);
+            this.constantOut = Objects.requireNonNull(constantOut);
         }
 
         private String asVarName(String optionName) {
@@ -352,9 +361,7 @@ public class ForeignExeMock {
             output.println();
 
             optionDefaults.forEach((k, v) -> output.printf("set \"%s=%s\"%n", asVarName(k), v));
-
-            output.println("set \"stdin_file=%TEMP%\\foreign_mock_%RANDOM%%RANDOM%.tmp\"");
-            output.println();
+            output.println(); // nothing else needed here
             return this;
         }
 
@@ -441,8 +448,8 @@ public class ForeignExeMock {
         // ───────────────────── stdin → file ─────────────────────
         @Override
         public ForeignExeMockWriter writeReadFromStdin() {
-            output.println("rem -- read everything the caller pipes into us ------------");
-            output.println("more > \"!stdin_file!\"");
+            output.println("rem -- consume everything the caller pipes into us -----");
+            output.println("more > nul"); // reads stdin until EOF, discards it
             output.println();
             return this;
         }
@@ -450,66 +457,12 @@ public class ForeignExeMock {
         // ─────────────── file → stdout (pad lines) ──────────────
         @Override
         public ForeignExeMockWriter writeWriteToStdout() {
-
-            // rolling buffer
-            output.println("set \"prev_line=\"");
-            output.println("set \"have_prev=0\"");
-
-            /*
-                read each physical record (trailing blanks intact)
-                findstr /n /R ".*" prefixes lines with  N:   (even empty ones)
-            */
-            output.println("for /f \"usebackq delims=\" %%L in (`findstr /n /R \".*\" \"!stdin_file!\"`) do (");
-            output.println("    set \"raw=%%L\"");
-            output.println("    set \"curr_line=!raw:*:=!\""); // strip N:
-            output.println("    if \"!have_prev!\"==\"1\" (");
-            output.println("        call :emit_with_nl"); // print previous line + NL
-            output.println("    )");
-            output.println("    set \"prev_line=!curr_line!\"");
-            output.println("    set \"have_prev=1\"");
-            output.println(")");
-
-            /*
-                After the loop prev_line holds LAST record.
-                If that record is empty, the input *did* end with an EOL, so nothing more
-                to print.  If it is non‑empty, the input lacked a final EOL — print the
-                line *without* adding a new one.
-            */
-            output.println("if \"!prev_line!\"==\"\" (");
-            output.println("    rem input ended with newline – nothing left to write");
-            output.println(") else (");
-            output.println("    call :emit_no_nl"); // print last line, no NL
-            output.println(")");
-
-            output.println("del \"!stdin_file!\" >nul 2>&1");
-            output.println("goto :finish");
+            output.printf("echo %s%n", constantOut.replace("\"", "\"\""));
+            output.println("goto :finish"); // skip anything that might follow
             output.println();
-
-            /* ---------- helpers --------------------------------------- */
-
-            // prev_line → stdout, padding rule, WITH trailing newline
-            output.println(":emit_with_nl");
-            output.println("if \"!prev_line:~-4!\"==\"    \" (");
-            output.println("    <nul set /p \"=!prev_line!\"");
-            output.println(") else (");
-            output.println("    <nul set /p \"=!prev_line!    \"");
-            output.println(")");
-            output.println("echo("); // newline
-            output.println("exit /b");
-            output.println();
-
-            // prev_line → stdout, padding rule, NO trailing newline
-            output.println(":emit_no_nl");
-            output.println("if \"!prev_line:~-4!\"==\"    \" (");
-            output.println("    <nul set /p \"=!prev_line!\"");
-            output.println(") else (");
-            output.println("    <nul set /p \"=!prev_line!    \"");
-            output.println(")");
-            output.println("exit /b");
-            output.println();
-
             return this;
         }
+
         // ───────────────────────── exit ─────────────────────────
         /* writeExitCode – central, always‑reached exit point */
         @Override

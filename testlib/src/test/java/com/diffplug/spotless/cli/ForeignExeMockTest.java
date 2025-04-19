@@ -24,9 +24,9 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
+import com.diffplug.selfie.Selfie;
 import com.diffplug.spotless.ProcessRunner;
 import com.diffplug.spotless.ResourceHarness;
-import com.diffplug.spotless.SelfieExpectations;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -105,10 +105,8 @@ class ForeignExeMockTest extends ResourceHarness {
                     input.getBytes(StandardCharsets.UTF_8),
                     List.of(mock.getAbsolutePath(), "--style", "LLVM"));
             String output = result.assertExitZero(StandardCharsets.UTF_8);
-            SelfieExpectations.expectNormalizedContent(output).toBe("""
-int main(){   \s
-return 0;   \s
-}   \s
+            Selfie.expectSelfie(output).toBe("""
+output written by clang-format
 """);
         }
     }

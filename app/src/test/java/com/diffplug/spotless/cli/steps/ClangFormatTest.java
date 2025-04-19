@@ -65,7 +65,7 @@ class ClangFormatTest extends CLIIntegrationHarness {
                 .run();
 
         assertFile(testFile).notSameSasResource(resourceName);
-        selfie().expectFileWithNormalizedLineEndings(testFile).toMatchDisk(testFileName);
+        selfie().expectFile(testFile).toMatchDisk(testFileName);
     }
 
     static Stream<Arguments> itFormatsFileType() {
@@ -92,6 +92,6 @@ class ClangFormatTest extends CLIIntegrationHarness {
                 .run();
 
         assertFile(testFile).notSameSasResource("clang/example.java.dirty");
-        selfie().expectFileWithNormalizedLineEndings(testFile).toMatchDisk();
+        selfie().expectFile(testFile).toMatchDisk();
     }
 }
