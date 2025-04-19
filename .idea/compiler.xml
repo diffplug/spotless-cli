@@ -16,4 +16,9 @@
     </annotationProcessing>
     <bytecodeTargetLevel target="21" />
   </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="spotless-cli.app.main" options="-Aproject=spotless-cli/app -Aother.resource.bundles=application -Aother.resource.patterns=.*\\.properties,.*\\.json,.*\\.js" />
+    </option>
+  </component>
 </project>
