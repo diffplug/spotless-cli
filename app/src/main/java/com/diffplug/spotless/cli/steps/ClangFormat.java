@@ -37,7 +37,7 @@ public class ClangFormat extends SpotlessFormatterStep {
     String version;
 
     @CommandLine.Option(
-            names = {"--path-to-exec", "-p"},
+            names = {"--clang-format-exec", "-c"},
             description = "The path to the clang-format executable." + OptionConstants.DEFAULT_VALUE_SUFFIX_BEGIN
                     + "looks on your PATH" + OptionConstants.DEFAULT_VALUE_SUFFIX_END)
     Path pathToExec;

@@ -61,7 +61,7 @@ class ClangFormatTest extends CLIIntegrationHarness {
                 .withTargets(testFileName)
                 .withStep(ClangFormat.class)
                 .withOption("--clang-version", ClangFormatStep.defaultVersion())
-                .withOption("--path-to-exec", clangFormatExec.getAbsolutePath())
+                .withOption("--clang-format-exec", clangFormatExec.getAbsolutePath())
                 .run();
 
         assertFile(testFile).notSameSasResource(resourceName);
@@ -88,7 +88,7 @@ class ClangFormatTest extends CLIIntegrationHarness {
                 .withStep(ClangFormat.class)
                 .withOption("--clang-version", ClangFormatStep.defaultVersion())
                 .withOption("--style", "Google")
-                .withOption("--path-to-exec", clangFormatExec.getAbsolutePath())
+                .withOption("--clang-format-exec", clangFormatExec.getAbsolutePath())
                 .run();
 
         assertFile(testFile).notSameSasResource("clang/example.java.dirty");
