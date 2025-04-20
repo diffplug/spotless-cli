@@ -149,8 +149,10 @@ or apply the formatting to the files.
 
 Available formatting steps:
   clang-format          Runs clang-format
-  license-header        Runs license header
+  format-annotations    Corrects line break formatting of type annotations in
+                          java files.
   google-java-format    Runs google java format
+  license-header        Runs license header
   palantir-java-format  Runs palantir java format
   prettier              Runs prettier, the opinionated code formatter.
 
@@ -177,6 +179,7 @@ Possible exit codes:
 Spotless CLI supports the following formatter steps in alphabetical order:
 
 - [clang-format](#clang-format)
+- [format-annotations](#format-annotations)
 - [google-java-format](#google-java-format)
 - [license-header](#license-header)
 - [palantir-java-format](#palantir-java-format)
@@ -219,6 +222,56 @@ spotless --target '**/src/**/*.cpp' clang-format --clang-version=20.1.2 --style=
 
 > [!IMPORTANT]
 > Running a clang-format step requires a working installation of the clang-format binary.
+
+### format-annotations
+
+TODO: maybe list possible target file types - maybe in the shields?
+
+In Java, type annotations should be on the same line as the type that they qualify. This formatter fixes this for you.
+
+To see usage instructions for the format-annotations formatter, run: `spotless format-annotations --help`
+
+<!---freshmark usage_format_annotations
+output =
+   '```\n' +
+   {{usage.format-annotations.array}}.join('\n') +
+    '\n```';
+-->
+
+```
+Usage: spotless format-annotations [-hV] [-a[=annotation[,
+                                   annotation...]...]]... [-r[=annotation[,
+                                   annotation...]...]]...
+Corrects line break formatting of type annotations in java files.
+  -a, --add-type-annotation[=annotation[,annotation...]...]
+                  Add annotations to the list of type annotations to keep on
+                    the same line as the type.
+  -h, --help      Show this help message and exit.
+  -r, --remove-type-annotation[=annotation[,annotation...]...]
+                  Remove annotations from the list of type annotations to keep
+                    on the same line as the type.
+  -V, --version   Print version information and exit.
+```
+
+<!---freshmark /usage_format_annotations -->
+
+Example usage:
+
+```shell
+spotless --target '**/src/**/*.java' format-annotations
+
+# or add/remove annotations to the default set using list syntax
+spotless --target '**/src/**/*.java' format-annotations \
+    --add-type-annotation='MyAnnotation1,MyAnnotation2' \
+    --remove-type-annotation='MyAnnotation3,MyAnnotation4'
+
+# or add/remove annotations to the default set using repeated options
+spotless --target '**/src/**/*.java' format-annotations \
+    --add-type-annotation='MyAnnotation1' \
+    --add-type-annotation='MyAnnotation2' \
+    --remove-type-annotation='MyAnnotation3' \
+    --remove-type-annotation='MyAnnotation4'
+```
 
 ### google-java-format
 

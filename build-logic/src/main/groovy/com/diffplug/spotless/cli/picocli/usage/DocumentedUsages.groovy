@@ -3,6 +3,7 @@ package com.diffplug.spotless.cli.picocli.usage
 enum DocumentedUsages {
 
 	CLANG_FORMAT(),
+	FORMAT_ANNOTATIONS(),
 	MAIN(""),
 	GOOGLE_JAVA_FORMAT(),
 	LICENSE_HEADER(),
@@ -13,11 +14,11 @@ enum DocumentedUsages {
 
 	private final String formatterStepName
 
-	DocumentedUsages(){
+	DocumentedUsages() {
 		this(null)
 	}
 
-	DocumentedUsages(String formatterStepName){
+	DocumentedUsages(String formatterStepName) {
 		this.formatterStepName = formatterStepName ?: name().toLowerCase().replace('_', '-')
 		this.fileName = "${name().toLowerCase().replace('_', '-')}.spotless.usage.txt"
 	}

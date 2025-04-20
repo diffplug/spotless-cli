@@ -29,6 +29,8 @@ public final class OptionConstants {
 
     public static final String VALID_AND_DEFAULT_VALUES_SUFFIX = VALID_VALUES_SUFFIX + DEFAULT_VALUE_SUFFIX;
 
+    public static final String OPTION_LIST_SPLIT = ",";
+
     private OptionConstants() {
         // no instance
     }
