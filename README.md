@@ -210,6 +210,11 @@ Runs clang-format
                         The version of clang-format to use.
                         (default: 10.0.1)
   -V, --version         Print version information and exit.
+
+📄 The following file types are supported by this formatter step:
+C, C++, Java, JavaScript, JSON, Objective-C, Protobuf, C#
+
+🌎 Homepage: https://clang.llvm.org/docs/ClangFormat.html
 ```
 
 <!---freshmark /usage_clang_format -->
@@ -251,6 +256,9 @@ Corrects line break formatting of type annotations in java files.
                   Remove annotations from the list of type annotations to keep
                     on the same line as the type.
   -V, --version   Print version information and exit.
+
+📄 The following file types are supported by this formatter step:
+Java
 ```
 
 <!---freshmark /usage_format_annotations -->
@@ -311,6 +319,11 @@ Runs google java format
                           One of: AOSP, GOOGLE
                           (default: GOOGLE)
   -V, --version           Print version information and exit.
+
+📄 The following file types are supported by this formatter step:
+Java
+
+🌎 Homepage: https://github.com/google/google-java-format
 ```
 
 <!---freshmark /usage_google_java_format -->
@@ -369,6 +382,12 @@ Runs license header
                           The separator to use for the year range in the
                             license header.
                           (default: -)
+
+📄 The following file types are supported by this formatter step:
+any
+
+🌎 Homepage: https://github.
+com/diffplug/spotless/tree/main/plugin-gradle#license-header
 ```
 
 <!---freshmark /usage_license_header -->
@@ -413,6 +432,11 @@ Runs palantir java format
                          One of: PALANTIR, AOSP, GOOGLE
                          (default: PALANTIR)
   -V, --version          Print version information and exit.
+
+📄 The following file types are supported by this formatter step:
+Java
+
+🌎 Homepage: https://github.com/palantir/palantir-java-format
 ```
 
 <!---freshmark /usage_palantir_java_format -->
@@ -483,6 +507,14 @@ Runs prettier, the opinionated code formatter.
   -R, --npmrc-file=<explicitNpmrcFile>
                   The explicit path to the .npmrc file.
   -V, --version   Print version information and exit.
+
+📄 The following file types are supported by this formatter step:
+JavaScript, JSX, Angular, Vue, Flow, TypeScript, CSS, Less, SCSS, HTML,
+Ember/Handlebars, JSON, GraphQL, Markdown, YAML, (and more using plugins)
+
+🌎 Homepage: https://prettier.io/
+
+🧩 Find plugins at https://prettier.io/docs/plugins.html#official-plugins
 ```
 
 <!---freshmark /usage_prettier -->

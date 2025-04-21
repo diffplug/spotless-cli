@@ -21,6 +21,7 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
 import com.diffplug.spotless.FormatterStep;
+import com.diffplug.spotless.cli.help.FormatterStepConstants;
 import com.diffplug.spotless.cli.help.OptionConstants;
 import com.diffplug.spotless.java.FormatAnnotationsStep;
 
@@ -28,8 +29,14 @@ import picocli.CommandLine;
 
 @CommandLine.Command(
         name = "format-annotations",
-        description = "Corrects line break formatting of type annotations in java files.")
+        description = "Corrects line break formatting of type annotations in java files.",
+        footer = {
+            "",
+            FormatterStepConstants.SUPPORTED_FILETYPES_INTRO + FormatAnnotations.SUPPORTED_FILETYPES,
+        })
 public class FormatAnnotations extends SpotlessFormatterStep {
+
+    public static final String SUPPORTED_FILETYPES = "Java";
 
     @CommandLine.Option(
             names = {"--add-type-annotation", "-a"},
