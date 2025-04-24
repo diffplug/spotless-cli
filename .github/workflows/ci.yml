@@ -144,6 +144,8 @@ jobs:
         run: "./gradlew -PreleaseBinariesRootDir=app/build/collected-binaries prepareReleaseBinaryZips"
       - name: "Prepare jreleaser for distribution"
         run: "./gradlew prepareJReleaserConfig"
+        env:
+          JRELEASER_CHOCOLATEY_USER: ${{ secrets.CHOCO_USER }} #manually extracted in jreleaser.yml
       - name: "Dry-run choco distribution"
         if: "${{ matrix.platform.name == 'windows-x86_64' }}"
         uses: jreleaser/release-action@v2

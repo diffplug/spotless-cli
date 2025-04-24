@@ -95,6 +95,8 @@ jobs:
         run: echo "VERSION=$(./gradlew changelogPrintCurrentVersion -Prelease=true --quiet)" >> "$GITHUB_OUTPUT"
       - name: "Prepare jreleaser for distribution"
         run: "./gradlew prepareJReleaserConfig"
+        env:
+          JRELEASER_CHOCOLATEY_USER: ${{ secrets.CHOCO_USER }} #manually extracted in jreleaser.yml
       - name: "Publish distributions"
         uses: jreleaser/release-action@v2
         with:
@@ -134,6 +136,10 @@ jobs:
         with:
           # no name - download all artifacts
           path: "app/build/collected-binaries"
+      - name: "Prepare jreleaser for distribution"
+        run: "./gradlew prepareJReleaserConfig"
+        env:
+          JRELEASER_CHOCOLATEY_USER: ${{ secrets.CHOCO_USER }} #manually extracted in jreleaser.yml
       - name: "Publish distributions"
         uses: jreleaser/release-action@v2
         with:
