@@ -8,16 +8,6 @@ on:
         description: "Force version number to publish (empty for automatic semver versioning)"
         required: false
         default: ""
-      to_publish: #TODO
-        description: "What to publish"
-        required: true
-        default: "all"
-        type: choice
-        options:
-          - plugin-gradle
-          - plugin-maven
-          - all
-          - lib
 
 permissions:
   contents: write
