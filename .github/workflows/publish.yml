@@ -84,8 +84,12 @@ jobs:
         with:
           # no name - download all artifacts
           path: "app/build/collected-binaries"
+      - name: "Prepare release zips for distribution"
+        run: "./gradlew -Prelease=true -PreleaseBinariesRootDir=app/build/collected-binaries prepareReleaseBinaryZips"
       - name: "Create release"
         run: "./gradlew -Prelease=true -PreleaseBinariesRootDir=app/build/collected-binaries changelogPush"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} # for gh cli usage
       - name: "Get version and set to output"
         id: get_version
         run: echo "VERSION=$(./gradlew changelogPrintCurrentVersion -Prelease=true --quiet)" >> "$GITHUB_OUTPUT"
