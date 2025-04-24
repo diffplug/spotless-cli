@@ -26,8 +26,9 @@ import com.diffplug.spotless.ThrowingEx;
 import com.diffplug.spotless.antlr4.Antlr4Defaults;
 import com.diffplug.spotless.cli.core.SpotlessActionContext;
 import com.diffplug.spotless.cli.core.TargetFileTypeInferer;
-import com.diffplug.spotless.cli.help.FormatterStepConstants;
+import com.diffplug.spotless.cli.help.AdditionalInfoLinks;
 import com.diffplug.spotless.cli.help.OptionConstants;
+import com.diffplug.spotless.cli.help.SupportedFileTypes;
 import com.diffplug.spotless.cpp.CppDefaults;
 import com.diffplug.spotless.generic.LicenseHeaderStep;
 import com.diffplug.spotless.kotlin.KotlinConstants;
@@ -35,20 +36,10 @@ import com.diffplug.spotless.protobuf.ProtobufConstants;
 
 import picocli.CommandLine;
 
-@CommandLine.Command(
-        name = "license-header",
-        description = "Runs license header",
-        footer = {
-            "",
-            FormatterStepConstants.SUPPORTED_FILETYPES_INTRO + LicenseHeader.SUPPORTED_FILETYPES,
-            "",
-            FormatterStepConstants.HOMEPAGE + LicenseHeader.HOMEPAGE
-        })
+@CommandLine.Command(name = "license-header", description = "Runs license header")
+@SupportedFileTypes("any")
+@AdditionalInfoLinks("https://github.com/diffplug/spotless/tree/main/plugin-gradle#license-header")
 public class LicenseHeader extends SpotlessFormatterStep {
-    public static final String SUPPORTED_FILETYPES = "any";
-
-    public static final String HOMEPAGE = "https://github.com/diffplug/spotless/tree/main/plugin-gradle#license-header";
-
     @CommandLine.ArgGroup(exclusive = true, multiplicity = "1")
     LicenseHeaderSourceOption licenseHeaderSourceOption;
 

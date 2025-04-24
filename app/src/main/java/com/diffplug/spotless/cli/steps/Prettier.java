@@ -28,7 +28,8 @@ import org.jetbrains.annotations.NotNull;
 import com.diffplug.spotless.FormatterStep;
 import com.diffplug.spotless.cli.core.ExecutionLayout;
 import com.diffplug.spotless.cli.core.SpotlessActionContext;
-import com.diffplug.spotless.cli.help.FormatterStepConstants;
+import com.diffplug.spotless.cli.help.AdditionalInfoLinks;
+import com.diffplug.spotless.cli.help.SupportedFileTypes;
 import com.diffplug.spotless.npm.NpmPathResolver;
 import com.diffplug.spotless.npm.PrettierConfig;
 import com.diffplug.spotless.npm.PrettierFormatterStep;
@@ -41,17 +42,30 @@ import static com.diffplug.spotless.cli.core.FilePathUtil.assertDirectoryExists;
 import static com.diffplug.spotless.cli.help.OptionConstants.NEW_LINE;
 import static com.diffplug.spotless.cli.steps.OptionDefaultUse.use;
 
-@CommandLine.Command(
-        name = "prettier",
-        description = "Runs prettier, the opinionated code formatter.",
-        footer = {
-            "",
-            FormatterStepConstants.SUPPORTED_FILETYPES_INTRO + Prettier.SUPPORTED_FILETYPES,
-            "",
-            FormatterStepConstants.HOMEPAGE + Prettier.HOMEPAGE,
-            "",
-            "🧩 Find plugins at https://prettier.io/docs/plugins.html#official-plugins"
-        })
+@CommandLine.Command(name = "prettier", description = "Runs prettier, the opinionated code formatter.")
+@SupportedFileTypes({
+    "JavaScript",
+    "JSX",
+    "Angular",
+    "Vue",
+    "Flow",
+    "TypeScript",
+    "CSS",
+    "Less",
+    "SCSS",
+    "HTML",
+    "Ember/Handlebars",
+    "JSON",
+    "GraphQL",
+    "Markdown",
+    "YAML",
+    "Java (only with plugins)",
+    "and more (using plugins)"
+})
+@AdditionalInfoLinks({
+    "https://prettier.io/",
+    "🧩 Find plugins at https://prettier.io/docs/plugins.html#official-plugins"
+})
 public class Prettier extends SpotlessFormatterStep {
 
     public static final String SUPPORTED_FILETYPES =

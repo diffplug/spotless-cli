@@ -17,6 +17,7 @@ package com.diffplug.spotless.cli;
 
 import org.junit.jupiter.api.Test;
 
+import com.diffplug.spotless.cli.steps.ClangFormat;
 import com.diffplug.spotless.tag.CliNativeTest;
 import com.diffplug.spotless.tag.CliProcessTest;
 
@@ -36,5 +37,19 @@ public class SpotlessCLIHelpAndVersionTest extends CLIIntegrationHarness {
     void testVersion() {
         SpotlessCLIRunner.Result result = cliRunner().withOption("--version").run();
         assertThat(result.stdOut()).containsPattern("Spotless CLI \\d+\\.\\d+\\.\\d+.*");
+    }
+
+    @Test
+    void testHelpShowsSupportedFileTypes() {
+        SpotlessCLIRunner.Result result =
+                cliRunner().withStep(ClangFormat.class).withOption("--help").run();
+        assertThat(result.stdOut()).contains("JavaScript", "C++");
+    }
+
+    @Test
+    void testHelpShowsHomepage() {
+        SpotlessCLIRunner.Result result =
+                cliRunner().withStep(ClangFormat.class).withOption("--help").run();
+        assertThat(result.stdOut()).contains("https://clang.llvm.org");
     }
 }

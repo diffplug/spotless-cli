@@ -211,10 +211,18 @@ Runs clang-format
                         (default: 10.0.1)
   -V, --version         Print version information and exit.
 
-📄 The following file types are supported by this formatter step:
-C, C++, Java, JavaScript, JSON, Objective-C, Protobuf, C#
+✅ This step supports the following file types:
+   * C
+   * C++
+   * Java
+   * JavaScript
+   * JSON
+   * Objective-C
+   * Protobuf
+   * C#
 
-🌎 Homepage: https://clang.llvm.org/docs/ClangFormat.html
+🌎 Additional info:
+https://clang.llvm.org/docs/ClangFormat.html
 ```
 
 <!---freshmark /usage_clang_format -->
@@ -257,7 +265,7 @@ Corrects line break formatting of type annotations in java files.
                     on the same line as the type.
   -V, --version   Print version information and exit.
 
-📄 The following file types are supported by this formatter step:
+✅ The following file types are supported by this formatter step:
 Java
 ```
 
@@ -320,10 +328,10 @@ Runs google java format
                           (default: GOOGLE)
   -V, --version           Print version information and exit.
 
-📄 The following file types are supported by this formatter step:
-Java
+✅ This step supports the following file type: Java
 
-🌎 Homepage: https://github.com/google/google-java-format
+🌎 Additional info:
+https://github.com/google/google-java-format
 ```
 
 <!---freshmark /usage_google_java_format -->
@@ -383,11 +391,10 @@ Runs license header
                             license header.
                           (default: -)
 
-📄 The following file types are supported by this formatter step:
-any
+✅ This step supports the following file type: any
 
-🌎 Homepage: https://github.
-com/diffplug/spotless/tree/main/plugin-gradle#license-header
+🌎 Additional info:
+https://github.com/diffplug/spotless/tree/main/plugin-gradle#license-header
 ```
 
 <!---freshmark /usage_license_header -->
@@ -433,10 +440,10 @@ Runs palantir java format
                          (default: PALANTIR)
   -V, --version          Print version information and exit.
 
-📄 The following file types are supported by this formatter step:
-Java
+✅ This step supports the following file type: Java
 
-🌎 Homepage: https://github.com/palantir/palantir-java-format
+🌎 Additional info:
+https://github.com/palantir/palantir-java-format
 ```
 
 <!---freshmark /usage_palantir_java_format -->
@@ -508,13 +515,28 @@ Runs prettier, the opinionated code formatter.
                   The explicit path to the .npmrc file.
   -V, --version   Print version information and exit.
 
-📄 The following file types are supported by this formatter step:
-JavaScript, JSX, Angular, Vue, Flow, TypeScript, CSS, Less, SCSS, HTML,
-Ember/Handlebars, JSON, GraphQL, Markdown, YAML, (and more using plugins)
+✅ This step supports the following file types:
+   * JavaScript
+   * JSX
+   * Angular
+   * Vue
+   * Flow
+   * TypeScript
+   * CSS
+   * Less
+   * SCSS
+   * HTML
+   * Ember/Handlebars
+   * JSON
+   * GraphQL
+   * Markdown
+   * YAML
+   * Java (only with plugins)
+   * and more (using plugins)
 
-🌎 Homepage: https://prettier.io/
-
-🧩 Find plugins at https://prettier.io/docs/plugins.html#official-plugins
+🌎 Additional info:
+   * https://prettier.io/
+   * 🧩 Find plugins at https://prettier.io/docs/plugins.html#official-plugins
 ```
 
 <!---freshmark /usage_prettier -->

@@ -19,25 +19,17 @@ import java.util.List;
 
 import com.diffplug.spotless.FormatterStep;
 import com.diffplug.spotless.cli.core.SpotlessActionContext;
-import com.diffplug.spotless.cli.help.FormatterStepConstants;
+import com.diffplug.spotless.cli.help.AdditionalInfoLinks;
 import com.diffplug.spotless.cli.help.OptionConstants;
+import com.diffplug.spotless.cli.help.SupportedFileTypes;
 import com.diffplug.spotless.java.GoogleJavaFormatStep;
 
 import picocli.CommandLine;
 
-@CommandLine.Command(
-        name = "google-java-format",
-        description = "Runs google java format",
-        footer = {
-            "",
-            FormatterStepConstants.SUPPORTED_FILETYPES_INTRO + GoogleJavaFormat.SUPPORTED_FILETYPES,
-            "",
-            FormatterStepConstants.HOMEPAGE + GoogleJavaFormat.HOMEPAGE
-        })
+@CommandLine.Command(name = "google-java-format", description = "Runs google java format")
+@SupportedFileTypes("Java")
+@AdditionalInfoLinks("https://github.com/google/google-java-format")
 public class GoogleJavaFormat extends SpotlessFormatterStep {
-    public static final String SUPPORTED_FILETYPES = "Java";
-
-    public static final String HOMEPAGE = "https://github.com/google/google-java-format";
 
     @CommandLine.Option(
             names = {"--style", "-s"},

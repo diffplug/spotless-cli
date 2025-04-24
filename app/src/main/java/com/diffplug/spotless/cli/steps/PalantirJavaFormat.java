@@ -21,25 +21,17 @@ import org.jetbrains.annotations.NotNull;
 
 import com.diffplug.spotless.FormatterStep;
 import com.diffplug.spotless.cli.core.SpotlessActionContext;
-import com.diffplug.spotless.cli.help.FormatterStepConstants;
+import com.diffplug.spotless.cli.help.AdditionalInfoLinks;
 import com.diffplug.spotless.cli.help.OptionConstants;
+import com.diffplug.spotless.cli.help.SupportedFileTypes;
 import com.diffplug.spotless.java.PalantirJavaFormatStep;
 
 import picocli.CommandLine;
 
-@CommandLine.Command(
-        name = "palantir-java-format",
-        description = "Runs palantir java format",
-        footer = {
-            "",
-            FormatterStepConstants.SUPPORTED_FILETYPES_INTRO + PalantirJavaFormat.SUPPORTED_FILETYPES,
-            "",
-            FormatterStepConstants.HOMEPAGE + PalantirJavaFormat.HOMEPAGE
-        })
+@CommandLine.Command(name = "palantir-java-format", description = "Runs palantir java format")
+@SupportedFileTypes("Java")
+@AdditionalInfoLinks("https://github.com/palantir/palantir-java-format")
 public class PalantirJavaFormat extends SpotlessFormatterStep {
-    public static final String SUPPORTED_FILETYPES = "Java";
-
-    public static final String HOMEPAGE = "https://github.com/palantir/palantir-java-format";
 
     @CommandLine.Option(
             names = {"--style", "-s"},

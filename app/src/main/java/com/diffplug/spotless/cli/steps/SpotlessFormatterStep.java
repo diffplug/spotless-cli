@@ -18,14 +18,41 @@ package com.diffplug.spotless.cli.steps;
 import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.diffplug.spotless.FormatterStep;
 import com.diffplug.spotless.cli.core.SpotlessActionContext;
+import com.diffplug.spotless.cli.help.SpotlessFormatterStepHelpRenderer;
 
 import picocli.CommandLine;
 
 @CommandLine.Command(mixinStandardHelpOptions = true, usageHelpAutoWidth = true)
 public abstract class SpotlessFormatterStep implements SpotlessCLIFormatterStep {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(SpotlessFormatterStep.class);
+
+    @CommandLine.Spec
+    private CommandLine.Model.CommandSpec spec;
+
+    @CommandLine.Option(
+            names = "--xxxabbbaaaddd", // random value, just to make it unique
+            hidden = true,
+            defaultValue = "true",
+            description = "just a hook to be invoked so we can modify the help section in the spec.commandLine()")
+    private void setSupportedFileTypes(boolean ignore) {
+        SpotlessFormatterStepHelpRenderer helpRenderer = new SpotlessFormatterStepHelpRenderer(this);
+        if (!helpRenderer.addSupportedFileTypesSection(spec)) {
+            LOGGER.debug(
+                    "Adding supported file types for step {} failed",
+                    this.getClass().getSimpleName());
+        }
+        if (!helpRenderer.addAdditionalInfoLinksSection(spec)) {
+            LOGGER.debug(
+                    "Adding additional info links for step {} failed",
+                    this.getClass().getSimpleName());
+        }
+    }
 
     @NotNull @Override
     public List<FormatterStep> prepareFormatterSteps(SpotlessActionContext context) {

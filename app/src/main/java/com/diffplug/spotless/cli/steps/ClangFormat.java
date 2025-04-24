@@ -21,21 +21,16 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
 import com.diffplug.spotless.FormatterStep;
-import com.diffplug.spotless.cli.help.FormatterStepConstants;
+import com.diffplug.spotless.cli.help.AdditionalInfoLinks;
 import com.diffplug.spotless.cli.help.OptionConstants;
+import com.diffplug.spotless.cli.help.SupportedFileTypes;
 import com.diffplug.spotless.cpp.ClangFormatStep;
 
 import picocli.CommandLine;
 
-@CommandLine.Command(
-        name = "clang-format",
-        description = "Runs clang-format",
-        footer = {
-            "",
-            FormatterStepConstants.SUPPORTED_FILETYPES_INTRO + ClangFormat.SUPPORTED_FILETYPES,
-            "",
-            FormatterStepConstants.HOMEPAGE + ClangFormat.HOMEPAGE
-        })
+@CommandLine.Command(name = "clang-format", description = "Runs clang-format")
+@SupportedFileTypes({"C", "C++", "Java", "JavaScript", "JSON", "Objective-C", "Protobuf", "C#"})
+@AdditionalInfoLinks({"https://clang.llvm.org/docs/ClangFormat.html"})
 public class ClangFormat extends SpotlessFormatterStep {
 
     public static final String SUPPORTED_FILETYPES = "C, C++, Java, JavaScript, JSON, Objective-C, Protobuf, C#";
