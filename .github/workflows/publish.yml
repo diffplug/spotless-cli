@@ -51,7 +51,7 @@ jobs:
       - name: "Setup Gradle"
         uses: "gradle/actions/setup-gradle@v4"
       - name: "Run nativeCompile"
-        run: "./gradlew -Prelease=true nativeCompile"
+        run: "./gradlew -Prelease=true -PreleaseForceVersion=${{ github.event.inputs.force_version }} nativeCompile"
       - name: "upload binary" # for collecting later
         uses: actions/upload-artifact@v4
         with:
@@ -85,14 +85,14 @@ jobs:
           # no name - download all artifacts
           path: "app/build/collected-binaries"
       - name: "Prepare release zips for distribution"
-        run: "./gradlew -Prelease=true -PreleaseBinariesRootDir=app/build/collected-binaries prepareReleaseBinaryZips"
+        run: "./gradlew -Prelease=true -PreleaseForceVersion=${{ github.event.inputs.force_version }} -PreleaseBinariesRootDir=app/build/collected-binaries prepareReleaseBinaryZips"
       - name: "Create release"
-        run: "./gradlew -Prelease=true -PreleaseBinariesRootDir=app/build/collected-binaries changelogPush"
+        run: "./gradlew -Prelease=true -PreleaseForceVersion=${{ github.event.inputs.force_version }} -PreleaseBinariesRootDir=app/build/collected-binaries changelogPush"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} # for gh cli usage
       - name: "Get version and set to output"
         id: get_version
-        run: echo "VERSION=$(./gradlew changelogPrintCurrentVersion -Prelease=true --quiet)" >> "$GITHUB_OUTPUT"
+        run: echo "VERSION=$(./gradlew changelogPrintCurrentVersion -Prelease=true -PreleaseForceVersion=${{ github.event.inputs.force_version }} --quiet)" >> "$GITHUB_OUTPUT"
       - name: "Prepare jreleaser for distribution"
         run: "./gradlew prepareJReleaserConfig"
         env:
@@ -136,6 +136,8 @@ jobs:
         with:
           # no name - download all artifacts
           path: "app/build/collected-binaries"
+      - name: "Prepare release zips for distribution"
+        run: "./gradlew -Prelease=true -PreleaseForceVersion=${{ github.event.inputs.force_version }} -PreleaseBinariesRootDir=app/build/collected-binaries prepareReleaseBinaryZips"
       - name: "Prepare jreleaser for distribution"
         run: "./gradlew prepareJReleaserConfig"
         env:
