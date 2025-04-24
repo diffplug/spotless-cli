@@ -99,6 +99,8 @@ jobs:
       - name: "Get version and set to output"
         id: get_version
         run: echo "VERSION=$(./gradlew changelogPrintCurrentVersion -Prelease=true --quiet)" >> "$GITHUB_OUTPUT"
+      - name: "Prepare jreleaser for distribution"
+        run: "./gradlew prepareJReleaserConfig"
       - name: "Publish distributions"
         uses: jreleaser/release-action@v2
         with:
@@ -147,6 +149,7 @@ jobs:
           JRELEASER_PROJECT_VERSION: ${{ needs.createRelease.outputs.RELEASE_VERSION }}
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           JRELEASER_CHOCOLATEY_GITHUB_TOKEN: ${{ secrets.BREW_CHOCO_CLI_GH_TOKEN }}
+          JRELEASER_CHOCOLATEY_USER: ${{ secrets.CHOCO_USER }} #manually extracted in jreleaser.yml
           JRELEASER_CHOCOLATEY_API_KEY: ${{ secrets.CHOCO_API_KEY }}
           JRELEASER_DISTRIBUTIONS_SPOTLESS_CLI_CHOCOLATEY_ACTIVE: ALWAYS
       - name: "Persist jreleaser output"

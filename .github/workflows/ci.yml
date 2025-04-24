@@ -143,6 +143,8 @@ jobs:
           path: "app/build/collected-binaries"
       - name: "Prepare release zips for distribution"
         run: "./gradlew -PreleaseBinariesRootDir=app/build/collected-binaries prepareReleaseBinaryZips"
+      - name: "Prepare jreleaser for distribution"
+        run: "./gradlew prepareJReleaserConfig"
       - name: "Dry-run choco distribution"
         if: "${{ matrix.platform.name == 'windows-x86_64' }}"
         uses: jreleaser/release-action@v2
@@ -154,6 +156,7 @@ jobs:
           JRELEASER_GITHUB_TOKEN: abc # don't provide correct token, just a dry-run
           JRELEASER_DISTRIBUTIONS_SPOTLESS_CLI_CHOCOLATEY_ACTIVE: ALWAYS
           JRELEASER_CHOCOLATEY_GITHUB_TOKEN: abc # don't provide correct token, just a dry-run
+          JRELEASER_CHOCOLATEY_USER: abc # don't provide correct token, just a dry-run
           JRELEASER_CHOCOLATEY_API_KEY: abc # don't provide correct token, just a dry-run
       - name: "Dry-run brew distribution"
         if: "${{ matrix.platform.name == 'linux-x86_64' }}"

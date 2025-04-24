@@ -171,3 +171,5 @@ gradle-app.setting
 
 #######  Custom stuff below here #######
 
+# jreleaser
+jreleaser.yml
