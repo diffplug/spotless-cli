@@ -1,0 +1,22 @@
+plugins {
+	id 'java'
+}
+
+configurations {
+	mockitoAgent
+}
+dependencies {
+	testImplementation(libs.mockito)
+	mockitoAgent(libs.mockito) {
+		transitive = false
+	}
+}
+
+tasks.withType(Test).configureEach { Test task ->
+	task.jvmArgs = [
+		"-javaagent:${configurations.mockitoAgent.asPath}",
+		// disable class data sharing, to prevent "OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended"
+		// see https://github.com/mockito/mockito/issues/3111#issuecomment-1733939989
+		'-Xshare:off',
+	]
+}

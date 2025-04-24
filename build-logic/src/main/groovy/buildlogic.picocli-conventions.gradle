@@ -1,0 +1,52 @@
+plugins {
+	id 'buildlogic.java-application-conventions'
+}
+
+dependencies {
+	implementation libs.picocli
+	annotationProcessor libs.picocli.codegen
+}
+
+compileJava {
+	// options for picocli codegen
+	// https://github.com/remkop/picocli/tree/main/picocli-codegen#222-other-options
+	options.compilerArgs += [
+		"-Aproject=${project.group}/${project.name}",
+		"-Aother.resource.bundles=application",
+		// patterns require double-escaping (one escape is removed by groovy, the other one is needed in the resulting json file)
+		"-Aother.resource.patterns=.*\\\\.properties,.*\\\\.json,.*\\\\.js"
+	]
+}
+
+tasks.withType(ProcessResources)
+		.configureEach(new ApplicationPropertiesProcessResourcesAction(
+		[
+			"cli.version": rootProject.version,
+			"lib.version": libs.versions.spotless.lib.get(),
+			"lib.extra.version": libs.versions.spotless.lib.get(),
+		]
+		))
+
+class ApplicationPropertiesProcessResourcesAction implements Action<ProcessResources> {
+
+	private final Map<String, String> properties = [:]
+
+	ApplicationPropertiesProcessResourcesAction(Map<String, String> props) {
+		this.properties.putAll(props)
+	}
+
+	@Override
+	void execute(ProcessResources processResources) {
+		def localProps = properties // prevent issues with decorated closure
+		// make sure to rerun task if properties change
+		processResources.inputs.properties(localProps)
+
+		// replace tokens in application.properties
+		processResources.filesMatching("application.properties") {
+			filter(
+					org.apache.tools.ant.filters.ReplaceTokens,
+					tokens: localProps
+					)
+		}
+	}
+}

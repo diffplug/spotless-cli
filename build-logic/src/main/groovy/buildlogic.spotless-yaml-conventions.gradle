@@ -1,0 +1,10 @@
+plugins {
+	id 'buildlogic.spotless-common-conventions'
+}
+
+spotless {
+	yaml {
+		target '.github/workflows/*.yml', '*.yml'
+		prettier()
+	}
+}

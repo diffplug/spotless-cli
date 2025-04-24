@@ -1,0 +1,98 @@
+plugins {
+	id 'java'
+	id 'org.graalvm.buildtools.native'
+	id 'buildlogic.jar-shadow-conventions'
+}
+
+tasks.withType(org.graalvm.buildtools.gradle.tasks.GenerateResourcesConfigFile).configureEach {
+	notCompatibleWithConfigurationCache('https://github.com/britter/maven-plugin-development/issues/8')
+}
+tasks.withType(org.graalvm.buildtools.gradle.tasks.BuildNativeImageTask).configureEach {
+	notCompatibleWithConfigurationCache('https://github.com/britter/maven-plugin-development/issues/8')
+}
+
+def nativeCompileMetaDir = project.layout.buildDirectory.dir('nativeCompile/src/main/resources/native-image/' + project.group + '/' + project.name)
+
+// documentation: https://graalvm.github.io/native-build-tools/latest/gradle-plugin.html
+// use tasks 'nativeCompile' and 'nativeRun' to compile and run the native image
+graalvmNative {
+	agent {
+		enabled = !project.hasProperty('skipGraalAgent') // we would love to make this dynamic, but it's not possible
+		defaultMode = "conditional"
+		modes {
+			conditional {
+				userCodeFilterPath = 'src/nativecompile/user-code-filter.json'
+			}
+		}
+		metadataCopy {
+			inputTaskNames.add('test')
+			inputTaskNames.add('testNpm')
+			mergeWithExisting = false
+			outputDirectories.add(nativeCompileMetaDir.get().asFile.path)
+		}
+		tasksToInstrumentPredicate = new java.util.function.Predicate<Task>() {
+					@Override
+					boolean test(Task task) {
+						def instrument = task.name == 'test' || task.name == 'testNpm'
+						logger.debug("Instrumenting task ${task.name} = $instrument")
+						return instrument
+					}
+				}
+	}
+	binaries {
+		main {
+			imageName = 'spotless'
+			mainClass = 'com.diffplug.spotless.cli.SpotlessCLI'
+			sharedLibrary = false
+			useFatJar = true // use shadowJar as input to have same classpath
+
+			// allow calling prettier (using local http server)
+			buildArgs.add('--enable-url-protocols=http')
+
+			if (project.hasProperty('release') && project.release == 'true') {
+				// optimizations, see https://www.graalvm.org/latest/reference-manual/native-image/optimizations-and-performance/
+				buildArgs.add('-O3')
+				// on production builds: Aims for the best performance at the cost of longer build times.
+			} else {
+				buildArgs.add('-Ob') // Quick build mode
+			}
+			// the following options are required for GJF
+			// see: <https://github.com/google/google-java-format/issues/894#issuecomment-1430408909>
+			buildArgs.add('-J--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED')
+			buildArgs.add('-J--add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED')
+			buildArgs.add('-J--add-exports=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED')
+			buildArgs.add('-J--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED')
+			buildArgs.add('-J--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED')
+
+			buildArgs.add('--initialize-at-build-time=com.sun.tools.javac.file.Locations')
+
+			buildArgs.add('-H:+UnlockExperimentalVMOptions') // to enable the following options
+			buildArgs.add('-H:IncludeResourceBundles=com.sun.tools.javac.resources.compiler')
+			buildArgs.add('-H:IncludeResourceBundles=com.sun.tools.javac.resources.javac')
+		}
+	}
+}
+
+if (!project.hasProperty('skipGraalAgent')) {
+	tasks.named('metadataCopy') {
+		dependsOn('test', 'testNpm')
+	}
+} else {
+	tasks.named('metadataCopy') {
+		enabled = false
+	}
+}
+
+tasks.named('nativeCompile') {
+	dependsOn('shadowJar')
+	classpathJar = tasks.shadowJar.archiveFile.get().asFile
+}
+
+tasks.named('shadowJar', com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) {
+	dependsOn('metadataCopy') // produces graalvm agent info
+	from(nativeCompileMetaDir.get().asFile.path) {
+		into('META-INF/native-image/' + project.group + '/' + project.name)
+	}
+}
+
+project.ext.nativeCompileMetaDir = nativeCompileMetaDir

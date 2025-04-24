@@ -1,0 +1,11 @@
+plugins {
+	id 'java'
+}
+
+tasks.withType(Test).configureEach {
+	it.environment project.properties.subMap(["selfie"]) // optional, see "Overwrite everything" below
+	it.inputs.files(fileTree("src/test") {
+		// optional, improves up-to-date checking
+		include "**/*.ss"
+	})
+}

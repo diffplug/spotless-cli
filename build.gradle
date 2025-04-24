@@ -1,0 +1,32 @@
+import com.diffplug.spotless.cli.io.CopySingleTemplateFileTask
+
+plugins {
+	id 'buildlogic.spotless-gradle-conventions'
+	id 'buildlogic.spotless-json-conventions'
+	id 'buildlogic.spotless-markdown-conventions'
+	id 'buildlogic.spotless-yaml-conventions'
+	id 'buildlogic.changelog-conventions'
+}
+
+subprojects {
+	apply plugin: 'buildlogic.spotless-gradle-conventions'
+}
+
+allprojects {
+	repositories {
+		mavenCentral()
+	}
+}
+
+tasks.register("prepareJReleaserConfig", CopySingleTemplateFileTask) {
+	group = "jreleaser"
+	description = "Prepare JReleaser config file"
+
+	Map<String, String> replaceTokens = [
+		'Env.JRELEASER_CHOCOLATEY_USER': System.getenv("JRELEASER_CHOCOLATEY_USER") ?: "",
+	]
+
+	template.set(layout.projectDirectory.file('jreleaser.yml.template'))
+	outputFile.set(layout.projectDirectory.file('jreleaser.yml'))
+	tokens.putAll(replaceTokens)
+}

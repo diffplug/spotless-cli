@@ -1,0 +1,66 @@
+plugins {
+	id 'java'
+	id 'com.adarshr.test-logger'
+}
+
+// See com.diffplug.spotless.tag package for available JUnit 5 @Tag annotations
+def special = [
+	'npm',
+	'cliProcess',
+	'cliProcessNpm',
+	'cliNative',
+	'cliNativeNpm'
+]
+
+tasks.named('test').configure {
+	useJUnitPlatform {
+	}
+}
+
+special.forEach { tag ->
+	tasks.register("test${tag.capitalize()}", Test) {
+		useJUnitPlatform {
+			includeTags tag
+			excludeTags 'none()'
+		}
+	}
+}
+
+// any test task that does not end with Npm should exclude all the npm tests
+tasks.withType(Test).configureEach { Test task ->
+	if (!task.name.toLowerCase().endsWith('npm')) {
+		def toExclude = special.findAll { it.toLowerCase().endsWith('npm') }.join('|')
+		task.useJUnitPlatform {
+			excludeTags toExclude
+		}
+	}
+}
+
+tasks.register('testAll') {
+	dependsOn tasks.matching { it.name.startsWith('test') && it.name != 'testAll' }
+}
+
+def testAllCliProcess = tasks.register('testAllCliProcess') {
+	dependsOn tasks.matching { it.name.startsWith('testCliProcess') }
+}
+
+tasks.named('check').configure {
+	it.dependsOn(testAllCliProcess)
+}
+
+[
+	tasks.named('testCliNative'),
+	tasks.named('testCliNativeNpm')
+].each {
+	it.configure { Test task ->
+		task.inputs.files(rootProject.project(':app').tasks.named('nativeCompile').get().outputs.files)
+	}
+}
+
+tasks.register('testAllCliNative') {
+	dependsOn tasks.matching { it.name.startsWith('testCliNative') }
+}
+
+tasks.withType(Test).configureEach {
+	testLogging.showStandardStreams = true
+}

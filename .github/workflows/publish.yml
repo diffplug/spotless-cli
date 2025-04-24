@@ -1,0 +1,162 @@
+---
+name: "publish a release"
+
+on:
+  workflow_dispatch:
+    inputs:
+      force_version:
+        description: "Force version number to publish (empty for automatic semver versioning)"
+        required: false
+        default: ""
+      to_publish: #TODO
+        description: "What to publish"
+        required: true
+        default: "all"
+        type: choice
+        options:
+          - plugin-gradle
+          - plugin-maven
+          - all
+          - lib
+
+permissions:
+  contents: write
+
+concurrency:
+  group: "${{ github.workflow }}-${{ github.ref }}"
+  cancel-in-progress: true
+jobs:
+  nativeCompile:
+    name: "${{ matrix.platform.name }}: create production-binary"
+    strategy:
+      matrix:
+        platform:
+          - name: "linux-x86_64"
+            runner: "ubuntu-latest"
+          - name: "linux-aarch_64"
+            runner: "ubuntu-24.04-arm"
+          - name: "windows-x86_64"
+            runner: "windows-latest"
+          - name: "osx-aarch_64"
+            runner: "macos-latest"
+          - name: "osx-x86_64"
+            runner: "macos-13"
+    runs-on: "${{ matrix.platform.runner }}"
+    env:
+      SEGMENT_DOWNLOAD_TIMEOUT_MINS: "15"
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v4"
+        with:
+          fetch-depth: 0
+      - name: "Install JDK 21"
+        uses: "actions/setup-java@v4"
+        with:
+          distribution: "graalvm"
+          java-version: 21
+      - name: "Install Node.js"
+        uses: actions/setup-node@v4
+        with:
+          node-version: "lts/jod" # 22
+      - name: "Setup Gradle"
+        uses: "gradle/actions/setup-gradle@v4"
+      - name: "Run nativeCompile"
+        run: "./gradlew -Prelease=true nativeCompile"
+      - name: "upload binary" # for collecting later
+        uses: actions/upload-artifact@v4
+        with:
+          name: "spotless-native-binary--${{ matrix.platform.name }}"
+          path: app/build/native/nativeCompile/spotless*
+          retention-days: 3
+          if-no-files-found: "error"
+  createRelease:
+    needs: nativeCompile
+    name: "Create a new release"
+    runs-on: ubuntu-latest
+    outputs:
+      RELEASE_VERSION: ${{ steps.get_version.outputs.VERSION }}
+    env:
+      SEGMENT_DOWNLOAD_TIMEOUT_MINS: "15"
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: "Install JDK 21"
+        uses: "actions/setup-java@v4"
+        with:
+          distribution: "graalvm"
+          java-version: 21
+      - name: "Setup Gradle"
+        uses: "gradle/actions/setup-gradle@v4"
+      - name: "Retrieve production-binaries"
+        uses: "actions/download-artifact@v4"
+        with:
+          # no name - download all artifacts
+          path: "app/build/collected-binaries"
+      - name: "Create release"
+        run: "./gradlew -Prelease=true -PreleaseBinariesRootDir=app/build/collected-binaries changelogPush"
+      - name: "Get version and set to output"
+        id: get_version
+        run: echo "VERSION=$(./gradlew changelogPrintCurrentVersion -Prelease=true --quiet)" >> "$GITHUB_OUTPUT"
+      - name: "Prepare jreleaser for distribution"
+        run: "./gradlew prepareJReleaserConfig"
+      - name: "Publish distributions"
+        uses: jreleaser/release-action@v2
+        with:
+          setup-java: false
+          arguments: "publish"
+        env:
+          JRELEASER_PROJECT_VERSION: ${{ steps.get_version.outputs.VERSION }}
+          JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          JRELEASER_HOMEBREW_GITHUB_TOKEN: ${{ secrets.BREW_CHOCO_CLI_GH_TOKEN }}
+          JRELEASER_DISTRIBUTIONS_SPOTLESS_CLI_BREW_ACTIVE: ALWAYS
+      - name: "Persist jreleaser output"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jreleaser-release-unix
+          path: |
+            out/jreleaser/trace.log
+            out/jreleaser/output.properties
+  createChocoRelase:
+    needs: createRelease
+    name: "Publish chocolatey package"
+    runs-on: windows-latest
+    env:
+      SEGMENT_DOWNLOAD_TIMEOUT_MINS: "15"
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: "Install JDK 21"
+        uses: "actions/setup-java@v4"
+        with:
+          distribution: "graalvm"
+          java-version: 21
+      - name: "Retrieve production-binaries"
+        uses: "actions/download-artifact@v4"
+        with:
+          # no name - download all artifacts
+          path: "app/build/collected-binaries"
+      - name: "Publish distributions"
+        uses: jreleaser/release-action@v2
+        with:
+          setup-java: false
+          arguments: "publish"
+        env:
+          JRELEASER_PROJECT_VERSION: ${{ needs.createRelease.outputs.RELEASE_VERSION }}
+          JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          JRELEASER_CHOCOLATEY_GITHUB_TOKEN: ${{ secrets.BREW_CHOCO_CLI_GH_TOKEN }}
+          JRELEASER_CHOCOLATEY_USER: ${{ secrets.CHOCO_USER }} #manually extracted in jreleaser.yml
+          JRELEASER_CHOCOLATEY_API_KEY: ${{ secrets.CHOCO_API_KEY }}
+          JRELEASER_DISTRIBUTIONS_SPOTLESS_CLI_CHOCOLATEY_ACTIVE: ALWAYS
+      - name: "Persist jreleaser output"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jreleaser-release-windows
+          path: |
+            out/jreleaser/trace.log
+            out/jreleaser/output.properties

@@ -1,0 +1,9 @@
+plugins {
+	id 'buildlogic.java-testlibrary-conventions'
+}
+
+dependencies {
+	implementation libs.bundles.test.libs
+	implementation libs.bundles.durian.libs
+	implementation libs.picocli
+}

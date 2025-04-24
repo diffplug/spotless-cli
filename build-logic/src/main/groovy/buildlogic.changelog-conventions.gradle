@@ -1,0 +1,29 @@
+plugins {
+	id 'com.diffplug.spotless-changelog'
+	id 'buildlogic.release-prepare-packages-conventions'
+}
+
+spotlessChangelog {
+	// need -Prelease=true in order to do a publish
+	appendDashSnapshotUnless_dashPrelease=true
+	// fail if the changelog is not properly formatted
+	enforceCheck true
+
+	if (project.hasProperty('releaseForceVersion') && project.releaseForceVersion != '') {
+		forceNextVersion project.releaseForceVersion
+	}
+	commitMessage "Published v{{version}}"
+	tagMessage "{{changes}}"
+	tagPrefix "v"
+	// https://cli.github.com/manual/gh_release_create
+	runAfterPush "gh release create v{{version}} --title 'spotless-cli v{{version}}' --notes-from-tag ${getPathsOfReleaseBinaryZips().join(' ')}"
+}
+
+version = spotlessChangelog.versionNext
+
+tasks.register('changelogPrintCurrentVersion') {
+	def versionToPrint = spotlessChangelog.versionNext
+	doLast {
+		println "${versionToPrint}"
+	}
+}
