@@ -10,3 +10,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Initial version of the CLI
+- Supported formatters (in alphabetical order):
+  - clang-format
+  - format-annotations
+  - google-java-format
+  - license-header
+  - palantir-java-format
+  - prettier
