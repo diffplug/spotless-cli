@@ -238,8 +238,6 @@ spotless --target '**/src/**/*.cpp' clang-format --clang-version=20.1.2 --style=
 
 ### format-annotations
 
-TODO: maybe list possible target file types - maybe in the shields?
-
 In Java, type annotations should be on the same line as the type that they qualify. This formatter fixes this for you.
 
 To see usage instructions for the format-annotations formatter, run: `spotless format-annotations --help`
@@ -265,8 +263,10 @@ Corrects line break formatting of type annotations in java files.
                     on the same line as the type.
   -V, --version   Print version information and exit.
 
-✅ The following file types are supported by this formatter step:
-Java
+✅ This step supports the following file type: Java
+
+🌎 Additional info:
+https://github.com/diffplug/spotless/tree/main/plugin-gradle#formatAnnotations
 ```
 
 <!---freshmark /usage_format_annotations -->
