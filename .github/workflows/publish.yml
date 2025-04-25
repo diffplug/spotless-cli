@@ -84,6 +84,9 @@ jobs:
         with:
           # no name - download all artifacts
           path: "app/build/collected-binaries"
+      - name: "Make sure downloaded binaries are executable"
+        run: |
+          find app/build/collected-binaries -type f -name "spotless*" -exec chmod +x {} \;
       - name: "Prepare release zips for distribution"
         run: "./gradlew -Prelease=true -PreleaseForceVersion=${{ github.event.inputs.force_version }} -PreleaseBinariesRootDir=app/build/collected-binaries prepareReleaseBinaryZips"
       - name: "Create release"
@@ -136,6 +139,11 @@ jobs:
         with:
           # no name - download all artifacts
           path: "app/build/collected-binaries"
+      - name: "Make sure downloaded binaries are executable"
+        run: |
+          for /r "app\build\collected-binaries" %%f in (spotless*) do (
+              icacls "%%f" /grant Everyone:RX
+          )
       - name: "Prepare release zips for distribution"
         run: "./gradlew -Prelease=true -PreleaseForceVersion=${{ github.event.inputs.force_version }} -PreleaseBinariesRootDir=app/build/collected-binaries prepareReleaseBinaryZips"
       - name: "Prepare jreleaser for distribution"
