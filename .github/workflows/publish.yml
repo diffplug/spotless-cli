@@ -118,6 +118,13 @@ jobs:
           path: |
             out/jreleaser/trace.log
             out/jreleaser/output.properties
+      - name: "upload distribution zips" # for chocolatey distribution
+        uses: actions/upload-artifact@v4
+        with:
+          name: "spotless-distribution-zips"
+          path: app/build/prepared-release-zips/spotless*.zip
+          retention-days: 3
+          if-no-files-found: "error"
   createChocoRelase:
     needs: createRelease
     name: "Publish chocolatey package"
@@ -134,18 +141,11 @@ jobs:
         with:
           distribution: "graalvm"
           java-version: 21
-      - name: "Retrieve production-binaries"
+      - name: "Download release zips"
         uses: "actions/download-artifact@v4"
         with:
-          # no name - download all artifacts
-          path: "app/build/collected-binaries"
-      - name: "Make sure downloaded binaries are executable"
-        run: |
-          for /r "app\build\collected-binaries" %%f in (spotless*) do (
-              icacls "%%f" /grant Everyone:RX
-          )
-      - name: "Prepare release zips for distribution"
-        run: "./gradlew -Prelease=true -PreleaseForceVersion=${{ github.event.inputs.force_version }} -PreleaseBinariesRootDir=app/build/collected-binaries prepareReleaseBinaryZips"
+          name: "spotless-distribution-zips" # download release zips only
+          path: "app/build/prepared-release-zips"
       - name: "Prepare jreleaser for distribution"
         run: "./gradlew prepareJReleaserConfig"
         env:

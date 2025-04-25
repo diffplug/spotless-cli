@@ -144,12 +144,6 @@ jobs:
         if: "${{ matrix.platform.name == 'linux-x86_64' }}"
         run: |
           find app/build/collected-binaries -type f -name "spotless*" -exec chmod +x {} \;
-      - name: "Make sure downloaded binaries are executable"
-        if: "${{ matrix.platform.name == 'windows-x86_64' }}"
-        run: |
-          for /r "app\build\collected-binaries" %%f in (spotless*) do (
-              icacls "%%f" /grant Everyone:RX
-          )
       - name: "Prepare release zips for distribution"
         run: "./gradlew -PreleaseBinariesRootDir=app/build/collected-binaries prepareReleaseBinaryZips"
       - name: "Prepare jreleaser for distribution"
