@@ -27,3 +27,28 @@ tasks.register('changelogPrintCurrentVersion') {
 		println "${versionToPrint}"
 	}
 }
+
+tasks.register('changelogPrintUnreleasedVersionContent') {
+	def changelog = spotlessChangelog.parsedChangelog
+	doLast {
+		println "${changelog.unreleasedChanges()}"
+	}
+}
+
+tasks.register('changelogPrintVersionContent') {
+	def changelog = spotlessChangelog.parsedChangelog
+	if (!project.hasProperty('changelogPrintVersion') || project.changelogPrintVersion == '') {
+		throw new IllegalArgumentException("Please provide a version to print with -PchangelogPrintVersion=<version>")
+	}
+	def versionToPrint = project.changelogPrintVersion
+	doLast {
+		String changelogString = changelog.toStringUnix()
+		String changeLog = changelogString.lines()
+				.dropWhile { String line -> !line.startsWith("## [${versionToPrint}]") }
+				.skip(1) // skip the version line
+				.takeWhile { String line -> !line.startsWith("## [") }
+				.toList()
+				.join("\n")
+		println "${changeLog}"
+	}
+}
