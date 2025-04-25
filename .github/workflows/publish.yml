@@ -89,6 +89,9 @@ jobs:
           find app/build/collected-binaries -type f -name "spotless*" -exec chmod +x {} \;
       - name: "Prepare release zips for distribution"
         run: "./gradlew -Prelease=true -PreleaseForceVersion=${{ github.event.inputs.force_version }} -PreleaseBinariesRootDir=app/build/collected-binaries prepareReleaseBinaryZips"
+      - name: "Get changelog of latest release to file"
+        run: |
+          echo "$(./gradlew changelogPrintLatestVersionContent -Prelease=true -PreleaseForceVersion=${{ github.event.inputs.force_version }} --quiet)" > "app/build/release-notes.md"
       - name: "Create release"
         run: "./gradlew -Prelease=true -PreleaseForceVersion=${{ github.event.inputs.force_version }} -PreleaseBinariesRootDir=app/build/collected-binaries changelogPush"
         env:

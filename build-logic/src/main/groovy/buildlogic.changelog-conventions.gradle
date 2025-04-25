@@ -13,10 +13,9 @@ spotlessChangelog {
 		forceNextVersion project.releaseForceVersion
 	}
 	commitMessage "Published v{{version}}"
-	tagMessage "{{changes}}"
 	tagPrefix "v"
 	// https://cli.github.com/manual/gh_release_create
-	runAfterPush "gh release create v{{version}} --title 'spotless-cli v{{version}}' --notes-from-tag ${getPathsOfReleaseBinaryZips().join(' ')}"
+	runAfterPush "gh release create v{{version}} --title 'spotless-cli v{{version}}' --notes-file app/build/release-notes.md --verify-tag ${getPathsOfReleaseBinaryZips().join(' ')}"
 }
 
 version = spotlessChangelog.versionNext
@@ -35,6 +34,19 @@ tasks.register('changelogPrintUnreleasedVersionContent') {
 	}
 }
 
+tasks.register('changelogPrintLatestVersionContent') {
+	def changelog = spotlessChangelog.parsedChangelog
+	doLast {
+		String changelogString = changelog.toStringUnix()
+		String changeLog = changelogString.lines()
+				.dropWhile { String line -> !line.startsWith("## [") } // latest version
+				.skip(1) // skip the version line
+				.takeWhile { String line -> !line.startsWith("## [") }
+				.toList()
+				.join("\n")
+		println "${changeLog}"
+	}
+}
 tasks.register('changelogPrintVersionContent') {
 	def changelog = spotlessChangelog.parsedChangelog
 	if (!project.hasProperty('changelogPrintVersion') || project.changelogPrintVersion == '') {
