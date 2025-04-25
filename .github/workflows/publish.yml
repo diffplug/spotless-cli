@@ -122,7 +122,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: "spotless-distribution-zips"
-          path: app/build/prepared-release-zips/spotless*.zip
+          path: app/build/prepared-release-zips/spotless*.zip*
           retention-days: 3
           if-no-files-found: "error"
   createChocoRelase:
@@ -141,6 +141,8 @@ jobs:
         with:
           distribution: "graalvm"
           java-version: 21
+      - name: "Setup Gradle"
+        uses: "gradle/actions/setup-gradle@v4"
       - name: "Download release zips"
         uses: "actions/download-artifact@v4"
         with:
