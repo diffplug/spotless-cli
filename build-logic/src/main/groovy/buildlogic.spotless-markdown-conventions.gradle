@@ -8,7 +8,6 @@ spotless {
 	freshmark {
 		// freshmark for keeping markdown files up to date
 		target '*.md'
-		targetExclude 'CHANGELOG.md' // don't mess things up for spotless-changelog
 		// provide lib versions to freshmark
 		properties(new FreshmarkPropertiesAction(rootProject, project))
 		properties {

@@ -7,11 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.1.0] - 2025-04-25
 ### Fixed
+
+- Support for transporting changelog to github releases
+
+## [0.1.0] - 2025-04-25
+
+### Fixed
+
 - Make sure release binaries are executable on unix systems
 - Make sure to use same zips for chocolatey distribution that are used for the release
+
 ### Added
+
 - Initial version of the CLI
 - Supported formatters (in alphabetical order):
   - clang-format
