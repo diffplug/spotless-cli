@@ -1,4 +1,4 @@
-# <img align="left" src="docs/logo/spotless_banner.png"> Spotless Command Line Interface CLI
+# <img align="left" src="docs/logo/spotless_banner.png" alt="Banner introducing spotless cli"> Spotless Command Line Interface CLI
 
 _Keep your code Spotless from the command line_
 
