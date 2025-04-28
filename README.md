@@ -4,7 +4,7 @@ _Keep your code Spotless from the command line_
 
 <!---freshmark shields
 output = [
-  link(shield('Changelog', 'changelog', '{{versionLast}}', 'blue'), 'CHANGES.md'),
+  link(shield('SpotlessCLI Version', 'latest-version', '{{spotlessVersion}}', 'blue'), 'CHANGES.md'),
   '',
   link(shield('OS Win', 'OS', 'Windows', 'blueviolet'), 'README.md'),
   link(shield('OS Linux', 'OS', 'Linux', 'blueviolet'), 'README.md'),
@@ -12,7 +12,7 @@ output = [
   ].join('\n')
 -->
 
-[![Changelog](https://img.shields.io/badge/changelog-versionLast%3DUNKNOWN-blue.svg)](CHANGES.md)
+[![SpotlessCLI Version](https://img.shields.io/badge/latest--version-0.1.0-blue.svg)](CHANGES.md)
 
 [![OS Win](https://img.shields.io/badge/OS-Windows-blueviolet.svg)](README.md)
 [![OS Linux](https://img.shields.io/badge/OS-Linux-blueviolet.svg)](README.md)

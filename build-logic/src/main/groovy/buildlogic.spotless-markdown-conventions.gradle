@@ -34,6 +34,7 @@ class FreshmarkPropertiesAction implements Action<Map<String, Object>> {
 		properties.putAll(versionsCollected)
 		def usageHelps = getUsageHelps()
 		properties.putAll(usageHelps)
+		properties.put('spotlessVersion', rootProject.spotlessChangelog.versionLast)
 	}
 
 	Map<String, String> getVersionsCollected() {
