@@ -70,7 +70,7 @@ brew install spotless-cli
 To install with Chocolatey on Windows:
 
 ```shell
-choco install ...
+choco install spotless-cli
 ```
 
 Alternatively, you can download the latest binary for your system from the [releases page](https://...) and add it to your PATH.
