@@ -1,22 +1,64 @@
 import com.diffplug.spotless.cli.picocli.usage.DocumentedUsages
+import com.diffplug.gradle.spotless.FreshMarkExtension
+import com.oracle.svm.core.annotate.Inject
 
 plugins {
 	id 'buildlogic.spotless-common-conventions'
+	id 'com.diffplug.spotless-changelog'
 }
+
+Action<FreshMarkExtension> freshmarkSetup = new Action<FreshMarkExtension>(){
+
+			void execute(FreshMarkExtension freshmark) {
+				freshmark.target '*.md'
+				freshmark.properties(new FreshmarkPropertiesAction(rootProject, project))
+				freshmark.properties {
+					it.put('changeThisValueToForceCacheMiss', '1f31705c-b1c6-4bce-9831-98881431b721')
+				}
+				freshmark.prettier() // prettier for markdown formatting
+				freshmark.endWithNewline()
+			}
+		}
 
 spotless {
 	freshmark {
 		// freshmark for keeping markdown files up to date
-		target '*.md'
-		// provide lib versions to freshmark
-		properties(new FreshmarkPropertiesAction(rootProject, project))
-		properties {
-			it.put('changeThisValueToForceCacheMiss', '1f31705c-b1c6-4bce-9831-98881431b721')
-		}
-		prettier() // prettier for markdown formatting
-		endWithNewline()
+		freshmarkSetup.execute(it)
 	}
 }
+
+interface MarkdownProjInjections {
+	@javax.inject.Inject
+	ExecOperations getExecOperations()
+}
+
+// if this freshmark has a changelog file, then it has version-sensitive content
+if (tasks.names.contains('changelogCheck')) {
+	// create a freshmark apply task manually
+	FreshMarkExtension freshmark = new FreshMarkExtension(spotless)
+	freshmarkSetup.execute(freshmark)
+	// override version for this task, we want to use versionNext because versionLast is bumped after evaluation, so peek ahead
+	freshmark.properties {
+		it.put('spotlessVersion', rootProject.spotlessChangelog.versionNext)
+	}
+	def changelogBumpFreshmark = freshmark.createIndependentApplyTask('changelogBumpFreshmark')
+	// freshmark should run after the changelog bump
+	changelogBumpFreshmark.dependsOn tasks.named('changelogBump')
+
+	def changelogBumpFreshmarkGitAdd = tasks.register('changelogBumpFreshmarkGitAdd') {
+		def execOps = project.objects.newInstance(MarkdownProjInjections).execOperations
+		// this git add should run after the freshmark
+		dependsOn(changelogBumpFreshmark)
+		// do the git add
+		doLast {
+			execOps.exec { commandLine 'git', 'add' , '*.md' }
+		}
+	}
+	tasks.named('changelogPush').configure {
+		dependsOn changelogBumpFreshmarkGitAdd
+	}
+}
+
 
 class FreshmarkPropertiesAction implements Action<Map<String, Object>> {
 
