@@ -6,17 +6,17 @@ _Keep your code Spotless from the command line_
 output = [
   link(shield('SpotlessCLI Version', 'latest-version', '{{spotlessVersion}}', 'blue'), 'CHANGES.md'),
   '',
-  link(shield('OS Win', 'OS', 'Windows', 'blueviolet'), 'README.md'),
-  link(shield('OS Linux', 'OS', 'Linux', 'blueviolet'), 'README.md'),
-  link(shield('OS macOS', 'OS', 'macOS', 'blueviolet'), 'README.md'),
+  link(shield('OS Win', 'OS', 'Windows', 'blueviolet'), '#installation-on-windows'),
+  link(shield('OS Linux', 'OS', 'Linux', 'blueviolet'), '#installation-on-macos-and-linux'),
+  link(shield('OS macOS', 'OS', 'macOS', 'blueviolet'), '#installation-on-macos-and-linux'),
   ].join('\n')
 -->
 
 [![SpotlessCLI Version](https://img.shields.io/badge/latest--version-0.1.0-blue.svg)](CHANGES.md)
 
-[![OS Win](https://img.shields.io/badge/OS-Windows-blueviolet.svg)](README.md)
-[![OS Linux](https://img.shields.io/badge/OS-Linux-blueviolet.svg)](README.md)
-[![OS macOS](https://img.shields.io/badge/OS-macOS-blueviolet.svg)](README.md)
+[![OS Win](https://img.shields.io/badge/OS-Windows-blueviolet.svg)](#installation-on-windows)
+[![OS Linux](https://img.shields.io/badge/OS-Linux-blueviolet.svg)](#installation-on-macos-and-linux)
+[![OS macOS](https://img.shields.io/badge/OS-macOS-blueviolet.svg)](#installation-on-macos-and-linux)
 
 <!---freshmark /shields -->
 
@@ -57,7 +57,9 @@ output = [
 
 ## Installation
 
-To install with Homebrew on macOS or Linux:
+### Installation on macOS and Linux
+
+To install with [Homebrew](https://brew.sh/) on macOS or Linux:
 
 ```shell
 brew install diffplug/tap/spotless-cli
@@ -67,7 +69,9 @@ brew tap diffplug/tap
 brew install spotless-cli
 ```
 
-To install with Chocolatey on Windows:
+### Installation on Windows
+
+To install with [Chocolatey](https://chocolatey.org/) on Windows:
 
 ```shell
 choco install spotless-cli
