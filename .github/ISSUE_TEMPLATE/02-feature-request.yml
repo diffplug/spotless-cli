@@ -1,0 +1,68 @@
+name: Feature request
+description: Suggest a new feature or enhancement for spotless-cli
+title: "[Feature Request]: "
+labels: ["enhancement"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for suggesting a feature!
+
+        Please make sure your idea aligns with the goals of `spotless-cli`, which is a thin CLI layer around `spotless-lib`.
+
+  - type: textarea
+    id: cli-version
+    attributes:
+      label: spotless-cli version (if relevant)
+      description: If your request is based on a current limitation or behavior.
+      placeholder: |
+        e.g.
+        --------------------------------------------------
+        🧼 Spotless CLI 0.1.0
+        --------------------------------------------------
+
+        spotless-lib:       3.1.0
+        spotless-lib-extra: 3.1.0
+    validations:
+      required: false
+
+  - type: textarea
+    id: feature-description
+    attributes:
+      label: Describe the feature
+      description: What functionality would you like to see added?
+      placeholder: |
+        I would like to see support for...
+        It would help because...
+    validations:
+      required: true
+
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation and use case
+      description: Why is this feature important to you? What problem does it solve?
+      placeholder: This feature would be useful for projects that...
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Have you considered any workarounds or other tools?
+      placeholder: Currently, I'm working around it by...
+    validations:
+      required: false
+
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Feature scope
+      description: Where do you think this feature belongs?
+      options:
+        - label: This should be implemented in `spotless-cli`.
+        - label: This may belong in `spotless-lib` instead.
+        - label: Not sure.

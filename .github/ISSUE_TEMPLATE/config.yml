@@ -1,0 +1,6 @@
+---
+blank_issues_enabled: true
+contact_links:
+  - name: Spotless Core Library Issues
+    url: https://github.com/diffplug/spotless/issues
+    about: Report an issue with the Spotless Core Library (if you suspect the bug to be inside the formatter itself).

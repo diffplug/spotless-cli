@@ -13,6 +13,11 @@ project:
   authors:
     - DiffPlug
   inceptionYear: "2025"
+  icons:
+    - url: https://raw.githubusercontent.com/diffplug/spotless-cli/docs/logo/spotless-brush-256.png
+      height: 256
+      width: 256
+      primary: true
 
 distributions:
   spotless-cli:

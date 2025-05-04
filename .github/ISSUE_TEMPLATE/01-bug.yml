@@ -1,0 +1,113 @@
+---
+name: Report a Bug
+description: File a bug report for spotless-cli
+title: "[BUG]: "
+labels: ["bug-unconfirmed"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for reporting a bug! Please take the time to fill out the following form so that we can
+        understand and reproduce the issue.
+        
+        Before submitting:
+        - Have you checked for **existing issues** in both [`spotless-cli`](https://github.com/diffplug/spotless-cli/issues) and [`spotless`](https://github.com/diffplug/spotless/issues)?
+        - Is this issue about formatting behavior that might belong to the [`spotless`](https://github.com/diffplug/spotless) library instead?
+
+  - type: checkboxes
+    id: pre_submission_checklist
+    attributes:
+      label: Pre-submission checks
+      description: Please confirm the following before submitting.
+      options:
+        - label: I have searched for [existing issues in spotless-cli](https://github.com/diffplug/spotless-cli/issues).
+          required: true
+        - label: I have searched for [existing issues in spotless](https://github.com/diffplug/spotless/issues).
+          required: true
+        - label: This issue is specific to `spotless-cli`, and not just the formatting logic in `spotless-lib`.
+          required: true
+
+  - type: textarea
+    id: cli-version
+    attributes:
+      label: spotless-cli version
+      description: Run `spotless --version` to get the version.
+      placeholder: |
+        e.g.
+        --------------------------------------------------
+        🧼 Spotless CLI 0.1.0
+        --------------------------------------------------
+
+        spotless-lib:       3.1.0
+        spotless-lib-extra: 3.1.0
+    validations:
+      required: true
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system and architecture
+      options:
+        - macOS (Intel)
+        - macOS (Apple Silicon / ARM)
+        - Linux (Intel)
+        - Linux (ARM)
+        - Windows (x64)
+        - I don't know (Please specify in the comment section)
+    validations:
+      required: true
+
+# # # #
+  - type: textarea
+    id: command
+    attributes:
+      label: CLI command used
+      description: The exact `spotless` command you ran.
+      placeholder: |
+        e.g. spotless --target '**/src/**/*.java' \
+                google-java-format \
+                license-header --header='/* (c) DiffPlug $YEAR */'
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Description of the problem
+      description: What did you expect to happen, and what actually happened?
+      placeholder: Describe the unexpected behavior in detail.
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs from the command line
+      description: Please re-run your command with `-vvvvv` and paste the output here.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproducibility
+    attributes:
+      label: Steps to reproduce
+      description: How can we reproduce the issue? Include the minimum files and configuration needed.
+      placeholder: |
+        1. Create a file with the following content...
+        2. Use this `.spotless.yaml` config...
+        3. Run `spotless apply` and observe...
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional context
+      description: Include any error logs, stack traces, screenshots, or references to related issues.
+      placeholder: |
+        - stack trace here
+        - related issue: #123
+        - logs from console...
+    validations:
+      required: false
