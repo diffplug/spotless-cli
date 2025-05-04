@@ -95,8 +95,8 @@ body:
       description: How can we reproduce the issue? Include the minimum files and configuration needed.
       placeholder: |
         1. Create a file with the following content...
-        2. Use this `.spotless.yaml` config...
-        3. Run `spotless apply` and observe...
+        2. Run the `spotless` command line described above...
+        3. See the following (unexpected message) in the output...
     validations:
       required: true
 
@@ -104,10 +104,11 @@ body:
     id: additional
     attributes:
       label: Additional context
-      description: Include any error logs, stack traces, screenshots, or references to related issues.
+      description: Include any additional and helpful information.
       placeholder: |
-        - stack trace here
+        - stack trace
+        - os information
         - related issue: #123
-        - logs from console...
+        - ...
     validations:
       required: false

@@ -64,5 +64,8 @@ body:
       description: Where do you think this feature belongs?
       options:
         - label: This should be implemented in `spotless-cli`.
-        - label: This may belong in `spotless-lib` instead.
+        - label: This may belong in the `spotless` core library instead.
+        - label: This needs to be implemented in both `spotless-cli` and `spotless` together.
         - label: Not sure.
+    validations:
+      required: true
