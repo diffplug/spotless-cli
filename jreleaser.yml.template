@@ -21,6 +21,15 @@ project:
       width: 256
       primary: true
 
+packagers:
+  brew:
+    multiPlatform: true
+  chocolatey:
+    username: "@Env.JRELEASER_CHOCOLATEY_USER@" # does not support name templates, so use gradle templating
+    repository:
+      branch: main
+      branchPush: main
+
 distributions:
   spotless-cli:
     stereotype: CLI
@@ -46,11 +55,7 @@ distributions:
 
     brew:
       templateDirectory: app/src/jreleaser/distributions/spotless-cli/brew
-      multiPlatform: true
 
     chocolatey:
       templateDirectory: app/src/jreleaser/distributions/spotless-cli/chocolatey
-      username: @Env.JRELEASER_CHOCOLATEY_USER@ # does not support name templates, so use gradle templating
       iconUrl: https://cdn.statically.io/gh/diffplug/spotless-cli/v{{projectVersion}}/docs/logo/spotless-brush-256.png
-      repository:
-        branch: main
