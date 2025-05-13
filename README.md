@@ -12,7 +12,7 @@ output = [
   ].join('\n')
 -->
 
-[![SpotlessCLI Version](https://img.shields.io/badge/latest--version-0.0.0-blue.svg)](CHANGES.md)
+[![SpotlessCLI Version](https://img.shields.io/badge/latest--version-0.1.0-blue.svg)](CHANGES.md)
 
 [![OS Win](https://img.shields.io/badge/OS-Windows-blueviolet.svg)](#installation-on-windows)
 [![OS Linux](https://img.shields.io/badge/OS-Linux-blueviolet.svg)](#installation-on-macos-and-linux)
@@ -106,74 +106,7 @@ output =
 -->
 
 ```
-                     __  __
-   _________  ____  / /_/ /__  __________
-  / ___/ __ \/ __ \/ __/ / _ \/ ___/ ___/
- (__  ) /_/ / /_/ / /_/ /  __(__  |__  )
-/____/ .___/\____/\__/_/\___/____/____/   Spotless CLI
-    /_/
 
-
-Usage: spotless [-hV] [-e=<encoding>] [-l=<lineEnding>] [--log-file=<logFile>]
-                [-m=<spotlessMode>] [-p=N] [-t=<targets>]... [-q | -v [-v]...]
-                [FORMATTING_STEPS]
-
-spotless is a command line interface (CLI) for the spotless code formatter.
-It can either check if your files are formatted according to your configuration
-or apply the formatting to the files.
-
-  -e, --encoding=<encoding>  The encoding of the files to format.
-                             (default: UTF-8)
-  -h, --help                 Show this help message and exit.
-  -l, --line-ending=<lineEnding>
-                             The line ending of the files to format.
-                             One of: GIT_ATTRIBUTES,
-                               GIT_ATTRIBUTES_FAST_ALLSAME, PLATFORM_NATIVE,
-                               WINDOWS, UNIX, MAC_CLASSIC, PRESERVE
-                             (default: UNIX)
-      --log-file=<logFile>   The log file to write the output to.
-  -m, --mode=<spotlessMode>  The mode to run spotless in.
-                             One of: CHECK, APPLY
-                             (default: APPLY)
-                             APPLY: Apply the correct formatting where needed
-                               (replace file contents with formatted content).
-                             CHECK: Check if the files are formatted or show
-                               the diff of the formatting.
-  -p, --parallelity=N        The number of parallel formatter threads to run.
-                             (default: #cores * 0.5)
-  -q, --quiet                Disable as much output as possible.
-  -t, --target=<targets>     The target files to format. Blobs are supported.
-                             Examples:
-                             -t 'src/**/*.java'
-                             -t 'src/**/*.kt'
-                             -t 'README.md'
-  -v                         Enable verbose output. Multiple -v options
-                               increase the verbosity (max 5).
-  -V, --version              Print version information and exit.
-
-Available formatting steps:
-  clang-format          Runs clang-format
-  format-annotations    Corrects line break formatting of type annotations in
-                          java files.
-  google-java-format    Runs google java format
-  license-header        Runs license header
-  palantir-java-format  Runs palantir java format
-  prettier              Runs prettier, the opinionated code formatter.
-
-Possible exit codes:
-  0    Successful formatting.
-       In APPLY mode, this means all files were formatted successfully.
-       In CHECK mode, this means all files were already formatted properly.
-  1    Some files need to be formatted.
-       In APPLY mode, this means some files failed to be formatted (see output
-         for details).
-       In CHECK mode, this means some files are currently not formatted
-         properly (and might be fixed in APPLY mode).
-  -1   Some files did not converge. This can happen when one formatter does not
-         converge on the file content.
-       You can find more about this special case here:
-         <https://github.com/diffplug/spotless/blob/main/PADDEDCELL.md>
-  -2   An exception occurred during execution.
 ```
 
 <!---freshmark /usage_main -->
@@ -203,30 +136,7 @@ output =
 -->
 
 ```
-Usage: spotless clang-format [-hV] [-c=<pathToExec>] [-s=<style>] [-v=<version>]
-Runs clang-format
-  -c, --clang-format-exec=<pathToExec>
-                        The path to the clang-format executable.
-                        (default: looks on your PATH)
-  -h, --help            Show this help message and exit.
-  -s, --style=<style>   The style to use for clang-format.
-  -v, --clang-version=<version>
-                        The version of clang-format to use.
-                        (default: 10.0.1)
-  -V, --version         Print version information and exit.
 
-✅ This step supports the following file types:
-   * C
-   * C++
-   * Java
-   * JavaScript
-   * JSON
-   * Objective-C
-   * Protobuf
-   * C#
-
-🌎 Additional info:
-https://clang.llvm.org/docs/ClangFormat.html
 ```
 
 <!---freshmark /usage_clang_format -->
@@ -254,23 +164,7 @@ output =
 -->
 
 ```
-Usage: spotless format-annotations [-hV] [-a[=annotation[,
-                                   annotation...]...]]... [-r[=annotation[,
-                                   annotation...]...]]...
-Corrects line break formatting of type annotations in java files.
-  -a, --add-type-annotation[=annotation[,annotation...]...]
-                  Add annotations to the list of type annotations to keep on
-                    the same line as the type.
-  -h, --help      Show this help message and exit.
-  -r, --remove-type-annotation[=annotation[,annotation...]...]
-                  Remove annotations from the list of type annotations to keep
-                    on the same line as the type.
-  -V, --version   Print version information and exit.
 
-✅ This step supports the following file type: Java
-
-🌎 Additional info:
-https://github.com/diffplug/spotless/tree/main/plugin-gradle#formatAnnotations
 ```
 
 <!---freshmark /usage_format_annotations -->
@@ -317,25 +211,7 @@ output =
 -->
 
 ```
-Usage: spotless google-java-format [-hijrV] [-s=<style>]
-Runs google java format
-  -h, --help              Show this help message and exit.
-  -i, --reorder-imports   Reorder imports.
-                          (default: false)
-  -j, --format-javadoc    Format javadoc.
-                          (default: true)
-  -r, --reflow-long-strings
-                          Reflow long strings.
-                          (default: false)
-  -s, --style=<style>     The style to use for the google java format.
-                          One of: AOSP, GOOGLE
-                          (default: GOOGLE)
-  -V, --version           Print version information and exit.
 
-✅ This step supports the following file type: Java
-
-🌎 Additional info:
-https://github.com/google/google-java-format
 ```
 
 <!---freshmark /usage_google_java_format -->
@@ -360,45 +236,7 @@ output =
 -->
 
 ```
-Usage: spotless license-header [-hV] [-c=<contentPattern>] [-d=<delimiter>]
-                               [-m=<yearMode>] [-s=<skipLinesMatching>]
-                               [-Y=<yearSeparator>] (-H=<header> |
-                               -f=<headerFile>)
-Runs license header
-  -c, --content-pattern=<contentPattern>
-                          The pattern to match the content of the file before
-                            inserting the licence header. (If the file content
-                            does not match the pattern, the header will not be
-                            inserted/updated.)
-  -d, --delimiter=<delimiter>
-                          The delimiter to use for the license header. If not
-                            provided, the delimiter will be guessed based on
-                            the first few files we find. Otherwise, 'java' will
-                            be assumed.
-  -f, --header-file=<headerFile>
-                          The license header content in a file to apply.
-                            May contain $YEAR as placeholder.
-  -h, --help              Show this help message and exit.
-  -H, --header=<header>   The license header content to apply. May contain
-                            $YEAR as placeholder.
-  -m, --year-mode=<yearMode>
-                          How and if the year in the copyright header should be
-                            updated.
-                          One of: PRESERVE, UPDATE_TO_TODAY, SET_FROM_GIT
-                          (default: PRESERVE)
-  -s, --skip-lines-matching=<skipLinesMatching>
-                          Skip lines matching the given regex pattern before
-                            inserting the licence header.
-  -V, --version           Print version information and exit.
-  -Y, --year-separator=<yearSeparator>
-                          The separator to use for the year range in the
-                            license header.
-                          (default: -)
 
-✅ This step supports the following file type: any
-
-🌎 Additional info:
-https://github.com/diffplug/spotless/tree/main/plugin-gradle#license-header
 ```
 
 <!---freshmark /usage_license_header -->
@@ -434,20 +272,7 @@ output =
 -->
 
 ```
-Usage: spotless palantir-java-format [-hjV] [-s=<style>]
-Runs palantir java format
-  -h, --help             Show this help message and exit.
-  -j, --format-javadoc   Format javadoc.
-                         (default: false)
-  -s, --style=<style>    The style to use for the palantir java format.
-                         One of: PALANTIR, AOSP, GOOGLE
-                         (default: PALANTIR)
-  -V, --version          Print version information and exit.
 
-✅ This step supports the following file type: Java
-
-🌎 Additional info:
-https://github.com/palantir/palantir-java-format
 ```
 
 <!---freshmark /usage_palantir_java_format -->
@@ -488,59 +313,7 @@ output =
 -->
 
 ```
-Usage: spotless prettier [-hV] [-C=<npmInstallCacheDir>]
-                         [-n=<explicitNpmExecutable>]
-                         [-N=<explicitNodeExecutable>]
-                         [-P=<prettierConfigPath>] [-R=<explicitNpmrcFile>]
-                         [-A=<additionalNpmrcLocations>]...
-                         [-c='OPTION=VALUE']... [-D='PACKAGE=VERSION']...
-Runs prettier, the opinionated code formatter.
-  -A, --additional-npmrc-location=<additionalNpmrcLocations>
-                  Additional locations to search for .npmrc files.
-  -c, --prettier-config-option='OPTION=VALUE'
-                  A prettier configuration options.
-                  The format is 'OPTION=VALUE'.
-                  example: 'printWidth=80'
-  -C, --npm-install-cache-dir=<npmInstallCacheDir>
-                  The directory to use for caching libraries retrieved by 'npm
-                    install'.
-  -D, --dev-dependency='PACKAGE=VERSION'
-                  An entry to add to the package.json for running prettier.
-                  The format is 'PACKAGE=VERSION'.
-                  example: 'prettier=2.8.7'
-  -h, --help      Show this help message and exit.
-  -n, --npm-exec=<explicitNpmExecutable>
-                  The explicit path to the npm executable.
-  -N, --node-exec=<explicitNodeExecutable>
-                  The explicit path to the node executable.
-  -P, --prettier-config-path=<prettierConfigPath>
-                  The path to the prettier configuration file.
-  -R, --npmrc-file=<explicitNpmrcFile>
-                  The explicit path to the .npmrc file.
-  -V, --version   Print version information and exit.
 
-✅ This step supports the following file types:
-   * JavaScript
-   * JSX
-   * Angular
-   * Vue
-   * Flow
-   * TypeScript
-   * CSS
-   * Less
-   * SCSS
-   * HTML
-   * Ember/Handlebars
-   * JSON
-   * GraphQL
-   * Markdown
-   * YAML
-   * Java (only with plugins)
-   * and more (using plugins)
-
-🌎 Additional info:
-   * https://prettier.io/
-   * 🧩 Find plugins at https://prettier.io/docs/plugins.html#official-plugins
 ```
 
 <!---freshmark /usage_prettier -->
