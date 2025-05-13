@@ -51,5 +51,6 @@ distributions:
     chocolatey:
       templateDirectory: app/src/jreleaser/distributions/spotless-cli/chocolatey
       username: @Env.JRELEASER_CHOCOLATEY_USER@ # does not support name templates, so use gradle templating
+      iconUrl: https://cdn.statically.io/gh/diffplug/spotless-cli/v{{projectVersion}}/docs/logo/spotless-brush-256.png
       repository:
         branch: main

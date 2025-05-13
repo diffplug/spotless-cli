@@ -1,6 +1,5 @@
 import com.diffplug.spotless.cli.picocli.usage.DocumentedUsages
 import com.diffplug.gradle.spotless.FreshMarkExtension
-import com.oracle.svm.core.annotate.Inject
 
 plugins {
 	id 'buildlogic.spotless-common-conventions'
@@ -10,7 +9,7 @@ plugins {
 Action<FreshMarkExtension> freshmarkSetup = new Action<FreshMarkExtension>(){
 
 			void execute(FreshMarkExtension freshmark) {
-				freshmark.target '*.md'
+				freshmark.target '*.md', 'docs/devs/*.md'
 				freshmark.properties(new FreshmarkPropertiesAction(rootProject, project))
 				freshmark.properties {
 					it.put('changeThisValueToForceCacheMiss', '1f31705c-b1c6-4bce-9831-98881431b721')
@@ -76,7 +75,7 @@ class FreshmarkPropertiesAction implements Action<Map<String, Object>> {
 		properties.putAll(versionsCollected)
 		def usageHelps = getUsageHelps()
 		properties.putAll(usageHelps)
-		properties.put('spotlessVersion', rootProject.spotlessChangelog.versionLast)
+		properties.put('spotlessVersion', rootProject.spotlessChangelog.versionLast ?: '0.0.0')
 	}
 
 	Map<String, String> getVersionsCollected() {
