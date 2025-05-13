@@ -160,6 +160,7 @@ jobs:
           JRELEASER_PROJECT_VERSION: ${{ needs.gradleCheck.outputs.RELEASE_VERSION }}
           JRELEASER_GITHUB_TOKEN: abc # don't provide correct token, just a dry-run
           JRELEASER_DISTRIBUTIONS_SPOTLESS_CLI_CHOCOLATEY_ACTIVE: ALWAYS
+          JRELEASER_DISTRIBUTIONS_SPOTLESS_CLI_CHOCOLATEY_REPOSITORY_ACTIVE: ALWAYS
           JRELEASER_CHOCOLATEY_GITHUB_TOKEN: abc # don't provide correct token, just a dry-run
           JRELEASER_CHOCOLATEY_USER: abc # don't provide correct token, just a dry-run
           JRELEASER_CHOCOLATEY_API_KEY: abc # don't provide correct token, just a dry-run

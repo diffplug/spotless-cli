@@ -8,13 +8,15 @@ project:
     Or even without any build system at all, just once, or when you are working on a single file.
   links:
     homepage: https://github.com/diffplug/spotless-cli
+    license: https://github.com/diffplug/spotless-cli/blob/main/LICENSE
   license: Apache-2.0
   copyright: DiffPlug
   authors:
-    - DiffPlug
+    - Ned Twigg
+    - Simon Gamma
   inceptionYear: "2025"
   icons:
-    - url: https://raw.githubusercontent.com/diffplug/spotless-cli/docs/logo/spotless-brush-256.png
+    - url: https://cdn.statically.io/gh/diffplug/spotless-cli/v{{projectVersion}}/docs/logo/spotless-brush-256.png
       height: 256
       width: 256
       primary: true
@@ -49,3 +51,5 @@ distributions:
     chocolatey:
       templateDirectory: app/src/jreleaser/distributions/spotless-cli/chocolatey
       username: @Env.JRELEASER_CHOCOLATEY_USER@ # does not support name templates, so use gradle templating
+      repository:
+        branch: main

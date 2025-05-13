@@ -167,6 +167,7 @@ jobs:
           JRELEASER_CHOCOLATEY_USER: ${{ secrets.CHOCO_USER }} #manually extracted in jreleaser.yml
           JRELEASER_CHOCOLATEY_API_KEY: ${{ secrets.CHOCO_API_KEY }}
           JRELEASER_DISTRIBUTIONS_SPOTLESS_CLI_CHOCOLATEY_ACTIVE: ALWAYS
+          JRELEASER_DISTRIBUTIONS_SPOTLESS_CLI_CHOCOLATEY_REPOSITORY_ACTIVE: ALWAYS
       - name: "Persist jreleaser output"
         if: always()
         uses: actions/upload-artifact@v4
