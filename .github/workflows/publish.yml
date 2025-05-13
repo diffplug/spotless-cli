@@ -121,6 +121,7 @@ jobs:
           path: |
             out/jreleaser/trace.log
             out/jreleaser/output.properties
+            out/jreleaser/package/spotless-cli/**
       - name: "upload distribution zips" # for chocolatey distribution
         uses: actions/upload-artifact@v4
         with:
@@ -177,3 +178,4 @@ jobs:
           path: |
             out/jreleaser/trace.log
             out/jreleaser/output.properties
+            out/jreleaser/package/spotless-cli/**
