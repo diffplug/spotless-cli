@@ -26,6 +26,8 @@ packagers:
     multiPlatform: true
   chocolatey:
     username: "@Env.JRELEASER_CHOCOLATEY_USER@" # does not support name templates, so use gradle templating
+    extraProperties:
+      packageSourceUrl: https://github.com/diffplug/chocolatey-bucket
     repository:
       branch: main
       branchPush: main

@@ -163,6 +163,7 @@ jobs:
         env:
           JRELEASER_PROJECT_VERSION: ${{ needs.createRelease.outputs.RELEASE_VERSION }}
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          JRELEASER_PACKAGERS_CHOCOLATEY_ACTIVE: ALWAYS
           JRELEASER_CHOCOLATEY_GITHUB_TOKEN: ${{ secrets.BREW_CHOCO_CLI_GH_TOKEN }}
           JRELEASER_CHOCOLATEY_USER: ${{ secrets.CHOCO_USER }} #manually extracted in jreleaser.yml
           JRELEASER_CHOCOLATEY_API_KEY: ${{ secrets.CHOCO_API_KEY }}
