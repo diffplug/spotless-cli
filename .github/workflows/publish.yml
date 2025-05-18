@@ -160,7 +160,7 @@ jobs:
         uses: jreleaser/release-action@v2
         with:
           setup-java: false
-          arguments: "publish"
+          arguments: "publish --debug" #https://jreleaser.org/guide/latest/tools/jreleaser-cli.html#_publish
         env:
           JRELEASER_PROJECT_VERSION: ${{ needs.createRelease.outputs.RELEASE_VERSION }}
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
