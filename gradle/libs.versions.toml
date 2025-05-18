@@ -10,8 +10,8 @@ native-include-palantirJavaFormat = "2.61.0"
 picocli = "4.7.6"
 selfie = "2.5.1"
 slf4j = "2.0.17"
-spotless-lib = "3.1.0"
-spotless-plugin-gradle = "7.0.2"
+spotless-lib = "3.1.1"
+spotless-plugin-gradle = "7.0.3"
 
 [libraries]
 annotations = { module = "org.jetbrains:annotations", version.ref = "annotations" }
