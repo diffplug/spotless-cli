@@ -20,7 +20,10 @@ spotlessChangelog {
 
 version = spotlessChangelog.versionNext
 
+def changelogTaskGroup = 'Changelog'
 tasks.register('changelogPrintCurrentVersion') {
+	group = changelogTaskGroup
+	description = 'Prints the current version of the project based on the changelog'
 	def versionToPrint = spotlessChangelog.versionNext
 	doLast {
 		println "${versionToPrint}"
@@ -28,6 +31,8 @@ tasks.register('changelogPrintCurrentVersion') {
 }
 
 tasks.register('changelogPrintUnreleasedVersionContent') {
+	group = changelogTaskGroup
+	description = 'Prints the content of the unreleased version in the changelog'
 	def changelog = spotlessChangelog.parsedChangelog
 	doLast {
 		println "${changelog.unreleasedChanges()}"
@@ -35,6 +40,8 @@ tasks.register('changelogPrintUnreleasedVersionContent') {
 }
 
 tasks.register('changelogPrintLatestVersionContent') {
+	group = changelogTaskGroup
+	description = 'Prints the content of the latest version in the changelog'
 	def changelog = spotlessChangelog.parsedChangelog
 	doLast {
 		String changelogString = changelog.toStringUnix()
@@ -48,12 +55,15 @@ tasks.register('changelogPrintLatestVersionContent') {
 	}
 }
 tasks.register('changelogPrintVersionContent') {
+	group = changelogTaskGroup
+	description = 'Prints the content of a specific version in the changelog'
 	def changelog = spotlessChangelog.parsedChangelog
-	if (!project.hasProperty('changelogPrintVersion') || project.changelogPrintVersion == '') {
-		throw new IllegalArgumentException("Please provide a version to print with -PchangelogPrintVersion=<version>")
-	}
-	def versionToPrint = project.changelogPrintVersion
+
+	def versionToPrint = project.getProperties().getOrDefault('changelogPrintVersion', '')
 	doLast {
+		if (versionToPrint == '') {
+			throw new IllegalArgumentException("Please provide a version to print with -PchangelogPrintVersion=<version>")
+		}
 		String changelogString = changelog.toStringUnix()
 		String changeLog = changelogString.lines()
 				.dropWhile { String line -> !line.startsWith("## [${versionToPrint}]") }
