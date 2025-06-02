@@ -50,3 +50,20 @@ https://github.com/diffplug/chocolatey-bucket
 4. If you have the deleted tag also locally, delete it with `git tag -d <tagname>` e.g. `git tag -d v1.0.0`
 5. commit the changes with `git commit -m "changelog: recreate v<your-version>"` e.g. `git commit -m "changelog: recreate v1.0.0"`
 6. push the changes with `git push origin main`
+
+## Manually publishing to chocolatey bucket
+
+Open the "publish a release" action run in spotless-cli repo
+
+https://github.com/diffplug/spotless-cli/actions
+
+1. Scroll down to "Artifacts"
+2. Download the `jreleaser-release-windows` artifact
+3. Unzip the artifact
+4. Copy everything from the `<zip-root>/package/spotless-cli` into the repo `chocolatey-bucket`.
+5. Remove the `spotless-cli/spotless-cli-*.nupkg` file
+6. Add everything with `git add .`
+7. Commit everything with `git commit -m "spotless-cli v<your-version>"` e.g. `git commit -m "spotless-cli v0.1.0"`
+8. Push everything with `git push origin main`
+9. Create a tag with `git tag v<your-version>` e.g. `git tag v0.1.0`
+10. Push the tag with `git push origin v<your-version>` e.g. `git push origin v0.1.0`
