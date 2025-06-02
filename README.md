@@ -301,7 +301,7 @@ output = [
   ].join('\n')
 -->
 
-[![Google Java Format version](https://img.shields.io/badge/google--java--format-1.24.0-blue.svg)](https://github.com/google/google-java-format)
+[![Google Java Format version](https://img.shields.io/badge/google--java--format-1.27.0-blue.svg)](https://github.com/google/google-java-format)
 
 <!---freshmark /gjfshields -->
 
@@ -417,7 +417,7 @@ output = [
   ].join('\n')
 -->
 
-[![Palantir Java Format version](https://img.shields.io/badge/palantir--java--format-2.61.0-blue.svg)](https://github.com/palantir/palantir-java-format)
+[![Palantir Java Format version](https://img.shields.io/badge/palantir--java--format-2.67.0-blue.svg)](https://github.com/palantir/palantir-java-format)
 
 <!---freshmark /pjfshields -->
 

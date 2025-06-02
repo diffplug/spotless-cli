@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Improvements to the chocolatey package distribution
+- Bumping the bundled google-java-format (1.21.0 -> 1.27.0)
+- Bumping the bundled palantir-java-format (2.61.0 -> 2.67.0)
+
 ## [0.1.0] - 2025-05-13
 
 ### Fixed
