@@ -129,7 +129,7 @@ jobs:
           path: app/build/prepared-release-zips/spotless*.zip*
           retention-days: 3
           if-no-files-found: "error"
-  createChocoRelase:
+  createChocoRelease:
     needs: createRelease
     name: "Publish chocolatey package"
     runs-on: windows-latest
@@ -179,3 +179,31 @@ jobs:
             out/jreleaser/trace.log
             out/jreleaser/output.properties
             out/jreleaser/package/spotless-cli/**
+  publishChocoSource:
+    needs: createChocoRelease
+    name: "Publish chocolatey source"
+    runs-on: ubuntu-latest"
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v4
+        with:
+          repository: "diffplug/chocolatey-bucket"
+          ref: "main"
+          token: "${{ secrets.BREW_CHOCO_CLI_GH_TOKEN }}"
+      - name: "Download chocolatey package source"
+        uses: "actions/download-artifact@v4"
+        with:
+          name: jreleaser-release-windows
+          path: build/jreleaser-windows
+      - name: "Update chocolatey package source"
+        run: |
+          cp -r build/jreleaser-windows/package/spotless-cli/chocolatey .
+          rm spotless-cli/*.nupkg
+          rm -r build/
+      - name: "Commit and push changes"
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "spotless-cli v${{ needs.createRelease.outputs.RELEASE_VERSION }}"
+          tagging_message: "v${{ needs.createRelease.outputs.RELEASE_VERSION }}"
+          skip_fetch: true
+          skip_checkout: true
