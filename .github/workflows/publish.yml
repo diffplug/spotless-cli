@@ -93,7 +93,9 @@ jobs:
         run: |
           echo "$(./gradlew changelogPrintLatestVersionContent -Prelease=true -PreleaseForceVersion=${{ github.event.inputs.force_version }} --quiet)" > "app/build/release-notes.md"
       - name: "Create release"
-        run: "./gradlew -Prelease=true -PreleaseForceVersion=${{ github.event.inputs.force_version }} -PreleaseBinariesRootDir=app/build/collected-binaries changelogPush"
+        run: |
+          ./gradlew generateUsage
+          ./gradlew -Prelease=true -PreleaseForceVersion=${{ github.event.inputs.force_version }} -PreleaseBinariesRootDir=app/build/collected-binaries changelogPush
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} # for gh cli usage
       - name: "Get version and set to output"
