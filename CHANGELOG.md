@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Adapted the build so that README.md does correctly include usage helps when updated during the release process
+
 ### Added
 
 - Commit, tag and push the choco source files to the chocolatey-bucket repository during the release process
