@@ -153,6 +153,7 @@ or apply the formatting to the files.
 
 Available formatting steps:
   clang-format          Runs clang-format
+  clean-that            CleanThat enables automatic refactoring of Java code.
   format-annotations    Corrects line break formatting of type annotations in
                           java files.
   google-java-format    Runs google java format
@@ -183,6 +184,7 @@ Possible exit codes:
 Spotless CLI supports the following formatter steps in alphabetical order:
 
 - [clang-format](#clang-format)
+- [clean-that](#clean-that)
 - [format-annotations](#format-annotations)
 - [google-java-format](#google-java-format)
 - [license-header](#license-header)
@@ -239,6 +241,73 @@ spotless --target '**/src/**/*.cpp' clang-format --clang-version=20.1.2 --style=
 
 > [!IMPORTANT]
 > Running a clang-format step requires a working installation of the clang-format binary.
+
+### clean-that
+
+<!---freshmark ctshields
+output = [
+  link(shield('CleanThat version', 'clean-that', '{{libs.versions.native.include.cleanThat}}', 'blue'), 'https://github.com/solven-eu/cleanthat'),
+  ].join('\n')
+-->
+
+[![CleanThat version](https://img.shields.io/badge/clean--that-2.23-blue.svg)](https://github.com/solven-eu/cleanthat)
+
+<!---freshmark /ctshields -->
+
+Cleanthat is a project enabling automatic code cleaning, from formatting to refactoring.
+
+To see usage instructions for the clean-that formatter, run: `spotless clean-that --help`
+
+<!---freshmark usage_clean_that
+output =
+   '```\n' +
+   {{usage.clean-that.array}}.join('\n') +
+    '\n```';
+-->
+
+```
+Usage: spotless clean-that [-dDhV] [-s=<sourceCompatibility>] [-a[=mutator[,
+                           mutator...]...]]... [-e[=mutator[,mutator...]...]]...
+CleanThat enables automatic refactoring of Java code.
+  -a, --add-mutator[=mutator[,mutator...]...]
+                  Add a mutator to the list of mutators to use. Mutators are
+                    the individual refactoring steps CleanThat applies. A list
+                    of available mutators can be found in the "Additional Info"
+                    section.
+  -d, --use-default-mutators
+                  Use the default mutators provided by CleanThat. Default
+                    mutators are: <SafeAndConsensual>.
+                  (default: true)
+  -D, --include-draft-mutators
+                  Include draft mutators in the list of mutators to use. Draft
+                    mutators are experimental and may not be fully tested or
+                    stable.
+                  (default: false)
+  -e, --exclude-mutator[=mutator[,mutator...]...]
+                  Remove a mutator from the list of mutators to use. This might
+                    make sense for composite mutators
+  -h, --help      Show this help message and exit.
+  -s, --source-compatibility=<sourceCompatibility>
+                  The source JDK version to use for the CleanThat mutators.
+                    This is used to determine the Java language features
+                    available.
+                  (default: 1.8)
+  -V, --version   Print version information and exit.
+
+✅ This step supports the following file type: Java
+
+🌎 Additional info:
+   * https://github.com/solven-eu/cleanthat
+   * https://github.com/solven-eu/cleanthat/blob/master/MUTATORS.generated.MD
+```
+
+<!---freshmark /usage_clean_that -->
+
+Example usage:
+
+```shell
+spotless --target '**/src/**/*.java' clean-that --exclude-mutator=StreamAnyMatch
+```
 
 ### format-annotations
 
