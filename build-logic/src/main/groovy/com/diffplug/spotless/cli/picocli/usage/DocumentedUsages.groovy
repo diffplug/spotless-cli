@@ -3,6 +3,7 @@ package com.diffplug.spotless.cli.picocli.usage
 enum DocumentedUsages {
 
 	CLANG_FORMAT(),
+	CLEAN_THAT(),
 	FORMAT_ANNOTATIONS(),
 	MAIN(""),
 	GOOGLE_JAVA_FORMAT(),
