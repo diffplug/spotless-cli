@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Commit, tag and push the choco source files to the chocolatey-bucket repository during the release process
 - Added formatter [`clean-that`](https://github.com/diffplug/spotless/tree/main/plugin-gradle#cleanthat)
+- Added formatter [`remove-unused-imports`](https://github.com/diffplug/spotless/tree/main/plugin-gradle#removeunusedimports)
 
 ## [0.1.1] - 2025-06-02
 

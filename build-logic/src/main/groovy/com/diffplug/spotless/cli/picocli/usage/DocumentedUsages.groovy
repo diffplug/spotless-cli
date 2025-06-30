@@ -9,7 +9,8 @@ enum DocumentedUsages {
 	GOOGLE_JAVA_FORMAT(),
 	LICENSE_HEADER(),
 	PALANTIR_JAVA_FORMAT(),
-	PRETTIER()
+	PRETTIER(),
+	REMOVE_UNUSED_IMPORTS(),
 
 	private final String fileName
 

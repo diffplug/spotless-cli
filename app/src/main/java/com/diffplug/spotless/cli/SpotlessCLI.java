@@ -50,6 +50,7 @@ import com.diffplug.spotless.cli.steps.GoogleJavaFormat;
 import com.diffplug.spotless.cli.steps.LicenseHeader;
 import com.diffplug.spotless.cli.steps.PalantirJavaFormat;
 import com.diffplug.spotless.cli.steps.Prettier;
+import com.diffplug.spotless.cli.steps.RemoveUnusedImports;
 import com.diffplug.spotless.cli.version.SpotlessCLIVersionProvider;
 
 import picocli.CommandLine;
@@ -100,7 +101,8 @@ import picocli.CommandLine.Command;
             GoogleJavaFormat.class,
             LicenseHeader.class,
             PalantirJavaFormat.class,
-            Prettier.class
+            Prettier.class,
+            RemoveUnusedImports.class
         })
 public class SpotlessCLI implements SpotlessAction, SpotlessCommand, SpotlessActionContextProvider {
 
