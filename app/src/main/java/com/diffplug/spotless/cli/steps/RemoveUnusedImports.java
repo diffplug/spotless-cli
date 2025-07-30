@@ -15,20 +15,19 @@
  */
 package com.diffplug.spotless.cli.steps;
 
+import java.util.Collections;
+import java.util.List;
+
+import org.jetbrains.annotations.NotNull;
+
 import com.diffplug.spotless.FormatterStep;
 import com.diffplug.spotless.cli.core.SpotlessActionContext;
 import com.diffplug.spotless.cli.help.AdditionalInfoLinks;
 import com.diffplug.spotless.cli.help.OptionConstants;
 import com.diffplug.spotless.cli.help.SupportedFileTypes;
-import com.diffplug.spotless.java.CleanthatJavaStep;
 import com.diffplug.spotless.java.RemoveUnusedImportsStep;
-import org.jetbrains.annotations.NotNull;
-import picocli.CommandLine;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import picocli.CommandLine;
 
 @CommandLine.Command(name = "remove-unused-imports", description = "Removes unused imports from Java files.")
 @SupportedFileTypes("Java")
@@ -38,8 +37,8 @@ public class RemoveUnusedImports extends SpotlessFormatterStep {
     @CommandLine.Option(
             names = {"--engine", "-e"},
             defaultValue = "GOOGLE_JAVA_FORMAT",
-            description =
-                    "The backing engine to use for detecting and removing unused imports." + OptionConstants.VALID_AND_DEFAULT_VALUES_SUFFIX)
+            description = "The backing engine to use for detecting and removing unused imports."
+                    + OptionConstants.VALID_AND_DEFAULT_VALUES_SUFFIX)
     Engine engine;
 
     public enum Engine {
@@ -47,7 +46,6 @@ public class RemoveUnusedImports extends SpotlessFormatterStep {
             @Override
             String formatterName() {
                 return RemoveUnusedImportsStep.defaultFormatter();
-
             }
         },
         CLEAN_THAT {
@@ -56,7 +54,6 @@ public class RemoveUnusedImports extends SpotlessFormatterStep {
                 return "cleanthat-javaparser-unnecessaryimport";
             }
         };
-
 
         abstract String formatterName();
     }
