@@ -152,14 +152,15 @@ or apply the formatting to the files.
   -V, --version              Print version information and exit.
 
 Available formatting steps:
-  clang-format          Runs clang-format
-  clean-that            CleanThat enables automatic refactoring of Java code.
-  format-annotations    Corrects line break formatting of type annotations in
-                          java files.
-  google-java-format    Runs google java format
-  license-header        Runs license header
-  palantir-java-format  Runs palantir java format
-  prettier              Runs prettier, the opinionated code formatter.
+  clang-format           Runs clang-format
+  clean-that             CleanThat enables automatic refactoring of Java code.
+  format-annotations     Corrects line break formatting of type annotations in
+                           java files.
+  google-java-format     Runs google java format
+  license-header         Runs license header
+  palantir-java-format   Runs palantir java format
+  prettier               Runs prettier, the opinionated code formatter.
+  remove-unused-imports  Removes unused imports from Java files.
 
 Possible exit codes:
   0    Successful formatting.
