@@ -191,6 +191,7 @@ Spotless CLI supports the following formatter steps in alphabetical order:
 - [license-header](#license-header)
 - [palantir-java-format](#palantir-java-format)
 - [prettier](#prettier)
+- [remove-unused-imports](#remove-unused-imports)
 
 ### clang-format
 
@@ -633,6 +634,46 @@ spotless --target='src/**/*.java' prettier \
     --prettier-config-option='plugins=["prettier-plugin-java"]' \
     --dev-dependency='prettier=3.0.3' \
     --dev-dependency='prettier-plugin-java=2.3.0'
+```
+
+### remove-unused-imports
+
+This removes unused imports from Java files.
+
+To see usage instructions for the format-annotations formatter, run: `spotless remove-unused-imports --help`
+
+<!---freshmark usage_remove_unused_imports
+output =
+   '```\n' +
+   {{usage.remove-unused-imports.array}}.join('\n') +
+    '\n```';
+-->
+
+```
+Usage: spotless remove-unused-imports [-hV] [-e=<engine>]
+Removes unused imports from Java files.
+  -e, --engine=<engine>   The backing engine to use for detecting and removing
+                            unused imports.
+                          One of: GOOGLE_JAVA_FORMAT, CLEAN_THAT
+                          (default: GOOGLE_JAVA_FORMAT)
+  -h, --help              Show this help message and exit.
+  -V, --version           Print version information and exit.
+
+✅ This step supports the following file type: Java
+
+🌎 Additional info:
+https://github.com/diffplug/spotless/tree/main/plugin-gradle#removeunusedimports
+```
+
+<!---freshmark /usage_remove_unused_imports -->
+
+Example usage:
+
+```shell
+spotless --target '**/src/**/*.java' remove-unused-imports
+
+# or use non-default engine
+spotless --target '**/src/**/*.java' remove-unused-imports --engine=CLEAN_THAT
 ```
 
 ## Tipps & Tricks
