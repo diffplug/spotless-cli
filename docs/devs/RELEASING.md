@@ -60,7 +60,7 @@ https://github.com/diffplug/spotless-cli/actions
 1. Scroll down to "Artifacts"
 2. Download the `jreleaser-release-windows` artifact
 3. Unzip the artifact
-4. Copy everything from the `<zip-root>/package/spotless-cli` into the repo `chocolatey-bucket`.
+4. Copy everything from the `<zip-root>/package/spotless-cli/chocolatey` into the repo `chocolatey-bucket`.
 5. Remove the `spotless-cli/spotless-cli-*.nupkg` file
 6. Add everything with `git add .`
 7. Commit everything with `git commit -m "spotless-cli v<your-version>"` e.g. `git commit -m "spotless-cli v0.1.0"`
