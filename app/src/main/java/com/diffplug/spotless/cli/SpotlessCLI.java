@@ -44,6 +44,7 @@ import com.diffplug.spotless.cli.help.OptionConstants;
 import com.diffplug.spotless.cli.logging.output.LoggingConfigurer;
 import com.diffplug.spotless.cli.logging.output.Output;
 import com.diffplug.spotless.cli.steps.ClangFormat;
+import com.diffplug.spotless.cli.steps.CleanThat;
 import com.diffplug.spotless.cli.steps.FormatAnnotations;
 import com.diffplug.spotless.cli.steps.GoogleJavaFormat;
 import com.diffplug.spotless.cli.steps.LicenseHeader;
@@ -94,6 +95,7 @@ import picocli.CommandLine.Command;
         subcommandsRepeatable = true,
         subcommands = {
             ClangFormat.class,
+            CleanThat.class,
             FormatAnnotations.class,
             GoogleJavaFormat.class,
             LicenseHeader.class,

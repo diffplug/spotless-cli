@@ -233,6 +233,16 @@ public class ResourceHarness {
             String content = new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
             conditions.accept(assertThat(content));
         }
+
+        public void sameAsFile(File otherFile) throws IOException {
+            String otherFileContent = Files.readString(otherFile.toPath());
+            hasContent(otherFileContent, StandardCharsets.UTF_8);
+        }
+
+        public void notSameAsFile(File otherFile) throws IOException {
+            String otherFileContent = Files.readString(otherFile.toPath());
+            notHasContent(otherFileContent, StandardCharsets.UTF_8);
+        }
     }
 
     public WriteAsserter setFile(String path) {

@@ -69,6 +69,9 @@ graalvmNative {
 			buildArgs.add('-H:+UnlockExperimentalVMOptions') // to enable the following options
 			buildArgs.add('-H:IncludeResourceBundles=com.sun.tools.javac.resources.compiler')
 			buildArgs.add('-H:IncludeResourceBundles=com.sun.tools.javac.resources.javac')
+
+			// the following options are required for clean-that
+			buildArgs.add('--initialize-at-build-time=com.google.common.jimfs.SystemJimfsFileSystemProvider')
 		}
 	}
 }
