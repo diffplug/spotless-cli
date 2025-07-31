@@ -12,7 +12,7 @@ output = [
   ].join('\n')
 -->
 
-[![SpotlessCLI Version](https://img.shields.io/badge/latest--version-0.1.1-blue.svg)](CHANGES.md)
+[![SpotlessCLI Version](https://img.shields.io/badge/latest--version-0.2.0-blue.svg)](CHANGES.md)
 
 [![OS Win](https://img.shields.io/badge/OS-Windows-blueviolet.svg)](#installation-on-windows)
 [![OS Linux](https://img.shields.io/badge/OS-Linux-blueviolet.svg)](#installation-on-macos-and-linux)
