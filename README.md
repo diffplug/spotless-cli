@@ -640,7 +640,7 @@ spotless --target='src/**/*.java' prettier \
 
 This removes unused imports from Java files.
 
-To see usage instructions for the format-annotations formatter, run: `spotless remove-unused-imports --help`
+To see usage instructions for the remove-unused-imports formatter, run: `spotless remove-unused-imports --help`
 
 <!---freshmark usage_remove_unused_imports
 output =
