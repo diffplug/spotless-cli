@@ -201,47 +201,50 @@ public class ResourceHarness {
             this.file = file;
         }
 
-        public void hasContent(String expected) {
-            hasContent(expected, StandardCharsets.UTF_8);
+        public ReadAsserter hasContent(String expected) {
+            return hasContent(expected, StandardCharsets.UTF_8);
         }
 
-        public void hasNotContent(String notExpected) {
-            notHasContent(notExpected, StandardCharsets.UTF_8);
+        public ReadAsserter hasNotContent(String notExpected) {
+            return notHasContent(notExpected, StandardCharsets.UTF_8);
         }
 
-        public void hasContent(String expected, Charset charset) {
+        public ReadAsserter hasContent(String expected, Charset charset) {
             assertThat(file).usingCharset(charset).hasContent(expected);
+            return this;
         }
 
-        public void notHasContent(String notExpected, Charset charset) {
+        public ReadAsserter notHasContent(String notExpected, Charset charset) {
             assertThat(file).usingCharset(charset).content().isNotEqualTo(notExpected);
+            return this;
         }
 
-        public void hasLines(String... lines) {
-            hasContent(String.join("\n", Arrays.asList(lines)));
+        public ReadAsserter hasLines(String... lines) {
+            return hasContent(String.join("\n", Arrays.asList(lines)));
         }
 
-        public void sameAsResource(String resource) {
-            hasContent(getTestResource(resource));
+        public ReadAsserter sameAsResource(String resource) {
+            return hasContent(getTestResource(resource));
         }
 
-        public void notSameSasResource(String resource) {
-            hasNotContent(getTestResource(resource));
+        public ReadAsserter notSameSasResource(String resource) {
+            return hasNotContent(getTestResource(resource));
         }
 
-        public void matches(Consumer<AbstractCharSequenceAssert<?, String>> conditions) throws IOException {
+        public ReadAsserter matches(Consumer<AbstractCharSequenceAssert<?, String>> conditions) throws IOException {
             String content = new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
             conditions.accept(assertThat(content));
+            return this;
         }
 
-        public void sameAsFile(File otherFile) throws IOException {
+        public ReadAsserter sameAsFile(File otherFile) throws IOException {
             String otherFileContent = Files.readString(otherFile.toPath());
-            hasContent(otherFileContent, StandardCharsets.UTF_8);
+            return hasContent(otherFileContent, StandardCharsets.UTF_8);
         }
 
-        public void notSameAsFile(File otherFile) throws IOException {
+        public ReadAsserter notSameAsFile(File otherFile) throws IOException {
             String otherFileContent = Files.readString(otherFile.toPath());
-            notHasContent(otherFileContent, StandardCharsets.UTF_8);
+            return notHasContent(otherFileContent, StandardCharsets.UTF_8);
         }
     }
 
