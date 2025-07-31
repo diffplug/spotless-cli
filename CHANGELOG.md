@@ -17,6 +17,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added formatter [`clean-that`](https://github.com/diffplug/spotless/tree/main/plugin-gradle#cleanthat)
 - Added formatter [`remove-unused-imports`](https://github.com/diffplug/spotless/tree/main/plugin-gradle#removeunusedimports)
 
+### Changed
+
+- Bumping the bundled spotless-lib (3.1.1 -> 3.3.1)
+
 ## [0.1.1] - 2025-06-02
 
 ### Changed
