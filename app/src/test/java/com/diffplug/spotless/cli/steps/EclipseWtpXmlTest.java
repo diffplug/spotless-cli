@@ -33,4 +33,10 @@ public class EclipseWtpXmlTest extends EclipseWtpTestBase {
         String fileName = runEclipseWtpWithType(EclipseWtp.Type.XML, "<a><b>   c</b></a>");
         selfie().expectResource(fileName).toMatchDisk();
     }
+
+    @Test
+    void itInfersXmlFileTypeFromFileExtension() {
+        String fileName = runEclipseWtpWithTypeInferred("xml", "<a><b>   c</b></a>");
+        selfie().expectResource(fileName).toMatchDisk();
+    }
 }

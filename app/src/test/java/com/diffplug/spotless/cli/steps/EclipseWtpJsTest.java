@@ -33,4 +33,10 @@ public class EclipseWtpJsTest extends EclipseWtpTestBase {
         String fileName = runEclipseWtpWithType(EclipseWtp.Type.JS, "function f(  )   {\n" + "a.b(1,\n" + "2);}");
         selfie().expectResource(fileName).toMatchDisk();
     }
+
+    @Test
+    void itInfersJsFileTypeFromFileExtension() {
+        String fileName = runEclipseWtpWithTypeInferred("js", "function f(  )   {\n" + "a.b(1,\n" + "2);}");
+        selfie().expectResource(fileName).toMatchDisk();
+    }
 }

@@ -35,4 +35,11 @@ public class EclipseWtpXhtmlTest extends EclipseWtpTestBase {
                 "<!DOCTYPE html> <html>\t<head> <meta   charset=\"UTF-8\"></head>\n" + "</html>  ");
         selfie().expectResource(fileName).toMatchDisk();
     }
+
+    @Test
+    void itInfersXhtmlFileTypeFromFileExtension() {
+        String fileName = runEclipseWtpWithTypeInferred(
+                "xhtml", "<!DOCTYPE html> <html>\t<head> <meta   charset=\"UTF-8\"></head>\n" + "</html>  ");
+        selfie().expectResource(fileName).toMatchDisk();
+    }
 }

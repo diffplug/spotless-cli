@@ -33,4 +33,10 @@ public class EclipseWtpCssTest extends EclipseWtpTestBase {
         String fileName = runEclipseWtpWithType(EclipseWtp.Type.CSS, "body {\n" + "a: v;   b:   \n" + "v;\n" + "}  \n");
         selfie().expectResource(fileName).toMatchDisk();
     }
+
+    @Test
+    void itInfersCssFileTypeFromFileExtension() {
+        String fileName = runEclipseWtpWithTypeInferred("css", "body {\n" + "a: v;   b:   \n" + "v;\n" + "}  \n");
+        selfie().expectResource(fileName).toMatchDisk();
+    }
 }

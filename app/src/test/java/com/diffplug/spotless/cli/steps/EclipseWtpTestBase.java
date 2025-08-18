@@ -32,4 +32,14 @@ public abstract class EclipseWtpTestBase extends CLIIntegrationHarness {
 
         return fileName;
     }
+
+    protected String runEclipseWtpWithTypeInferred(String fileExtension, String unformatted) {
+        String fileName = "test." + fileExtension;
+        setFile(fileName).toContent(unformatted);
+
+        SpotlessCLIRunner.Result result =
+                cliRunner().withTargets(fileName).withStep(EclipseWtp.class).run();
+
+        return fileName;
+    }
 }

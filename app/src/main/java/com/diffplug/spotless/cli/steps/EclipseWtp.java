@@ -17,11 +17,15 @@ package com.diffplug.spotless.cli.steps;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Locale;
+import java.util.function.Supplier;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.diffplug.spotless.FormatterStep;
 import com.diffplug.spotless.cli.core.SpotlessActionContext;
+import com.diffplug.spotless.cli.core.TargetFileTypeInferer;
 import com.diffplug.spotless.cli.help.OptionConstants;
 import com.diffplug.spotless.extra.EclipseBasedStepBuilder;
 import com.diffplug.spotless.extra.wtp.EclipseWtpFormatterStep;
@@ -45,9 +49,10 @@ public class EclipseWtp extends SpotlessFormatterStep {
 
     @CommandLine.Option(
             names = {"-t", "--type"},
-            description = "The type of the Eclipse WTP formatter." + OptionConstants.VALID_VALUES_SUFFIX,
-            required = true)
-    Type type; // TODO: might trying inferring type
+            description =
+                    "The type of the Eclipse WTP formatter. If not provided, the type will be guessed based on the first few files we find. If that does not work, we fail the formatting run."
+                            + OptionConstants.VALID_VALUES_SUFFIX)
+    Type type;
 
     public enum Type {
         CSS(EclipseWtpFormatterStep.CSS),
@@ -66,11 +71,23 @@ public class EclipseWtp extends SpotlessFormatterStep {
         public @NotNull EclipseWtpFormatterStep toEclipseWtpType() {
             return this.backendEclipseWtpType;
         }
+
+        public static @Nullable Type fromTargetFileType(@NotNull TargetFileTypeInferer.TargetFileType targetFileType) {
+            return switch (targetFileType.fileExtension().toLowerCase(Locale.getDefault())) {
+                case "css" -> CSS;
+                case "html", "htm" -> HTML;
+                case "js" -> JS;
+                case "json" -> JSON;
+                case "xml" -> XML;
+                case "xhtml" -> XHTML;
+                default -> null;
+            };
+        }
     }
 
     @Override
     public @NotNull List<FormatterStep> prepareFormatterSteps(SpotlessActionContext context) {
-        EclipseWtpFormatterStep wtpType = type.toEclipseWtpType();
+        EclipseWtpFormatterStep wtpType = type(context::targetFileType).toEclipseWtpType();
         EclipseBasedStepBuilder builder = wtpType.createBuilder(context.provisioner());
         builder.setVersion(ECLIPSE_WTP_VERSION);
         if (configFiles != null && !configFiles.isEmpty()) {
@@ -80,5 +97,20 @@ public class EclipseWtp extends SpotlessFormatterStep {
                     .toList());
         }
         return List.of(builder.build());
+    }
+
+    private Type type(Supplier<TargetFileTypeInferer.TargetFileType> targetFileTypeSupplier) {
+        if (type != null) {
+            return type;
+        }
+        // try type inferring
+        TargetFileTypeInferer.TargetFileType targetFileType = targetFileTypeSupplier.get();
+        Type inferredType = Type.fromTargetFileType(targetFileType);
+        if (inferredType != null) {
+            return inferredType;
+        } else {
+            throw new IllegalArgumentException("Could not infer Eclipse WTP type from target file type: "
+                    + targetFileType.fileExtension() + " - workaround by specifying the --type option.");
+        }
     }
 }

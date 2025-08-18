@@ -35,4 +35,18 @@ public class EclipseWtpHtmlTest extends EclipseWtpTestBase {
                 "<!DOCTYPE html> <html>\t<head> <meta   charset=\"UTF-8\"></head>\n" + "</html>  ");
         selfie().expectResource(fileName).toMatchDisk();
     }
+
+    @Test
+    void itInfersHtmlFileTypeFromFileExtension() {
+        String fileName = runEclipseWtpWithTypeInferred(
+                "html", "<!DOCTYPE html> <html>\t<head> <meta   charset=\"UTF-8\"></head>\n" + "</html>  ");
+        selfie().expectResource(fileName).toMatchDisk();
+    }
+
+    @Test
+    void itInfersHtmlFileTypeFromShortFileExtension() {
+        String fileName = runEclipseWtpWithTypeInferred(
+                "htm", "<!DOCTYPE html> <html>\t<head> <meta   charset=\"UTF-8\"></head>\n" + "</html>  ");
+        selfie().expectResource(fileName).toMatchDisk();
+    }
 }

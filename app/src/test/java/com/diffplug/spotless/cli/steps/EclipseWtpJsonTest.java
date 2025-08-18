@@ -34,4 +34,11 @@ public class EclipseWtpJsonTest extends EclipseWtpTestBase {
                 runEclipseWtpWithType(EclipseWtp.Type.JSON, "{\"a\": \"b\",\t\"c\":   { \"d\": \"e\",\"f\": \"g\"}}");
         selfie().expectResource(fileName).toMatchDisk();
     }
+
+    @Test
+    void itInfersJsonFileTypeFromFileExtension() {
+        String fileName =
+                runEclipseWtpWithTypeInferred("json", "{\"a\": \"b\",\t\"c\":   { \"d\": \"e\",\"f\": \"g\"}}");
+        selfie().expectResource(fileName).toMatchDisk();
+    }
 }
