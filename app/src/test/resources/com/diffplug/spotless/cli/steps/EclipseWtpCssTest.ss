@@ -1,4 +1,4 @@
-╔═ itSupportsFormattingFileType/CSS ═╗
+╔═ itSupportsFormattingCssFileType ═╗
 body {
 	a: v;
 	b: v;

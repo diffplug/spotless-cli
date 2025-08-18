@@ -1,4 +1,4 @@
-╔═ itSupportsFormattingFileType/HTML ═╗
+╔═ itSupportsFormattingHtmlFileType ═╗
 <!DOCTYPE html>
 <html>
 <head>
