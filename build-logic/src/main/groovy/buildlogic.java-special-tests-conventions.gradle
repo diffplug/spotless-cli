@@ -10,12 +10,11 @@ def special = [
 	'cliProcessNpm',
 	'cliNative',
 	'cliNativeNpm',
-    'separateJvm'
+	'separateJvm'
 ]
 
-tasks.named('test').configure {
-	useJUnitPlatform {
-	}
+tasks.named('test', Test).configure {
+	useJUnitPlatform()
 }
 
 special.forEach { tag ->
@@ -28,23 +27,23 @@ special.forEach { tag ->
 }
 
 tasks.named('testSeparateJvm', Test) {
-    it.forkEvery = 1 // ensure that each test task runs in a separate JVM
+	it.forkEvery = 1 // ensure that each test task runs in a separate JVM
 }
 
 tasks.withType(Test).configureEach { Test task ->
-    // any test task that does not end with Npm should exclude all the npm tests
-    if (!task.name.toLowerCase().endsWith('npm')) {
-        def toExclude = special.findAll { it.toLowerCase().endsWith('npm') }.join('|')
-        task.useJUnitPlatform {
-            excludeTags toExclude
-        }
-    }
-    // any test task that does not end with separateJvm should exclude all the separateJvm tests
-    if (!task.name.toLowerCase().endsWith('separatejvm')) {
-        task.useJUnitPlatform {
-            excludeTags 'separateJvm'
-        }
-    }
+	// any test task that does not end with Npm should exclude all the npm tests
+	if (!task.name.toLowerCase().endsWith('npm')) {
+		def toExclude = special.findAll { it.toLowerCase().endsWith('npm') }.join('|')
+		task.useJUnitPlatform {
+			excludeTags toExclude
+		}
+	}
+	// any test task that does not end with separateJvm should exclude all the separateJvm tests
+	if (!task.name.toLowerCase().endsWith('separatejvm')) {
+		task.useJUnitPlatform {
+			excludeTags 'separateJvm'
+		}
+	}
 }
 
 tasks.register('testAll') {

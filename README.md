@@ -154,6 +154,7 @@ or apply the formatting to the files.
 Available formatting steps:
   clang-format           Runs clang-format
   clean-that             CleanThat enables automatic refactoring of Java code.
+  eclipse-wtp            Runs Eclipse WTP formatter (4.21.0)
   format-annotations     Corrects line break formatting of type annotations in
                            java files.
   google-java-format     Runs google java format

@@ -15,10 +15,10 @@
  */
 package com.diffplug.spotless.tag;
 
-import org.junit.jupiter.api.Tag;
-
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
+
+import org.junit.jupiter.api.Tag;
 
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.TYPE;

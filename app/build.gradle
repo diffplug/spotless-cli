@@ -2,12 +2,6 @@ import com.diffplug.spotless.cli.picocli.usage.GenerateUsagePropertiesTask
 import com.diffplug.spotless.extra.wtp.EclipseWtpFormatterStep
 import org.gradle.plugins.ide.eclipse.model.EclipseWtp
 
-//buildscript {
-//	dependencies {
-//		classpath libs.spotless.lib.extra
-//	}
-//}
-
 plugins {
 	id 'buildlogic.picocli-conventions'
 	id 'buildlogic.java-special-tests-conventions'
@@ -27,14 +21,18 @@ dependencies {
 	// this is necessary to allow for native compilation where reflective access to dynamic jars is not possible
 	implementation libs.bundles.native.includes
 
+	// Eclipse WTP formatter used a custom lockfile to ensure the formatter has the
+	// correct version of all its libraries
 	def resourceName = "/com/diffplug/spotless/extra/eclipse_wtp_formatter/v4.21.0.lockfile"
-	println("resource: " + resourceName)
-    EclipseWtpFormatterStep.getResource(resourceName)
+	logger.debug("reading eclipse wtp resource: " + resourceName)
+	EclipseWtpFormatterStep.getResource(resourceName)
 			.readLines()
-	        .findAll { !it.startsWith('#')} // filter out comments
-	        .each { implementation("${it}") {
-				transitive=false
-			} }
+			.findAll { !it.startsWith('#')} // filter out comments
+			.each {
+				implementation("${it}") {
+					transitive=false
+				}
+			}
 }
 
 application {
