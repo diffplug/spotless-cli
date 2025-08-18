@@ -9,6 +9,9 @@ mockito = "5.17.0"
 native-include-cleanThat = "2.23"
 native-include-googleJavaFormat = "1.27.0"
 native-include-palantirJavaFormat = "2.67.0"
+# to find required version here check eclipse_wtp_formatter/v4.21.0.lockfile
+# where <4.21.0> is the default version of com.diffplug.spotless.extra.wtp.EclipseWtpFormatterStep#defaultVersion
+native-include-spotlessEclipseWtp = "3.23.0"
 picocli = "4.7.6"
 selfie = "2.5.1"
 slf4j = "2.0.17"
@@ -28,6 +31,7 @@ mockito = { module = "org.mockito:mockito-core", version.ref = "mockito" }
 native-include-cleanThat = { module = "io.github.solven-eu.cleanthat:java", version.ref = "native-include-cleanThat" }
 native-include-googleJavaFormat = { module = "com.google.googlejavaformat:google-java-format", version.ref = "native-include-googleJavaFormat" }
 native-include-palantirJavaFormat = { module = "com.palantir.javaformat:palantir-java-format", version.ref = "native-include-palantirJavaFormat" }
+native-include-spotlessEclipseWtp = { module = "com.diffplug.spotless:spotless-eclipse-wtp", version.ref = "native-include-spotlessEclipseWtp" }
 picocli = { module = "info.picocli:picocli", version.ref = "picocli" }
 picocli-codegen = { module = "info.picocli:picocli-codegen", version.ref = "picocli" }
 selfie = { module = "com.diffplug.selfie:selfie-runner-junit5", version.ref = "selfie" }
@@ -43,6 +47,7 @@ native-includes = [
     "native-include-cleanThat",
     "native-include-googleJavaFormat",
     "native-include-palantirJavaFormat",
+    "native-include-spotlessEclipseWtp",
 ]
 spotless-libs = ["spotless-lib", "spotless-lib-extra"]
 test-libs = ["assertj-core", "junit-jupiter-api", "selfie", "mockito"]

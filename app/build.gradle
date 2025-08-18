@@ -1,4 +1,12 @@
 import com.diffplug.spotless.cli.picocli.usage.GenerateUsagePropertiesTask
+import com.diffplug.spotless.extra.wtp.EclipseWtpFormatterStep
+import org.gradle.plugins.ide.eclipse.model.EclipseWtp
+
+//buildscript {
+//	dependencies {
+//		classpath libs.spotless.lib.extra
+//	}
+//}
 
 plugins {
 	id 'buildlogic.picocli-conventions'
@@ -9,6 +17,7 @@ plugins {
 
 version = rootProject.version
 
+
 dependencies {
 	testImplementation project(':testlib')
 	implementation libs.bundles.spotless.libs
@@ -17,6 +26,15 @@ dependencies {
 	// these are fixed versions of the otherwise dynamic dependencies for spotless
 	// this is necessary to allow for native compilation where reflective access to dynamic jars is not possible
 	implementation libs.bundles.native.includes
+
+	def resourceName = "/com/diffplug/spotless/extra/eclipse_wtp_formatter/v4.21.0.lockfile"
+	println("resource: " + resourceName)
+    EclipseWtpFormatterStep.getResource(resourceName)
+			.readLines()
+	        .findAll { !it.startsWith('#')} // filter out comments
+	        .each { implementation("${it}") {
+				transitive=false
+			} }
 }
 
 application {
@@ -35,7 +53,7 @@ gradle.taskGraph.whenReady { TaskExecutionGraph graph ->
 }
 
 tasks.withType(Test).configureEach {
-	if (it.name == 'test' || it.name == 'testNpm') {
+	if (it.name == 'test' || it.name == 'testNpm' || it.name == 'testSeparateJvm') {
 		it.outputs.dir(nativeCompileMetaDir)
 		if (project.hasProperty('agent')) {
 			it.inputs.property('agent', project.property('agent')) // make sure to re-run tests if agent changes
