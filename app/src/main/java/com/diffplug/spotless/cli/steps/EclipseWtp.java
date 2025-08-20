@@ -26,7 +26,9 @@ import org.jetbrains.annotations.Nullable;
 import com.diffplug.spotless.FormatterStep;
 import com.diffplug.spotless.cli.core.SpotlessActionContext;
 import com.diffplug.spotless.cli.core.TargetFileTypeInferer;
+import com.diffplug.spotless.cli.help.AdditionalInfoLinks;
 import com.diffplug.spotless.cli.help.OptionConstants;
+import com.diffplug.spotless.cli.help.SupportedFileTypes;
 import com.diffplug.spotless.extra.EclipseBasedStepBuilder;
 import com.diffplug.spotless.extra.wtp.EclipseWtpFormatterStep;
 
@@ -35,6 +37,11 @@ import picocli.CommandLine;
 @CommandLine.Command(
         name = "eclipse-wtp",
         description = "Runs Eclipse WTP formatter (" + EclipseWtp.ECLIPSE_WTP_VERSION + ")")
+@SupportedFileTypes({"css", "html", "js", "json", "xml", "xhtml"})
+@AdditionalInfoLinks({
+    "https://github.com/diffplug/spotless/tree/main/plugin-gradle#eclipse-web-tools-platform",
+    "https://projects.eclipse.org/projects/webtools"
+})
 public class EclipseWtp extends SpotlessFormatterStep {
 
     public static final String ECLIPSE_WTP_VERSION = "4.21.0"; // TODO we need to slurp in the lock file also
@@ -42,9 +49,8 @@ public class EclipseWtp extends SpotlessFormatterStep {
     @CommandLine.Option(
             names = {"-f", "--config-file"},
             arity = "0",
-            description =
-                    "The path to the Eclipse WTP configuration file.\n"
-                            + "For supported config file options see <https://github.com/diffplug/spotless/tree/main/plugin-gradle#eclipse-web-tools-platform>")
+            description = "The path to the Eclipse WTP configuration file. "
+                    + "For supported config file options see spotless documentation (additional info links).")
     List<Path> configFiles;
 
     @CommandLine.Option(

@@ -4,6 +4,7 @@ enum DocumentedUsages {
 
 	CLANG_FORMAT(),
 	CLEAN_THAT(),
+	ECLIPSE_WTP(),
 	FORMAT_ANNOTATIONS(),
 	MAIN(""),
 	GOOGLE_JAVA_FORMAT(),

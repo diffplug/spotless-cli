@@ -12,6 +12,7 @@ native-include-palantirJavaFormat = "2.67.0"
 # to find required version here check eclipse_wtp_formatter/v4.21.0.lockfile
 # where <4.21.0> is the default version of com.diffplug.spotless.extra.wtp.EclipseWtpFormatterStep#defaultVersion
 native-include-spotlessEclipseWtp = "3.23.0"
+native-include-spotlessEclipseWtpFormatter = "4.21.0"
 picocli = "4.7.6"
 selfie = "2.5.1"
 slf4j = "2.0.17"
