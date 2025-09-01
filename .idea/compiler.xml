@@ -5,7 +5,7 @@
       <profile name="Gradle Imported" enabled="true">
         <outputRelativeToContentRoot value="true" />
         <option name="other.resource.bundles" value="application" />
-        <option name="other.resource.patterns" value=".*\\.properties,.*\\.json,.*\\.js" />
+        <option name="other.resource.patterns" value=".*\\.properties,.*\\.json,.*\\.js,.*\\.MF" />
         <option name="project" value="spotless-cli/app" />
         <processorPath useClasspath="false">
           <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/info.picocli/picocli-codegen/4.7.6/c36d09aee9ded3685ceac45de8c1e02623158920/picocli-codegen-4.7.6.jar" />
@@ -18,7 +18,7 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="spotless-cli.app.main" options="-Aproject=spotless-cli/app -Aother.resource.bundles=application -Aother.resource.patterns=.*\\.properties,.*\\.json,.*\\.js" />
+      <module name="spotless-cli.app.main" options="-Aproject=spotless-cli/app -Aother.resource.bundles=application -Aother.resource.patterns=.*\\.properties,.*\\.json,.*\\.js,.*\\.MF" />
     </option>
   </component>
 </project>

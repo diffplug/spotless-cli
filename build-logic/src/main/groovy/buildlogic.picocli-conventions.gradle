@@ -14,7 +14,7 @@ compileJava {
 		"-Aproject=${project.group}/${project.name}",
 		"-Aother.resource.bundles=application",
 		// patterns require double-escaping (one escape is removed by groovy, the other one is needed in the resulting json file)
-		"-Aother.resource.patterns=.*\\\\.properties,.*\\\\.json,.*\\\\.js"
+		"-Aother.resource.patterns=.*\\\\.properties,.*\\\\.json,.*\\\\.js,.*\\\\.MF"
 	]
 }
 

@@ -45,6 +45,7 @@ import com.diffplug.spotless.cli.logging.output.LoggingConfigurer;
 import com.diffplug.spotless.cli.logging.output.Output;
 import com.diffplug.spotless.cli.steps.ClangFormat;
 import com.diffplug.spotless.cli.steps.CleanThat;
+import com.diffplug.spotless.cli.steps.EclipseWtp;
 import com.diffplug.spotless.cli.steps.FormatAnnotations;
 import com.diffplug.spotless.cli.steps.GoogleJavaFormat;
 import com.diffplug.spotless.cli.steps.LicenseHeader;
@@ -97,6 +98,7 @@ import picocli.CommandLine.Command;
         subcommands = {
             ClangFormat.class,
             CleanThat.class,
+            EclipseWtp.class,
             FormatAnnotations.class,
             GoogleJavaFormat.class,
             LicenseHeader.class,

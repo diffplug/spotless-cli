@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added formatter [`eclipse-wtp`](https://github.com/diffplug/spotless/tree/main/plugin-gradle#eclipse-web-tools-platform)
+
 ## [0.2.0] - 2025-07-31
 
 ### Fixed
