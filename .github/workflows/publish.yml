@@ -199,7 +199,7 @@ jobs:
           path: build/jreleaser-windows
       - name: "Update chocolatey package source"
         run: |
-          cp -r build/jreleaser-windows/package/spotless-cli/chocolatey .
+          cp -r build/jreleaser-windows/package/spotless-cli/chocolatey/* .
           rm spotless-cli/*.nupkg
           rm -r build/
       - name: "Commit and push changes"
