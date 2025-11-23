@@ -20,10 +20,15 @@ project:
       height: 256
       width: 256
       primary: true
+  languages:
+    java:
+      groupId: com.diffplug.spotless.cli
+      artifactId: spotless-cli
+      # The minimum Java version required by consumers to run the application.
+      version: 21
 
 packagers:
   brew:
-    multiPlatform: true
   chocolatey:
     username: "@Env.JRELEASER_CHOCOLATEY_USER@" # does not support name templates, so use gradle templating
     extraProperties:
@@ -31,11 +36,13 @@ packagers:
     repository:
       branch: main
       branchPush: main
+  # future setup
+  jbang:
 
 distributions:
   spotless-cli:
     stereotype: CLI
-    type: BINARY
+    type: JAVA_BINARY
     executable:
       name: spotless
     tags:
@@ -44,16 +51,7 @@ distributions:
       - code-style
 
     artifacts:
-      - path: app/build/prepared-release-zips/spotless-{{projectVersion}}-osx-aarch_64.zip
-        platform: osx-aarch_64
-      - path: app/build/prepared-release-zips/spotless-{{projectVersion}}-osx-x86_64.zip
-        platform: osx-x86_64
-      - path: app/build/prepared-release-zips/spotless-{{projectVersion}}-linux-aarch_64.zip
-        platform: linux-aarch_64
-      - path: app/build/prepared-release-zips/spotless-{{projectVersion}}-linux-x86_64.zip
-        platform: linux-x86_64
-      - path: app/build/prepared-release-zips/spotless-{{projectVersion}}-windows-x86_64.zip
-        platform: windows-x86_64
+      - path: app/build/distributions/spotless-cli-{{projectVersion}}.zip
 
     brew:
       templateDirectory: app/src/jreleaser/distributions/spotless-cli/brew
@@ -61,3 +59,7 @@ distributions:
     chocolatey:
       templateDirectory: app/src/jreleaser/distributions/spotless-cli/chocolatey
       iconUrl: https://cdn.statically.io/gh/diffplug/spotless-cli/v{{projectVersion}}/docs/logo/spotless-brush-256.png
+
+    # future setup
+    jbang:
+      templateDirectory: app/src/jreleaser/distributions/spotless-cli/jbang
