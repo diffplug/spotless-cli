@@ -16,8 +16,8 @@ native-include-spotlessEclipseWtpFormatter = "4.21.0"
 picocli = "4.7.6"
 selfie = "2.5.1"
 slf4j = "2.0.17"
-spotless-lib = "3.3.1"
-spotless-plugin-gradle = "7.2.1"
+spotless-lib = "4.1.0"
+spotless-plugin-gradle = "8.1.0"
 
 [libraries]
 annotations = { module = "org.jetbrains:annotations", version.ref = "annotations" }
