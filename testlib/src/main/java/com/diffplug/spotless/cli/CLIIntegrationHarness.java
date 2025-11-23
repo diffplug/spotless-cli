@@ -26,15 +26,12 @@ import com.diffplug.spotless.ResourceHarness;
 
 @EnabledIf("testEnvIsMatching")
 public abstract class CLIIntegrationHarness extends ResourceHarness {
-    protected static final String SYSPROP_CLI_NATIVE =
-            SpotlessCLIRunnerInNativeExternalProcess.SPOTLESS_CLI_NATIVE_IMAGE_SYSPROP;
-    protected static final String SYSPROP_CLI_SHADOW_JAR =
-            SpotlessCLIRunnerInExternalJavaProcess.SPOTLESS_CLI_SHADOW_JAR_SYSPROP;
+    protected static final String SPOTLESS_CLI_PROCESS_LAUNCHER =
+            SpotlessCLIRunnerInExternalJavaProcess.SPOTLESS_CLI_PROCESS_LAUNCHER;
     protected static final String SYSPROP_CLI_IN_SAME_THREAD =
             SpotlessCLIRunnerInSameThread.SPOTLESS_CLI_IN_SAME_THREAD;
 
-    protected static final Set<String> SYS_PROPS =
-            Set.of(SYSPROP_CLI_NATIVE, SYSPROP_CLI_SHADOW_JAR, SYSPROP_CLI_IN_SAME_THREAD);
+    protected static final Set<String> SYS_PROPS = Set.of(SPOTLESS_CLI_PROCESS_LAUNCHER, SYSPROP_CLI_IN_SAME_THREAD);
 
     /**
      * Each test gets its own temp folder, and we create a gradle
@@ -60,10 +57,7 @@ public abstract class CLIIntegrationHarness extends ResourceHarness {
     }
 
     protected SpotlessCLIRunner createRunnerBasedOnSysprop() {
-        if (System.getProperties().containsKey(SYSPROP_CLI_NATIVE)) {
-            return SpotlessCLIRunner.createNative();
-        }
-        if (System.getProperties().containsKey(SYSPROP_CLI_SHADOW_JAR)) {
+        if (System.getProperties().containsKey(SPOTLESS_CLI_PROCESS_LAUNCHER)) {
             return SpotlessCLIRunner.createExternalProcess();
         }
         if (System.getProperties().containsKey(SYSPROP_CLI_IN_SAME_THREAD)) {
@@ -77,7 +71,7 @@ public abstract class CLIIntegrationHarness extends ResourceHarness {
     }
 
     protected static boolean isInExternalProcess() {
-        return Stream.of(SYSPROP_CLI_NATIVE, SYSPROP_CLI_SHADOW_JAR)
+        return Stream.of(SPOTLESS_CLI_PROCESS_LAUNCHER)
                 .anyMatch(p -> System.getProperties().containsKey(p));
     }
 

@@ -17,7 +17,6 @@ repositories {
 }
 
 dependencies {
-	implementation 'com.gradleup.shadow:shadow-gradle-plugin:8.3.6'
 	implementation libs.bundles.spotless.libs
 	implementation libs.spotless.plugin.gradle
 }

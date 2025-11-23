@@ -1,4 +1,4 @@
-
+// TODO: remove this completely once we fully migrate to JReleaser java-binary for packaging
 File releaseBinariesRootDir = rootProject.file(project.findProperty('releaseBinariesRootDir') ?: 'app/build/release-binaries')
 def releaseBinariesSubdirectories = [] as List<File>
 File releaseBinariesZipDir = rootProject.file('app/build/prepared-release-zips')

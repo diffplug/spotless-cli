@@ -15,21 +15,26 @@
  */
 package com.diffplug.spotless.cli;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import com.diffplug.spotless.ProcessRunner;
 import com.diffplug.spotless.ThrowingEx;
 
 public class SpotlessCLIRunnerInExternalJavaProcess extends SpotlessCLIRunner {
 
-    static final String SPOTLESS_CLI_SHADOW_JAR_SYSPROP = "spotless.cli.shadowJar";
+    static final String SPOTLESS_CLI_PROCESS_LAUNCHER = "spotless.cli.processLauncher";
+    static final String SPOTLESS_CLI_PROCESS_LAUNCHER_JAVA_HOME = "spotless.cli.processLauncher.javaHome"; // optional
 
     public SpotlessCLIRunnerInExternalJavaProcess() {
         super();
-        if (System.getProperty(SPOTLESS_CLI_SHADOW_JAR_SYSPROP) == null) {
+        if (System.getProperty(SPOTLESS_CLI_PROCESS_LAUNCHER) == null) {
             throw new IllegalStateException(
-                    "spotless.cli.shadowJar system property must be set to the path of the shadow jar");
+                    SPOTLESS_CLI_PROCESS_LAUNCHER + " system property must be set to the path of the launcher");
         }
     }
 
@@ -37,7 +42,7 @@ public class SpotlessCLIRunnerInExternalJavaProcess extends SpotlessCLIRunner {
         try (ProcessRunner runner = new ProcessRunner()) {
 
             ProcessRunner.Result pResult =
-                    ThrowingEx.get(() -> runner.exec(workingDir(), System.getenv(), null, processArgs(args)));
+                    ThrowingEx.get(() -> runner.exec(workingDir(), envWithCurrentJava(), null, processArgs(args)));
 
             return new Result(pResult.exitCode(), null, pResult.stdOutUtf8(), pResult.stdErrUtf8());
         }
@@ -45,15 +50,45 @@ public class SpotlessCLIRunnerInExternalJavaProcess extends SpotlessCLIRunner {
 
     private List<String> processArgs(List<String> args) {
         List<String> processArgs = new ArrayList<>();
-        processArgs.add(currentJavaExecutable());
-        processArgs.add("-jar");
-        String jarPath = System.getProperty(SPOTLESS_CLI_SHADOW_JAR_SYSPROP);
-        processArgs.add(jarPath);
-
-        //		processArgs.add(SpotlessCLI.class.getProtectionDomain().getCodeSource().getLocation().getPath());
-
+        processArgs.add(System.getProperty(SPOTLESS_CLI_PROCESS_LAUNCHER));
         processArgs.addAll(args);
         return processArgs;
+    }
+
+    private Map<String, String> envWithCurrentJava() {
+        // put current java
+        Map<String, String> env = new LinkedHashMap<>(System.getenv());
+
+        // Override JAVA_HOME if specified via sysprop or use current java
+        Optional<String> javaHomeOpt = javaHomeFromSyspropOrCurrent();
+        javaHomeOpt.ifPresentOrElse(javaHome -> env.put("JAVA_HOME", javaHome), () -> env.remove("JAVA_HOME"));
+
+        // Prepend current java bin to PATH
+        String currentJavaBin = currentJavaExecutable();
+        if (!"java".equals(currentJavaBin)) {
+            String currentJavaDir = Path.of(currentJavaBin).getParent().toString();
+            String currentPath = env.get("PATH");
+            if (currentPath == null || currentPath.isEmpty()) {
+                currentPath = currentJavaDir;
+            } else {
+                currentPath = currentJavaDir + System.getProperty("path.separator") + currentPath;
+            }
+            env.put("PATH", currentPath);
+        }
+        return env;
+    }
+
+    private Optional<String> javaHomeFromSyspropOrCurrent() {
+        String javaHome = System.getProperty(SPOTLESS_CLI_PROCESS_LAUNCHER_JAVA_HOME);
+        if (javaHome != null && !javaHome.isEmpty()) {
+            return Optional.of(javaHome);
+        }
+        String currentJavaBin = currentJavaExecutable();
+        if ("java".equals(currentJavaBin)) {
+            return Optional.empty(); // unset
+        }
+
+        return Optional.of(Path.of(currentJavaBin).getParent().getParent().toString());
     }
 
     private String currentJavaExecutable() {
