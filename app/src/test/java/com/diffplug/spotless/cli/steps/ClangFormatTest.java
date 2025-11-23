@@ -28,11 +28,9 @@ import org.junit.jupiter.params.provider.MethodSource;
 import com.diffplug.spotless.cli.CLIIntegrationHarness;
 import com.diffplug.spotless.cli.ForeignExeMock;
 import com.diffplug.spotless.cpp.ClangFormatStep;
-import com.diffplug.spotless.tag.CliNativeTest;
 import com.diffplug.spotless.tag.CliProcessTest;
 
 @CliProcessTest
-@CliNativeTest
 class ClangFormatTest extends CLIIntegrationHarness {
 
     File clangFormatExec;

@@ -8,8 +8,6 @@ def special = [
 	'npm',
 	'cliProcess',
 	'cliProcessNpm',
-	'cliNative',
-	'cliNativeNpm',
 	'separateJvm'
 ]
 
@@ -56,19 +54,6 @@ def testAllCliProcess = tasks.register('testAllCliProcess') {
 
 tasks.named('check').configure {
 	it.dependsOn(testAllCliProcess)
-}
-
-[
-	tasks.named('testCliNative'),
-	tasks.named('testCliNativeNpm')
-].each {
-	it.configure { Test task ->
-		task.inputs.files(rootProject.project(':app').tasks.named('nativeCompile').get().outputs.files)
-	}
-}
-
-tasks.register('testAllCliNative') {
-	dependsOn tasks.matching { it.name.startsWith('testCliNative') }
 }
 
 tasks.withType(Test).configureEach {

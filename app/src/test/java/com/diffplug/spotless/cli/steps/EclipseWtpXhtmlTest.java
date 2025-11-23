@@ -18,13 +18,11 @@ package com.diffplug.spotless.cli.steps;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
 
-import com.diffplug.spotless.tag.CliNativeTest;
 import com.diffplug.spotless.tag.CliProcessTest;
 import com.diffplug.spotless.tag.SeparateJvmTest;
 
 @Isolated
 @SeparateJvmTest
-@CliNativeTest
 @CliProcessTest
 public class EclipseWtpXhtmlTest extends EclipseWtpTestBase {
 

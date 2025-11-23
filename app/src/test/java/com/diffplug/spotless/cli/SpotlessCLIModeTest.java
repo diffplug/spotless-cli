@@ -20,12 +20,10 @@ import java.io.IOException;
 import org.junit.jupiter.api.Test;
 
 import com.diffplug.spotless.cli.steps.GoogleJavaFormat;
-import com.diffplug.spotless.tag.CliNativeTest;
 import com.diffplug.spotless.tag.CliProcessTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@CliNativeTest
 @CliProcessTest
 public class SpotlessCLIModeTest extends CLIIntegrationHarness {
 

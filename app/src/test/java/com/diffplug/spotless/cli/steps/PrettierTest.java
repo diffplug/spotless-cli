@@ -23,7 +23,6 @@ import org.junit.jupiter.api.condition.DisabledOnOs;
 
 import com.diffplug.spotless.cli.CLIIntegrationHarness;
 import com.diffplug.spotless.cli.SpotlessCLIRunner;
-import com.diffplug.spotless.tag.CliNativeNpmTest;
 import com.diffplug.spotless.tag.CliProcessNpmTest;
 import com.diffplug.spotless.tag.NpmTest;
 
@@ -32,7 +31,6 @@ import static org.junit.jupiter.api.condition.OS.WINDOWS;
 
 @NpmTest
 @CliProcessNpmTest
-@CliNativeNpmTest
 public class PrettierTest extends CLIIntegrationHarness {
 
     @Test

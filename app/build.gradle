@@ -5,7 +5,7 @@ import org.gradle.plugins.ide.eclipse.model.EclipseWtp
 plugins {
 	id 'buildlogic.picocli-conventions'
 	id 'buildlogic.java-special-tests-conventions'
-	id 'buildlogic.java-graalvm-conventions'
+	id 'buildlogic.jar-shadow-conventions'
 	id 'buildlogic.spotless-json-conventions'
 }
 
@@ -52,19 +52,11 @@ gradle.taskGraph.whenReady { TaskExecutionGraph graph ->
 
 tasks.withType(Test).configureEach {
 	if (it.name == 'test' || it.name == 'testNpm' || it.name == 'testSeparateJvm') {
-		it.outputs.dir(nativeCompileMetaDir)
-		if (project.hasProperty('agent')) {
-			it.inputs.property('agent', project.property('agent')) // make sure to re-run tests if agent changes
-		}
 		it.systemProperty 'spotless.cli.inSameThread', 'true' //mark tests
 	}
 	if (it.name == 'testCliProcess' || it.name == 'testCliProcessNpm') {
 		it.dependsOn('shadowJar')
 		it.systemProperty 'spotless.cli.shadowJar', tasks.shadowJar.archiveFile.get().asFile
-	}
-	if (it.name == 'testCliNative' || it.name == 'testCliNativeNpm') {
-		it.dependsOn('nativeCompile')
-		it.systemProperty 'spotless.cli.nativeImage', tasks.nativeCompile.outputFile.get().asFile
 	}
 }
 

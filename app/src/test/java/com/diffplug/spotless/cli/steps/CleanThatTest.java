@@ -21,11 +21,9 @@ import java.io.IOException;
 import org.junit.jupiter.api.Test;
 
 import com.diffplug.spotless.cli.CLIIntegrationHarness;
-import com.diffplug.spotless.tag.CliNativeTest;
 import com.diffplug.spotless.tag.CliProcessTest;
 
 @CliProcessTest
-@CliNativeTest
 public class CleanThatTest extends CLIIntegrationHarness {
 
     @Test

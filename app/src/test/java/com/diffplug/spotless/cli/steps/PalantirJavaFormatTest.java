@@ -21,11 +21,9 @@ import org.junit.jupiter.params.provider.EnumSource;
 
 import com.diffplug.spotless.cli.CLIIntegrationHarness;
 import com.diffplug.spotless.cli.SpotlessCLIRunner;
-import com.diffplug.spotless.tag.CliNativeTest;
 import com.diffplug.spotless.tag.CliProcessTest;
 
 @CliProcessTest
-@CliNativeTest
 public class PalantirJavaFormatTest extends CLIIntegrationHarness {
 
     @Test
