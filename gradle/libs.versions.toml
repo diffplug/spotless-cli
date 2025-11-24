@@ -5,6 +5,9 @@ classgraph = "4.8.180"
 diff-utils = "1.3.0"
 durian = "1.2.0"
 junit = "5.8.1"
+maven-resolver = "2.0.13"
+maven-resolver-transport-http = "1.9.24"
+maven-settings = "3.9.11"
 mockito = "5.17.0"
 native-include-cleanThat = "2.23"
 native-include-googleJavaFormat = "1.27.0"
@@ -28,6 +31,14 @@ durian-io = { module = "com.diffplug.durian:durian-io", version.ref = "durian" }
 durian-collect = { module = "com.diffplug.durian:durian-collect", version.ref = "durian" }
 junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
 junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
+maven-resolver-api = { module = "org.apache.maven.resolver:maven-resolver-api", version.ref = "maven-resolver" }
+maven-resolver-spi = { module = "org.apache.maven.resolver:maven-resolver-spi", version.ref = "maven-resolver" }
+maven-resolver-util = { module = "org.apache.maven.resolver:maven-resolver-util", version.ref = "maven-resolver" }
+maven-resolver-impl = { module = "org.apache.maven.resolver:maven-resolver-impl", version.ref = "maven-resolver" }
+maven-resolver-connector-basic = { module = "org.apache.maven.resolver:maven-resolver-connector-basic", version.ref = "maven-resolver" }
+maven-resolver-transport-http = { module = "org.apache.maven.resolver:maven-resolver-transport-http", version.ref = "maven-resolver-transport-http" }
+maven-settings = { module = "org.apache.maven:maven-settings", version.ref = "maven-settings" }
+maven-settings-builder = { module = "org.apache.maven:maven-settings-builder", version.ref = "maven-settings" }
 mockito = { module = "org.mockito:mockito-core", version.ref = "mockito" }
 native-include-cleanThat = { module = "io.github.solven-eu.cleanthat:java", version.ref = "native-include-cleanThat" }
 native-include-googleJavaFormat = { module = "com.google.googlejavaformat:google-java-format", version.ref = "native-include-googleJavaFormat" }
@@ -44,6 +55,16 @@ spotless-plugin-gradle = { module = "com.diffplug.spotless:spotless-plugin-gradl
 
 [bundles]
 durian-libs = ["durian-core", "durian-io", "durian-collect"]
+maven-resolver-libs = [
+    "maven-resolver-api",
+    "maven-resolver-spi",
+    "maven-resolver-util",
+    "maven-resolver-impl",
+    "maven-resolver-connector-basic",
+    "maven-resolver-transport-http",
+    "maven-settings",
+    "maven-settings-builder"
+]
 native-includes = [
     "native-include-cleanThat",
     "native-include-googleJavaFormat",

@@ -1,0 +1,22 @@
+plugins {
+    id 'buildlogic.java-library-conventions'
+}
+
+version = rootProject.version
+
+dependencies {
+//
+//    implementation libs.bundles.maven.resolver.libs
+
+    implementation( platform("org.apache.maven:maven-resolver-provider:3.9.11"))
+    implementation( "org.apache.maven:maven-resolver-provider")
+    implementation "org.apache.maven.resolver:maven-resolver-api"
+    implementation "org.apache.maven.resolver:maven-resolver-spi"
+    implementation "org.apache.maven.resolver:maven-resolver-util"
+    implementation "org.apache.maven.resolver:maven-resolver-impl"
+    implementation "org.apache.maven.resolver:maven-resolver-connector-basic"
+    implementation "org.apache.maven.resolver:maven-resolver-transport-file"
+    implementation "org.apache.maven.resolver:maven-resolver-transport-http"
+
+    implementation libs.bundles.spotless.libs
+}

@@ -34,4 +34,7 @@ plugins {
 }
 
 rootProject.name = 'spotless-cli'
-include('app', 'testlib')
+
+include 'app'
+include 'testlib'
+include 'provisioner'
