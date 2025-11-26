@@ -1,0 +1,2 @@
+# we explicitly want to include jar files in this local test maven repository
+!*.jar
