@@ -16,22 +16,7 @@ dependencies {
 	implementation libs.bundles.spotless.libs
 	implementation libs.diff.utils
 
-	// these are fixed versions of the otherwise dynamic dependencies for spotless
-	// this is necessary to allow for native compilation where reflective access to dynamic jars is not possible
-	implementation libs.bundles.native.includes
-
-	// Eclipse WTP formatter used a custom lockfile to ensure the formatter has the
-	// correct version of all its libraries
-	def resourceName = "/com/diffplug/spotless/extra/eclipse_wtp_formatter/v4.21.0.lockfile"
-	logger.debug("reading eclipse wtp resource: " + resourceName)
-	EclipseWtpFormatterStep.getResource(resourceName)
-			.readLines()
-			.findAll { !it.startsWith('#')} // filter out comments
-			.each {
-				implementation("${it}") {
-					transitive=false
-				}
-			}
+	implementation project(':provisioner')
 }
 
 application {

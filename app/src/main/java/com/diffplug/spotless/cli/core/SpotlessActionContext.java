@@ -27,23 +27,28 @@ public class SpotlessActionContext {
 
     private final TargetFileTypeInferer.TargetFileType targetFileType;
     private final FileResolver fileResolver;
+    private final Provisioner provisioner;
     private final ExecutionLayout executionLayout;
 
     private SpotlessActionContext(
             @NotNull TargetFileTypeInferer.TargetFileType targetFileType,
             @NotNull FileResolver fileResolver,
+            @NotNull Provisioner provisioner,
             @NotNull SpotlessCommandLineStream commandLineStream) {
         this.targetFileType = Objects.requireNonNull(targetFileType);
         this.fileResolver = Objects.requireNonNull(fileResolver);
+        this.provisioner = Objects.requireNonNull(provisioner);
         this.executionLayout = ExecutionLayout.create(fileResolver, Objects.requireNonNull(commandLineStream));
     }
 
     public SpotlessActionContext(
             @NotNull TargetFileTypeInferer.TargetFileType targetFileType,
             @NotNull FileResolver fileResolver,
+            @NotNull Provisioner provisioner,
             @NotNull ExecutionLayout executionLayout) {
-        this.targetFileType = targetFileType;
-        this.fileResolver = fileResolver;
+        this.targetFileType = Objects.requireNonNull(targetFileType);
+        this.fileResolver = Objects.requireNonNull(fileResolver);
+        this.provisioner = Objects.requireNonNull(provisioner);
         this.executionLayout = executionLayout;
     }
 
@@ -60,7 +65,7 @@ public class SpotlessActionContext {
     }
 
     public Provisioner provisioner() {
-        return CliJarProvisioner.INSTANCE;
+        return provisioner;
     }
 
     public ExecutionLayout executionLayout() {
@@ -72,12 +77,14 @@ public class SpotlessActionContext {
     }
 
     public SpotlessActionContext deriveContext(Integer deriveId) {
-        return new SpotlessActionContext(targetFileType, fileResolver, executionLayout.deriveLayout(deriveId));
+        return new SpotlessActionContext(
+                targetFileType, fileResolver, provisioner, executionLayout.deriveLayout(deriveId));
     }
 
     public static class Builder {
         private TargetFileTypeInferer.TargetFileType targetFileType;
         private FileResolver fileResolver;
+        private Provisioner provisioner;
         private SpotlessCommandLineStream commandLineStream;
 
         public Builder targetFileType(TargetFileTypeInferer.TargetFileType targetFileType) {
@@ -90,13 +97,18 @@ public class SpotlessActionContext {
             return this;
         }
 
+        public Builder provisioner(Provisioner provisioner) {
+            this.provisioner = provisioner;
+            return this;
+        }
+
         public Builder commandLineStream(SpotlessCommandLineStream commandLineStream) {
             this.commandLineStream = commandLineStream;
             return this;
         }
 
         public SpotlessActionContext build() {
-            return new SpotlessActionContext(targetFileType, fileResolver, commandLineStream);
+            return new SpotlessActionContext(targetFileType, fileResolver, provisioner, commandLineStream);
         }
     }
 }

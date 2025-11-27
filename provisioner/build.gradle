@@ -5,14 +5,11 @@ plugins {
 version = rootProject.version
 
 dependencies {
-	//
-	//    implementation libs.bundles.maven.resolver.libs
-
-    api( platform("org.apache.maven.resolver:maven-resolver:2.0.13"))
-
-//	implementation "org.apache.maven:maven-resolver-provider"
-
+	// BOM to align all maven resolver versions
+	// the first two on API, to allow user of SpotlessCliMavenProvisioner to specify repositories
+	api( platform("org.apache.maven.resolver:maven-resolver:2.0.13"))
 	api "org.apache.maven.resolver:maven-resolver-api"
+	// implementations needed for a working resolver, irrelevant for API consumers
 	implementation "org.apache.maven.resolver:maven-resolver-spi"
 	implementation "org.apache.maven.resolver:maven-resolver-util"
 	implementation "org.apache.maven.resolver:maven-resolver-impl"
@@ -20,14 +17,8 @@ dependencies {
 	implementation "org.apache.maven.resolver:maven-resolver-transport-file"
 	implementation "org.apache.maven.resolver:maven-resolver-transport-apache"
 
-//    implementation "org.apache.maven.resolver:maven-resolver-supplier-mvn3"
-    implementation "org.apache.maven.resolver:maven-resolver-supplier-mvn4"
-
-    implementation "org.apache.maven:maven-resolver-provider:3.9.11"
-
-    // ✅ THESE are required to support parent POM resolution
-    implementation "org.apache.maven:maven-model-builder:3.9.11"
-    implementation "org.apache.maven:maven-resolver-provider:3.9.11"
+	// This one is required to support parent POM resolution
+	implementation "org.apache.maven.resolver:maven-resolver-supplier-mvn4"
 
 	implementation libs.bundles.spotless.libs
 }

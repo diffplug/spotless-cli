@@ -28,15 +28,15 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-class DynamicMavenResolverPublisherTest {
+class SpotlessCliMavenProvisionerTest {
 
     @Test
     @Disabled(
             "Disabled to avoid network dependency during tests, enable when network access is acceptable while developing")
     void itResolvesDiffplugSpotlessLib(@TempDir Path tempDir) {
         // Given
-        DynamicMavenResolverPublisher provisioner =
-                new DynamicMavenResolverPublisher(DynamicMavenResolverPublisher.DEFAULT_REMOTE_REPOSITORIES, tempDir);
+        SpotlessCliMavenProvisioner provisioner =
+                new SpotlessCliMavenProvisioner(SpotlessCliMavenProvisioner.DEFAULT_REMOTE_REPOSITORIES, tempDir);
         // When
         Set<File> files = provisioner.provisionWithTransitives(true, "com.diffplug.spotless:spotless-lib:4.1.0");
         Set<String> fileNames = files.stream().map(File::getName).collect(Collectors.toSet());
@@ -48,12 +48,15 @@ class DynamicMavenResolverPublisherTest {
     }
 
     @Test
+    @Disabled(
+            "Disabled to avoid network dependency during tests, enable when network access is acceptable while developing")
     void itResolvesGoogleJavaFormat(@TempDir Path tempDir) {
         // Given
-        DynamicMavenResolverPublisher provisioner =
-                new DynamicMavenResolverPublisher(DynamicMavenResolverPublisher.DEFAULT_REMOTE_REPOSITORIES, tempDir);
+        SpotlessCliMavenProvisioner provisioner =
+                new SpotlessCliMavenProvisioner(SpotlessCliMavenProvisioner.DEFAULT_REMOTE_REPOSITORIES, tempDir);
         // When
-        Set<File> files = provisioner.provisionWithTransitives(true, "com.google.googlejavaformat:google-java-format:1.28.0");
+        Set<File> files =
+                provisioner.provisionWithTransitives(true, "com.google.googlejavaformat:google-java-format:1.28.0");
         Set<String> fileNames = files.stream().map(File::getName).collect(Collectors.toSet());
         // Then
         SoftAssertions.assertSoftly(softly -> {
@@ -67,7 +70,7 @@ class DynamicMavenResolverPublisherTest {
     @Test
     void itResolvesTestLib1(@TempDir Path tempDir) {
         // Given
-        DynamicMavenResolverPublisher provisioner = provisionerForLocalMavenTestRepo(tempDir);
+        SpotlessCliMavenProvisioner provisioner = provisionerForLocalMavenTestRepo(tempDir);
         // When
         Set<File> files = provisioner.provisionWithTransitives(true, "com.example:lib1:1.0.0");
         Set<String> fileNames = files.stream().map(File::getName).collect(Collectors.toSet());
@@ -81,7 +84,7 @@ class DynamicMavenResolverPublisherTest {
     @Test
     void itResolvesTestLib2WithTransitives(@TempDir Path tempDir) {
         // Given
-        DynamicMavenResolverPublisher provisioner = provisionerForLocalMavenTestRepo(tempDir);
+        SpotlessCliMavenProvisioner provisioner = provisionerForLocalMavenTestRepo(tempDir);
         // When
         Set<File> files = provisioner.provisionWithTransitives(true, "com.example:lib2:1.0.0");
         Set<String> fileNames = files.stream().map(File::getName).collect(Collectors.toSet());
@@ -96,7 +99,7 @@ class DynamicMavenResolverPublisherTest {
     @Test
     void itResolvesTestLib2WithoutTransitives(@TempDir Path tempDir) {
         // Given
-        DynamicMavenResolverPublisher provisioner = provisionerForLocalMavenTestRepo(tempDir);
+        SpotlessCliMavenProvisioner provisioner = provisionerForLocalMavenTestRepo(tempDir);
         // When
         Set<File> files = provisioner.provisionWithTransitives(false, "com.example:lib2:1.0.0");
         Set<String> fileNames = files.stream().map(File::getName).collect(Collectors.toSet());
@@ -111,7 +114,7 @@ class DynamicMavenResolverPublisherTest {
     @Test
     void itResolvesLib2WhenRepeatedlyProvisioning(@TempDir Path tempDir) {
         // Given
-        DynamicMavenResolverPublisher provisioner = provisionerForLocalMavenTestRepo(tempDir);
+        SpotlessCliMavenProvisioner provisioner = provisionerForLocalMavenTestRepo(tempDir);
         // When
         Set<File> firstProvisioning = provisioner.provisionWithTransitives(true, "com.example:lib2:1.0.0");
         Set<File> secondProvisioning = provisioner.provisionWithTransitives(true, "com.example:lib2:1.0.0");
@@ -128,7 +131,7 @@ class DynamicMavenResolverPublisherTest {
     @Test
     void itResolvesLib3WithTransitivesRespectingParentPom(@TempDir Path tempDir) {
         // Given
-        DynamicMavenResolverPublisher provisioner = provisionerForLocalMavenTestRepo(tempDir);
+        SpotlessCliMavenProvisioner provisioner = provisionerForLocalMavenTestRepo(tempDir);
         // When
         Set<File> files = provisioner.provisionWithTransitives(true, "com.example:lib3:1.0.0");
         Set<String> fileNames = files.stream().map(File::getName).collect(Collectors.toSet());
@@ -140,8 +143,8 @@ class DynamicMavenResolverPublisherTest {
         });
     }
 
-    private static @NotNull DynamicMavenResolverPublisher provisionerForLocalMavenTestRepo(Path tempDir) {
-        return new DynamicMavenResolverPublisher(localMavenTestRepo(), tempDir);
+    private static @NotNull SpotlessCliMavenProvisioner provisionerForLocalMavenTestRepo(Path tempDir) {
+        return new SpotlessCliMavenProvisioner(localMavenTestRepo(), tempDir);
     }
 
     private static @NotNull List<RemoteRepository> localMavenTestRepo() {

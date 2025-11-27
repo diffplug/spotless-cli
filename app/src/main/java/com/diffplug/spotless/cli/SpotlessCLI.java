@@ -43,6 +43,7 @@ import com.diffplug.spotless.cli.execution.SpotlessExecutionStrategy;
 import com.diffplug.spotless.cli.help.OptionConstants;
 import com.diffplug.spotless.cli.logging.output.LoggingConfigurer;
 import com.diffplug.spotless.cli.logging.output.Output;
+import com.diffplug.spotless.cli.provisioner.SpotlessCliMavenProvisioner;
 import com.diffplug.spotless.cli.steps.ClangFormat;
 import com.diffplug.spotless.cli.steps.CleanThat;
 import com.diffplug.spotless.cli.steps.EclipseWtp;
@@ -337,6 +338,9 @@ public class SpotlessCLI implements SpotlessAction, SpotlessCommand, SpotlessAct
         return SpotlessActionContext.builder()
                 .targetFileType(targetFileTypeInferer.inferTargetFileType())
                 .fileResolver(new FileResolver(baseDir()))
+                .provisioner(new SpotlessCliMavenProvisioner(
+                        SpotlessCliMavenProvisioner.DEFAULT_REMOTE_REPOSITORIES,
+                        SpotlessCliMavenProvisioner.DEFAULT_LOCAL_MAVEN_REPO)) // TODO allow configuration
                 .commandLineStream(commandLineStream)
                 .build();
     }

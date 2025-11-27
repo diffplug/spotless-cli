@@ -22,16 +22,12 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
-import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.collection.CollectRequest;
 import org.eclipse.aether.graph.Dependency;
-import org.eclipse.aether.impl.ArtifactDescriptorReader;
-import org.eclipse.aether.repository.LocalRepository;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.resolution.ArtifactRequest;
 import org.eclipse.aether.resolution.ArtifactResult;
@@ -44,7 +40,7 @@ import org.eclipse.aether.util.filter.DependencyFilterUtils;
 
 import com.diffplug.spotless.Provisioner;
 
-public class DynamicMavenResolverPublisher implements Provisioner {
+public class SpotlessCliMavenProvisioner implements Provisioner {
 
     public static final List<RemoteRepository> DEFAULT_REMOTE_REPOSITORIES =
             List.of(new RemoteRepository.Builder("central", "default", "https://repo1.maven.org/maven2/").build());
@@ -55,7 +51,7 @@ public class DynamicMavenResolverPublisher implements Provisioner {
 
     private final Path localMavenRepo;
 
-    public DynamicMavenResolverPublisher(List<RemoteRepository> remoteRepositories, Path localMavenRepo) {
+    public SpotlessCliMavenProvisioner(List<RemoteRepository> remoteRepositories, Path localMavenRepo) {
         this.remoteRepositories = remoteRepositories;
         this.localMavenRepo = localMavenRepo;
     }
@@ -78,13 +74,14 @@ public class DynamicMavenResolverPublisher implements Provisioner {
 
     private RepositorySystemSession newSession(RepositorySystem system) {
         SessionBuilderSupplier sessionBuilderSupplier = new SessionBuilderSupplier(system);
-        return sessionBuilderSupplier.get()
+        return sessionBuilderSupplier
+                .get()
                 .withLocalRepositoryBaseDirectories(localMavenRepo)
                 .build();
-//        DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
-//        LocalRepository localRepo = new LocalRepository(localMavenRepo.toFile());
-//        session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepo));
-//        return session;
+        //        DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
+        //        LocalRepository localRepo = new LocalRepository(localMavenRepo.toFile());
+        //        session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepo));
+        //        return session;
     }
 
     @Override

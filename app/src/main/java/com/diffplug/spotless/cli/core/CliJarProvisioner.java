@@ -22,7 +22,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import com.diffplug.spotless.JarState;
 import com.diffplug.spotless.Provisioner;
 
 /**
@@ -38,7 +37,7 @@ public class CliJarProvisioner implements Provisioner {
     public static final File OWN_JAR = createSentinelFile();
 
     public CliJarProvisioner() {
-        JarState.setForcedClassLoader(getClass().getClassLoader()); // use the classloader of this class
+        //        JarState.setForcedClassLoader(getClass().getClassLoader()); // use the classloader of this class
     }
 
     private static File createSentinelFile() {
