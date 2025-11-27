@@ -30,6 +30,7 @@ import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.collection.CollectRequest;
 import org.eclipse.aether.graph.Dependency;
+import org.eclipse.aether.impl.ArtifactDescriptorReader;
 import org.eclipse.aether.repository.LocalRepository;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.resolution.ArtifactRequest;
@@ -37,6 +38,7 @@ import org.eclipse.aether.resolution.ArtifactResult;
 import org.eclipse.aether.resolution.DependencyRequest;
 import org.eclipse.aether.resolution.DependencyResult;
 import org.eclipse.aether.supplier.RepositorySystemSupplier;
+import org.eclipse.aether.supplier.SessionBuilderSupplier;
 import org.eclipse.aether.util.artifact.JavaScopes;
 import org.eclipse.aether.util.filter.DependencyFilterUtils;
 
@@ -75,16 +77,25 @@ public class DynamicMavenResolverPublisher implements Provisioner {
     }
 
     private RepositorySystemSession newSession(RepositorySystem system) {
-        DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
-        LocalRepository localRepo = new LocalRepository(localMavenRepo.toFile());
-        session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepo));
-        return session;
+        SessionBuilderSupplier sessionBuilderSupplier = new SessionBuilderSupplier(system);
+        return sessionBuilderSupplier.get()
+                .withLocalRepositoryBaseDirectories(localMavenRepo)
+                .build();
+//        DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
+//        LocalRepository localRepo = new LocalRepository(localMavenRepo.toFile());
+//        session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepo));
+//        return session;
     }
 
     @Override
     public Set<File> provisionWithTransitives(boolean withTransitives, Collection<String> mavenCoordinates) {
         RepositorySystem repositorySystem = newRepositorySystem();
         RepositorySystemSession repositorySystemSession = newSession(repositorySystem);
+
+        // Let the resolver apply mirrors / proxies / repo managers etc. (like Maven)
+        List<RemoteRepository> resolutionRepos =
+                repositorySystem.newResolutionRepositories(repositorySystemSession, remoteRepositories);
+
         Set<File> jarFiles = new LinkedHashSet<>();
 
         for (String coord : mavenCoordinates) {
@@ -95,7 +106,7 @@ public class DynamicMavenResolverPublisher implements Provisioner {
                     // Resolve full dependency graph
                     CollectRequest collectRequest = new CollectRequest();
                     collectRequest.setRoot(new Dependency(artifact, JavaScopes.RUNTIME));
-                    remoteRepositories.forEach(collectRequest::addRepository);
+                    collectRequest.setRepositories(resolutionRepos);
 
                     DependencyRequest dependencyRequest = new DependencyRequest(
                             collectRequest, DependencyFilterUtils.classpathFilter(JavaScopes.RUNTIME));
@@ -103,6 +114,7 @@ public class DynamicMavenResolverPublisher implements Provisioner {
                     DependencyResult result =
                             repositorySystem.resolveDependencies(repositorySystemSession, dependencyRequest);
 
+                    System.out.println(result.getRoot());
                     result.getArtifactResults().forEach(r -> {
                         File f = r.getArtifact().getFile();
                         if (f != null) jarFiles.add(f);

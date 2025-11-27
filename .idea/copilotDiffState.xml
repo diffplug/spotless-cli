@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CopilotDiffPersistence">
+    <option name="pendingDiffs">
+      <map>
+        <entry key="$PROJECT_DIR$/provisioner/maven-test-repo/com/example/parent/1.0.0/parent-1.0.0.pom">
+          <value>
+            <PendingDiffInfo>
+              <option name="filePath" value="$PROJECT_DIR$/provisioner/maven-test-repo/com/example/parent/1.0.0/parent-1.0.0.pom" />
+              <option name="originalContent" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&#10;&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot;&#10;         xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;&#10;         xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;&#10;    &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;&#10;    &lt;groupId&gt;com.example&lt;/groupId&gt;&#10;    &lt;artifactId&gt;parent&lt;/artifactId&gt;&#10;    &lt;version&gt;1.0.0&lt;/version&gt;&#10;    &lt;packaging&gt;pom&lt;/packaging&gt;&#10;    &lt;name&gt;parent&lt;/name&gt;&#10;    &lt;dependencies&gt;&#10;        &lt;dependency&gt;&#10;            &lt;groupId&gt;com.example&lt;/groupId&gt;&#10;            &lt;artifactId&gt;lib1&lt;/artifactId&gt;&#10;            &lt;version&gt;1.0.0&lt;/version&gt;&#10;        &lt;/dependency&gt;&#10;    &lt;/dependencies&gt;&#10;&#10;&lt;/project&gt;&#10;" />
+              <option name="updatedContent" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&#10;&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot;&#10;         xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;&#10;         xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;&#10;    &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;&#10;    &lt;groupId&gt;com.example&lt;/groupId&gt;&#10;    &lt;artifactId&gt;parent&lt;/artifactId&gt;&#10;    &lt;version&gt;1.0.0&lt;/version&gt;&#10;    &lt;packaging&gt;pom&lt;/packaging&gt;&#10;    &lt;name&gt;parent&lt;/name&gt;&#10;    &lt;dependencyManagement&gt;&#10;        &lt;dependencies&gt;&#10;            &lt;dependency&gt;&#10;                &lt;groupId&gt;com.example&lt;/groupId&gt;&#10;                &lt;artifactId&gt;lib1&lt;/artifactId&gt;&#10;                &lt;version&gt;1.0.0&lt;/version&gt;&#10;            &lt;/dependency&gt;&#10;        &lt;/dependencies&gt;&#10;    &lt;/dependencyManagement&gt;&#10;&#10;&lt;/project&gt;&#10;" />
+            </PendingDiffInfo>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>
