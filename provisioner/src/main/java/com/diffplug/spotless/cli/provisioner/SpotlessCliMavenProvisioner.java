@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
@@ -39,6 +40,7 @@ import org.eclipse.aether.util.artifact.JavaScopes;
 import org.eclipse.aether.util.filter.DependencyFilterUtils;
 
 import com.diffplug.spotless.Provisioner;
+import com.diffplug.spotless.ThrowingEx;
 
 public class SpotlessCliMavenProvisioner implements Provisioner {
 
@@ -78,60 +80,70 @@ public class SpotlessCliMavenProvisioner implements Provisioner {
                 .get()
                 .withLocalRepositoryBaseDirectories(localMavenRepo)
                 .build();
-        //        DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
-        //        LocalRepository localRepo = new LocalRepository(localMavenRepo.toFile());
-        //        session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepo));
-        //        return session;
     }
 
     @Override
     public Set<File> provisionWithTransitives(boolean withTransitives, Collection<String> mavenCoordinates) {
-        RepositorySystem repositorySystem = newRepositorySystem();
-        RepositorySystemSession repositorySystemSession = newSession(repositorySystem);
 
-        // Let the resolver apply mirrors / proxies / repo managers etc. (like Maven)
-        List<RemoteRepository> resolutionRepos =
-                repositorySystem.newResolutionRepositories(repositorySystemSession, remoteRepositories);
+        final ArtifactResolverFunc artifactResolverFunc =
+                withTransitives ? new DependencyGraphResolverFunc() : new SingleArtifactResolverFunc();
 
-        Set<File> jarFiles = new LinkedHashSet<>();
-
-        for (String coord : mavenCoordinates) {
-            Artifact artifact = new DefaultArtifact(coord);
-
-            try {
-                if (withTransitives) {
-                    // Resolve full dependency graph
-                    CollectRequest collectRequest = new CollectRequest();
-                    collectRequest.setRoot(new Dependency(artifact, JavaScopes.RUNTIME));
-                    collectRequest.setRepositories(resolutionRepos);
-
-                    DependencyRequest dependencyRequest = new DependencyRequest(
-                            collectRequest, DependencyFilterUtils.classpathFilter(JavaScopes.RUNTIME));
-
-                    DependencyResult result =
-                            repositorySystem.resolveDependencies(repositorySystemSession, dependencyRequest);
-
-                    System.out.println(result.getRoot());
-                    result.getArtifactResults().forEach(r -> {
-                        File f = r.getArtifact().getFile();
-                        if (f != null) jarFiles.add(f);
-                    });
-
-                } else {
-                    // Resolve just the main artifact
-                    ArtifactRequest request = new ArtifactRequest();
-                    request.setArtifact(artifact);
-                    remoteRepositories.forEach(request::addRepository);
-
-                    ArtifactResult result = repositorySystem.resolveArtifact(repositorySystemSession, request);
-                    jarFiles.add(result.getArtifact().getFile());
-                }
-
-            } catch (Exception e) {
-                throw new RuntimeException("Failed to resolve: " + coord, e);
-            }
-        }
+        Set<File> jarFiles = mavenCoordinates.stream()
+                .map(DefaultArtifact::new)
+                .flatMap(ThrowingEx.wrap(artifact -> artifactResolverFunc.apply(artifact).stream()))
+                .map(ArtifactResult::getArtifact)
+                .map(Artifact::getPath)
+                .map(Path::toFile)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
 
         return jarFiles;
+    }
+
+    private interface ArtifactResolverFunc {
+        List<ArtifactResult> apply(Artifact artifact) throws Exception;
+    }
+
+    private abstract class BaseArtifactResolverFunc implements ArtifactResolverFunc {
+        protected final RepositorySystem repositorySystem;
+        protected final RepositorySystemSession repositorySystemSession;
+        protected final List<RemoteRepository> resolutionRepos;
+
+        protected BaseArtifactResolverFunc() {
+            this.repositorySystem = newRepositorySystem();
+            this.repositorySystemSession = newSession(repositorySystem);
+            this.resolutionRepos =
+                    repositorySystem.newResolutionRepositories(repositorySystemSession, remoteRepositories);
+        }
+    }
+
+    private class DependencyGraphResolverFunc extends BaseArtifactResolverFunc {
+
+        @Override
+        public List<ArtifactResult> apply(Artifact artifact) throws Exception {
+
+            CollectRequest collectRequest = new CollectRequest();
+            collectRequest.setRoot(new Dependency(artifact, JavaScopes.RUNTIME));
+            collectRequest.setRepositories(remoteRepositories);
+
+            DependencyRequest dependencyRequest =
+                    new DependencyRequest(collectRequest, DependencyFilterUtils.classpathFilter(JavaScopes.RUNTIME));
+
+            DependencyResult result = repositorySystem.resolveDependencies(repositorySystemSession, dependencyRequest);
+
+            return result.getArtifactResults();
+        }
+    }
+
+    private class SingleArtifactResolverFunc extends BaseArtifactResolverFunc {
+
+        @Override
+        public List<ArtifactResult> apply(Artifact artifact) throws Exception {
+            ArtifactRequest request = new ArtifactRequest();
+            request.setArtifact(artifact);
+            remoteRepositories.forEach(request::addRepository);
+
+            ArtifactResult result = repositorySystem.resolveArtifact(repositorySystemSession, request);
+            return List.of(result);
+        }
     }
 }
