@@ -8,7 +8,6 @@ def special = [
 	'npm',
 	'cliProcess',
 	'cliProcessNpm',
-	'separateJvm'
 ]
 
 tasks.named('test', Test).configure {
@@ -24,22 +23,12 @@ special.forEach { tag ->
 	}
 }
 
-tasks.named('testSeparateJvm', Test) {
-	it.forkEvery = 1 // ensure that each test task runs in a separate JVM
-}
-
 tasks.withType(Test).configureEach { Test task ->
 	// any test task that does not end with Npm should exclude all the npm tests
 	if (!task.name.toLowerCase().endsWith('npm')) {
 		def toExclude = special.findAll { it.toLowerCase().endsWith('npm') }.join('|')
 		task.useJUnitPlatform {
 			excludeTags toExclude
-		}
-	}
-	// any test task that does not end with separateJvm should exclude all the separateJvm tests
-	if (!task.name.toLowerCase().endsWith('separatejvm')) {
-		task.useJUnitPlatform {
-			excludeTags 'separateJvm'
 		}
 	}
 }
