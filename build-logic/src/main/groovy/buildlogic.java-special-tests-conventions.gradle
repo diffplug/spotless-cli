@@ -10,10 +10,6 @@ def special = [
 	'cliProcessNpm',
 ]
 
-tasks.named('test', Test).configure {
-	useJUnitPlatform()
-}
-
 special.forEach { tag ->
 	tasks.register("test${tag.capitalize()}", Test) {
 		useJUnitPlatform {
