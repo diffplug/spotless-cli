@@ -16,51 +16,7 @@ concurrency:
   group: "${{ github.workflow }}-${{ github.ref }}"
   cancel-in-progress: true
 jobs:
-  nativeCompile:
-    name: "${{ matrix.platform.name }}: create production-binary"
-    strategy:
-      matrix:
-        platform:
-          - name: "linux-x86_64"
-            runner: "ubuntu-latest"
-          - name: "linux-aarch_64"
-            runner: "ubuntu-24.04-arm"
-          - name: "windows-x86_64"
-            runner: "windows-latest"
-          - name: "osx-aarch_64"
-            runner: "macos-latest"
-          - name: "osx-x86_64"
-            runner: "macos-13"
-    runs-on: "${{ matrix.platform.runner }}"
-    env:
-      SEGMENT_DOWNLOAD_TIMEOUT_MINS: "15"
-    steps:
-      - name: "Checkout"
-        uses: "actions/checkout@v4"
-        with:
-          fetch-depth: 0
-      - name: "Install JDK 21"
-        uses: "actions/setup-java@v4"
-        with:
-          distribution: "graalvm"
-          java-version: 21
-      - name: "Install Node.js"
-        uses: actions/setup-node@v4
-        with:
-          node-version: "lts/jod" # 22
-      - name: "Setup Gradle"
-        uses: "gradle/actions/setup-gradle@v4"
-      - name: "Run nativeCompile"
-        run: "./gradlew -Prelease=true -PreleaseForceVersion=${{ github.event.inputs.force_version }} nativeCompile"
-      - name: "upload binary" # for collecting later
-        uses: actions/upload-artifact@v4
-        with:
-          name: "spotless-native-binary--${{ matrix.platform.name }}"
-          path: app/build/native/nativeCompile/spotless*
-          retention-days: 3
-          if-no-files-found: "error"
   createRelease:
-    needs: nativeCompile
     name: "Create a new release"
     runs-on: ubuntu-latest
     outputs:
@@ -75,20 +31,12 @@ jobs:
       - name: "Install JDK 21"
         uses: "actions/setup-java@v4"
         with:
-          distribution: "graalvm"
+          distribution: "zulu"
           java-version: 21
       - name: "Setup Gradle"
         uses: "gradle/actions/setup-gradle@v4"
-      - name: "Retrieve production-binaries"
-        uses: "actions/download-artifact@v5"
-        with:
-          # no name - download all artifacts
-          path: "app/build/collected-binaries"
-      - name: "Make sure downloaded binaries are executable"
-        run: |
-          find app/build/collected-binaries -type f -name "spotless*" -exec chmod +x {} \;
-      - name: "Prepare release zips for distribution"
-        run: "./gradlew -Prelease=true -PreleaseForceVersion=${{ github.event.inputs.force_version }} -PreleaseBinariesRootDir=app/build/collected-binaries prepareReleaseBinaryZips"
+      - name: "Create Distribution Zips"
+        run: "./gradlew -Prelease=true -PreleaseForceVersion=${{ github.event.inputs.force_version }} distZip"
       - name: "Get changelog of latest release to file"
         run: |
           echo "$(./gradlew changelogPrintLatestVersionContent -Prelease=true -PreleaseForceVersion=${{ github.event.inputs.force_version }} --quiet)" > "app/build/release-notes.md"
@@ -124,12 +72,12 @@ jobs:
             out/jreleaser/trace.log
             out/jreleaser/output.properties
             out/jreleaser/package/spotless-cli/**
-      - name: "upload distribution zips" # for chocolatey distribution
+      - name: "Upload distribution Zip" # for chocolatey distribution
         uses: actions/upload-artifact@v4
         with:
-          name: "spotless-distribution-zips"
-          path: app/build/prepared-release-zips/spotless*.zip*
-          retention-days: 3
+          name: "spotless-distribution-zip"
+          path: app/build/distributions/spotless-cli-*.zip
+          retention-days: 7
           if-no-files-found: "error"
   createChocoRelease:
     needs: createRelease
@@ -145,14 +93,14 @@ jobs:
       - name: "Install JDK 21"
         uses: "actions/setup-java@v4"
         with:
-          distribution: "graalvm"
+          distribution: "zulu"
           java-version: 21
       - name: "Setup Gradle"
         uses: "gradle/actions/setup-gradle@v4"
-      - name: "Download release zips"
+      - name: "Download release zip"
         uses: "actions/download-artifact@v5"
         with:
-          name: "spotless-distribution-zips" # download release zips only
+          name: "spotless-distribution-zip"
           path: "app/build/prepared-release-zips"
       - name: "Prepare jreleaser for distribution"
         run: "./gradlew prepareJReleaserConfig"
