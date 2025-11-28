@@ -1,6 +1,5 @@
 plugins {
 	id 'com.diffplug.spotless-changelog'
-	id 'buildlogic.release-prepare-packages-conventions'
 }
 
 spotlessChangelog {
@@ -15,7 +14,7 @@ spotlessChangelog {
 	commitMessage "Published v{{version}}"
 	tagPrefix "v"
 	// https://cli.github.com/manual/gh_release_create
-	runAfterPush "gh release create v{{version}} --title 'spotless-cli v{{version}}' --notes-file app/build/release-notes.md --verify-tag ${getPathsOfReleaseBinaryZips().join(' ')}"
+	runAfterPush "gh release create v{{version}} --title 'spotless-cli v{{version}}' --notes-file app/build/release-notes.md --verify-tag ${layout.buildDirectory.dir('distributions').get().file('spotless-cli-{{version}}.zip').asFile.absolutePath}"
 }
 
 version = spotlessChangelog.versionNext

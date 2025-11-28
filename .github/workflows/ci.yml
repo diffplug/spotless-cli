@@ -49,6 +49,15 @@ jobs:
         run: "./gradlew :build-logic:check --no-configuration-cache"
       - name: "Run check on project"
         run: "./gradlew generateUsage && ./gradlew check"
+      - name: "Create dist zip (java binary)"
+        run: "./gradlew distZip"
+      - name: "upload dist-zip" # for debugging
+        uses: actions/upload-artifact@v4
+        with:
+          name: "dist-zip"
+          path: app/build/distributions/spotless-*.zip
+          retention-days: 7
+          if-no-files-found: "error"
       - name: "Get version and set to output"
         id: get_version
         run: echo "VERSION=$(./gradlew changelogPrintCurrentVersion --quiet)" >> "$GITHUB_OUTPUT"
@@ -82,17 +91,11 @@ jobs:
           java-version: 21
       - name: "Setup Gradle"
         uses: "gradle/actions/setup-gradle@v4"
-      - name: "Retrieve binaries"
+      - name: "Retrieve dist-zip"
         uses: "actions/download-artifact@v4"
         with:
-          # no name - download all artifacts
-          path: "app/build/collected-binaries"
-      - name: "Make sure downloaded binaries are executable"
-        if: "${{ matrix.platform.name == 'linux-x86_64' }}"
-        run: |
-          find app/build/collected-binaries -type f -name "spotless*" -exec chmod +x {} \;
-      - name: "Prepare release zips for distribution"
-        run: "./gradlew -PreleaseBinariesRootDir=app/build/collected-binaries prepareReleaseBinaryZips"
+          name: "dist-zip"
+          path: "app/build/distributions"
       - name: "Prepare jreleaser for distribution"
         run: "./gradlew prepareJReleaserConfig"
         env:
