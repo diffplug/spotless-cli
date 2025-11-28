@@ -7,3 +7,5 @@
 /dataSources/
 /dataSources.local.xml
 /copilot.data.migration.*.xml
+/copilot.*State.xml
+
