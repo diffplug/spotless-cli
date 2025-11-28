@@ -29,6 +29,8 @@ import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.collection.CollectRequest;
 import org.eclipse.aether.graph.Dependency;
+import org.eclipse.aether.graph.DependencyFilter;
+import org.eclipse.aether.graph.DependencyNode;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.resolution.ArtifactRequest;
 import org.eclipse.aether.resolution.ArtifactResult;
@@ -125,8 +127,10 @@ public class SpotlessCliMavenProvisioner implements Provisioner {
             collectRequest.setRoot(new Dependency(artifact, JavaScopes.RUNTIME));
             collectRequest.setRepositories(remoteRepositories);
 
-            DependencyRequest dependencyRequest =
-                    new DependencyRequest(collectRequest, DependencyFilterUtils.classpathFilter(JavaScopes.RUNTIME));
+            DependencyFilter filter = DependencyFilterUtils.andFilter(
+                    DependencyFilterUtils.classpathFilter(JavaScopes.RUNTIME), FilterOptionalDependencies.INSTANCE);
+
+            DependencyRequest dependencyRequest = new DependencyRequest(collectRequest, filter);
 
             DependencyResult result = repositorySystem.resolveDependencies(repositorySystemSession, dependencyRequest);
 
@@ -144,6 +148,20 @@ public class SpotlessCliMavenProvisioner implements Provisioner {
 
             ArtifactResult result = repositorySystem.resolveArtifact(repositorySystemSession, request);
             return List.of(result);
+        }
+    }
+
+    private static class FilterOptionalDependencies implements DependencyFilter {
+
+        private static final FilterOptionalDependencies INSTANCE = new FilterOptionalDependencies();
+
+        @Override
+        public boolean accept(DependencyNode node, List<DependencyNode> parents) {
+            boolean isOptional = node.getDependency().isOptional();
+            if (isOptional) {
+                System.out.println(node.getDependency() + " is optional, excluding from resolution");
+            }
+            return !isOptional;
         }
     }
 }
