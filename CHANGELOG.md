@@ -9,7 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Bumping the bundled spotless-lib (3.3.1 -> 4.1.0)
+- **BREAKING** Bumping the bundled spotless-lib (3.3.1 -> 4.1.0)
+- **BREAKING** spotless cli is moving away from distributing as a graalvm native image.
+  From now on, we will distribute spotless cli as a regular java application (set of jars).
+  :question: Why? Even though the native image gives us great performance, it comes with the cost of major limitations:
+  - :boom: no support for dynamic class loading (which is needed to load formatters/plugins in specific versions at runtime)
+  - :boom: classpath collisions are difficult to handle (for example it is not possible to have eclipse-wtp and eclipse-java-formatter at the same time)
+  - :boom: increased code complexity when reflection is added mix by any formatter used
+    The distribution as regular java application removes these limitations and gives us more flexibility to add new formatters and features in the future.
+    The downside is that the startup time will be a bit slower and it requires a jre to be installed on the system.
 
 ### Fixed
 
