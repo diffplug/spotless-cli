@@ -28,7 +28,6 @@ project:
       version: 21
 
 packagers:
-  brew:
   chocolatey:
     username: "@Env.JRELEASER_CHOCOLATEY_USER@" # does not support name templates, so use gradle templating
     extraProperties:
@@ -36,8 +35,6 @@ packagers:
     repository:
       branch: main
       branchPush: main
-  # future setup
-  jbang:
 
 distributions:
   spotless-cli:

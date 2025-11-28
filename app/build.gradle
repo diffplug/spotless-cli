@@ -22,7 +22,12 @@ dependencies {
 application {
 	mainClass = 'com.diffplug.spotless.cli.SpotlessCLI'
 	applicationName = 'spotless'
-	archivesBaseName = 'spotless-cli'
+}
+
+distributions {
+	main {
+		distributionBaseName = 'spotless-cli'
+	}
 }
 
 tasks.withType(Test).configureEach {
