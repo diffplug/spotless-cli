@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - "main"
+      - "feature/move-to-java-binary-releasing"
   workflow_dispatch:
     inputs:
       force_gradle_cache_clean:
