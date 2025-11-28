@@ -80,7 +80,7 @@ jobs:
       - name: "Setup Gradle"
         uses: "gradle/actions/setup-gradle@v4"
       - name: "Retrieve production-binaries"
-        uses: "actions/download-artifact@v4"
+        uses: "actions/download-artifact@v5"
         with:
           # no name - download all artifacts
           path: "app/build/collected-binaries"
@@ -150,7 +150,7 @@ jobs:
       - name: "Setup Gradle"
         uses: "gradle/actions/setup-gradle@v4"
       - name: "Download release zips"
-        uses: "actions/download-artifact@v4"
+        uses: "actions/download-artifact@v5"
         with:
           name: "spotless-distribution-zips" # download release zips only
           path: "app/build/prepared-release-zips"
@@ -193,7 +193,7 @@ jobs:
           ref: "main"
           token: "${{ secrets.BREW_CHOCO_CLI_GH_TOKEN }}"
       - name: "Download chocolatey package source"
-        uses: "actions/download-artifact@v4"
+        uses: "actions/download-artifact@v5"
         with:
           name: jreleaser-release-windows
           path: build/jreleaser-windows
