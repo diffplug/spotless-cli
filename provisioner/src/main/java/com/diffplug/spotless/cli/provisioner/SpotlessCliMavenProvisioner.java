@@ -40,11 +40,15 @@ import org.eclipse.aether.supplier.RepositorySystemSupplier;
 import org.eclipse.aether.supplier.SessionBuilderSupplier;
 import org.eclipse.aether.util.artifact.JavaScopes;
 import org.eclipse.aether.util.filter.DependencyFilterUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.diffplug.spotless.Provisioner;
 import com.diffplug.spotless.ThrowingEx;
 
 public class SpotlessCliMavenProvisioner implements Provisioner {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(SpotlessCliMavenProvisioner.class);
 
     public static final List<RemoteRepository> DEFAULT_REMOTE_REPOSITORIES =
             List.of(new RemoteRepository.Builder("central", "default", "https://repo1.maven.org/maven2/").build());
@@ -157,9 +161,10 @@ public class SpotlessCliMavenProvisioner implements Provisioner {
 
         @Override
         public boolean accept(DependencyNode node, List<DependencyNode> parents) {
-            boolean isOptional = node.getDependency().isOptional();
+            Dependency dependency = node.getDependency();
+            boolean isOptional = dependency.isOptional();
             if (isOptional) {
-                System.out.println(node.getDependency() + " is optional, excluding from resolution");
+                LOGGER.debug("{} is optional, excluding from resolution", dependency);
             }
             return !isOptional;
         }
