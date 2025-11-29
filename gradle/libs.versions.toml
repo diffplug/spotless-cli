@@ -34,7 +34,7 @@ maven-resolver-bom = { module = "org.apache.maven.resolver:maven-resolver", vers
 maven-resolver-connector-basic = { module = "org.apache.maven.resolver:maven-resolver-connector-basic" } # version from bom
 maven-resolver-impl = { module = "org.apache.maven.resolver:maven-resolver-impl" } # version from bom
 maven-resolver-spi = { module = "org.apache.maven.resolver:maven-resolver-spi" } # version from bom
-maven-resolver-supplier-mvn4 = { module = "org.apache.maven.resolver:maven-resolver-supplier-mvn4" } # version from bom
+maven-resolver-supplier-mvn4 = { module = "org.apache.maven.resolver:maven-resolver-supplier-mvn4" } # version from bom - required to read maven structures like parent poms and more
 maven-resolver-transport-apache = { module = "org.apache.maven.resolver:maven-resolver-transport-apache" } # version from bom
 maven-resolver-transport-file = { module = "org.apache.maven.resolver:maven-resolver-transport-file" } # version from bom
 maven-resolver-util = { module = "org.apache.maven.resolver:maven-resolver-util" } # version from bom
@@ -54,8 +54,8 @@ spotless-plugin-gradle = { module = "com.diffplug.spotless:spotless-plugin-gradl
 
 [bundles]
 durian-libs = ["durian-core", "durian-io", "durian-collect"]
-maven-resolver-libs = [
-    "maven-resolver-api",
+maven-resolver-api = ["maven-resolver-api"]
+maven-resolver-impl-libs = [
     "maven-resolver-spi",
     "maven-resolver-util",
     "maven-resolver-impl",
