@@ -41,10 +41,6 @@ public abstract class SpotlessCLIRunner {
         return new SpotlessCLIRunnerInExternalJavaProcess();
     }
 
-    public static SpotlessCLIRunner createNative() {
-        return new SpotlessCLIRunnerInNativeExternalProcess();
-    }
-
     public SpotlessCLIRunner withWorkingDir(@NotNull File workingDir) {
         this.workingDir = Objects.requireNonNull(workingDir);
         return this;
