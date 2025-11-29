@@ -7,18 +7,27 @@ version = rootProject.version
 dependencies {
 	// BOM to align all maven resolver versions
 	// the first two on API, to allow user of SpotlessCliMavenProvisioner to specify repositories
-	api( platform("org.apache.maven.resolver:maven-resolver:2.0.13"))
-	api "org.apache.maven.resolver:maven-resolver-api"
+	api( platform(libs.maven.resolver.bom))
+	//	api( platform("org.apache.maven.resolver:maven-resolver:2.0.13"))
+	//	api "org.apache.maven.resolver:maven-resolver-api"
+	api libs.maven.resolver.api
 	// implementations needed for a working resolver, irrelevant for API consumers
-	implementation "org.apache.maven.resolver:maven-resolver-spi"
-	implementation "org.apache.maven.resolver:maven-resolver-util"
-	implementation "org.apache.maven.resolver:maven-resolver-impl"
-	implementation "org.apache.maven.resolver:maven-resolver-connector-basic"
-	implementation "org.apache.maven.resolver:maven-resolver-transport-file"
-	implementation "org.apache.maven.resolver:maven-resolver-transport-apache"
+	// implementation "org.apache.maven.resolver:maven-resolver-spi"
+	implementation libs.maven.resolver.spi
+	//	implementation "org.apache.maven.resolver:maven-resolver-util"
+	implementation libs.maven.resolver.util
+	//	implementation "org.apache.maven.resolver:maven-resolver-impl"
+	implementation libs.maven.resolver.impl
+	//	implementation "org.apache.maven.resolver:maven-resolver-connector-basic"
+	implementation libs.maven.resolver.connector.basic
+	//	implementation "org.apache.maven.resolver:maven-resolver-transport-file"
+	implementation libs.maven.resolver.transport.file
+	//	implementation "org.apache.maven.resolver:maven-resolver-transport-apache"
+	implementation libs.maven.resolver.transport.apache
 
 	// This one is required to support parent POM resolution
-	implementation "org.apache.maven.resolver:maven-resolver-supplier-mvn4"
+	//	implementation "org.apache.maven.resolver:maven-resolver-supplier-mvn4"
+	implementation libs.maven.resolver.supplier.mvn4
 
 	implementation libs.bundles.spotless.libs
 }
