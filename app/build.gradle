@@ -5,6 +5,8 @@ import org.gradle.plugins.ide.eclipse.model.EclipseWtp
 plugins {
 	id 'buildlogic.picocli-conventions'
 	id 'buildlogic.java-special-tests-conventions'
+	id 'buildlogic.java-application-min-java-version-conventions'
+	id 'buildlogic.java-application-conventions'
 	id 'buildlogic.spotless-json-conventions'
 }
 
@@ -17,44 +19,6 @@ dependencies {
 	implementation libs.diff.utils
 
 	implementation project(':provisioner')
-}
-
-import org.gradle.api.GradleException
-
-def javaExtension = extensions.getByType(JavaPluginExtension)
-def requiredMajor = javaExtension.toolchain.languageVersion.map { it.asInt() }.get()
-
-tasks.named('startScripts', CreateStartScripts).configure {
-	doLast {
-		def unixMarker = 'exec "$JAVACMD" "$@"'
-		def windowsMarker = '"%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %SPOTLESS_OPTS%  -classpath "%CLASSPATH%" com.diffplug.spotless.cli.SpotlessCLI %*'
-
-		if (!unixScript.text.contains(unixMarker)) {
-			throw new GradleException("Unable to patch Unix launcher: '${unixMarker}' not found.")
-		}
-		if (!windowsScript.text.contains(windowsMarker)) {
-			throw new GradleException("Unable to patch Windows launcher: '${windowsMarker}' not found.")
-		}
-
-		unixScript.text = unixScript.text.replace(unixMarker, """
-spotlessCheckJavaVersion() {
-    local current=\$("\$JAVACMD" -version 2>&1 | awk -F[\\".] 'NR==1 {print \$2}')
-    if [ "\$current" -lt $requiredMajor ]; then
-        echo "Spotless CLI requires Java $requiredMajor or newer but found \$current. Make sure to install Java >= $requiredMajor and add it to the path or set JAVA_HOME env variable." >&2
-        exit 1
-    fi
-}
-spotlessCheckJavaVersion
-$unixMarker""")
-
-		windowsScript.text = windowsScript.text.replace(windowsMarker, """
-for /f "tokens=3 delims=." %%i in ('"%JAVA_EXE%" -version 2^>^&1 ^| findstr /r "[0-9][0-9]*\\.[0-9][0-9]*.*"') do set CURRENT_JAVA_MAJOR=%%i
-if %CURRENT_JAVA_MAJOR% LSS $requiredMajor (
-    echo Spotless CLI requires Java $requiredMajor or newer but found %CURRENT_JAVA_MAJOR%. Make sure to install Java >= $requiredMajor and add it to the path or set JAVA_HOME env variable. >&2
-    exit /b 1
-)
-$windowsMarker""")
-	}
 }
 
 application {
