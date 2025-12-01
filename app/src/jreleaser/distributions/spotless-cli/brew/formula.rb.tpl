@@ -24,7 +24,7 @@ class {{brewFormulaName}} < Formula
 
   def install
     libexec.install Dir["*"]
-    bin.install_symlink "#{libexec}/bin/{{distributionExecutableUnix}}" => "{{distributionExecutableName}}"
+    (bin/"{{distributionExecutableName}}").write_env_script libexec/"bin/{{distributionExecutableUnix}}", Language::Java.java_home_env("{{distributionJavaVersionMajor}}")
   end
 
   test do
