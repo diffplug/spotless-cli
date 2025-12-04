@@ -436,16 +436,6 @@ spotless --target '**/src/**/*.java' format-annotations \
 
 ### google-java-format
 
-<!---freshmark gjfshields
-output = [
-  link(shield('Google Java Format version', 'google-java-format', '{{libs.versions.native.include.googleJavaFormat}}', 'blue'), 'https://github.com/google/google-java-format'),
-  ].join('\n')
--->
-
-[![Google Java Format version](https://img.shields.io/badge/google--java--format-1.27.0-blue.svg)](https://github.com/google/google-java-format)
-
-<!---freshmark /gjfshields -->
-
 Formats Java files according to the [google-java-format](https://github.com/google/google-java-format) style guide.
 
 To see usage instructions for the google-java-format formatter, run: `spotless google-java-format --help`
@@ -458,7 +448,7 @@ output =
 -->
 
 ```
-Usage: spotless google-java-format [-hijrV] [-s=<style>]
+Usage: spotless google-java-format [-hijrV] [-s=<style>] [-v=<useVersion>]
 Runs google java format
   -h, --help              Show this help message and exit.
   -i, --reorder-imports   Reorder imports.
@@ -471,6 +461,10 @@ Runs google java format
   -s, --style=<style>     The style to use for the google java format.
                           One of: AOSP, GOOGLE
                           (default: GOOGLE)
+  -v, --use-version=<useVersion>
+                          The version of google java format to use. Must be >=
+                            1.8.
+                          (default: 1.28.0)
   -V, --version           Print version information and exit.
 
 ✅ This step supports the following file type: Java

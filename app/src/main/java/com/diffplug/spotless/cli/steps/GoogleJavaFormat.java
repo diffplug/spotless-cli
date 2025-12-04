@@ -31,6 +31,13 @@ import picocli.CommandLine;
 @AdditionalInfoLinks("https://github.com/google/google-java-format")
 public class GoogleJavaFormat extends SpotlessFormatterStep {
 
+    private static final String DEFAULT_VERSION_SYSPROP = "steps.google-java-format.default-version";
+
+    static {
+        // workaround for dynamic property values in annotations
+        System.setProperty(DEFAULT_VERSION_SYSPROP, GoogleJavaFormatStep.defaultVersion());
+    }
+
     @CommandLine.Option(
             names = {"--style", "-s"},
             defaultValue = "GOOGLE",
@@ -61,11 +68,18 @@ public class GoogleJavaFormat extends SpotlessFormatterStep {
             description = "Format javadoc." + OptionConstants.DEFAULT_VALUE_SUFFIX)
     boolean formatJavadoc;
 
+    @CommandLine.Option(
+            names = {"--use-version", "-v"},
+            defaultValue = "${sys:" + DEFAULT_VERSION_SYSPROP + "}",
+            description =
+                    "The version of google java format to use. Must be >= 1.8." + OptionConstants.DEFAULT_VALUE_SUFFIX)
+    String useVersion;
+
     @Override
     public List<FormatterStep> prepareFormatterSteps(SpotlessActionContext context) {
         return List.of(GoogleJavaFormatStep.create(
                 GoogleJavaFormatStep.defaultGroupArtifact(),
-                GoogleJavaFormatStep.defaultVersion(),
+                useVersion,
                 style.name(),
                 context.provisioner(),
                 reflowLongStrings,

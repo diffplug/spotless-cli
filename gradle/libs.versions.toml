@@ -8,7 +8,6 @@ junit = "5.8.1"
 maven-resolver = "2.0.13"
 mockito = "5.17.0"
 native-include-cleanThat = "2.23"
-native-include-googleJavaFormat = "1.27.0"
 native-include-palantirJavaFormat = "2.67.0"
 # to find required version here check eclipse_wtp_formatter/v4.21.0.lockfile
 # where <4.21.0> is the default version of com.diffplug.spotless.extra.wtp.EclipseWtpFormatterStep#defaultVersion
@@ -40,7 +39,6 @@ maven-resolver-transport-file = { module = "org.apache.maven.resolver:maven-reso
 maven-resolver-util = { module = "org.apache.maven.resolver:maven-resolver-util" } # version from bom
 mockito = { module = "org.mockito:mockito-core", version.ref = "mockito" }
 native-include-cleanThat = { module = "io.github.solven-eu.cleanthat:java", version.ref = "native-include-cleanThat" }
-native-include-googleJavaFormat = { module = "com.google.googlejavaformat:google-java-format", version.ref = "native-include-googleJavaFormat" }
 native-include-palantirJavaFormat = { module = "com.palantir.javaformat:palantir-java-format", version.ref = "native-include-palantirJavaFormat" }
 native-include-spotlessEclipseWtp = { module = "com.diffplug.spotless:spotless-eclipse-wtp", version.ref = "native-include-spotlessEclipseWtp" }
 picocli = { module = "info.picocli:picocli", version.ref = "picocli" }
@@ -66,7 +64,6 @@ maven-resolver-impl-libs = [
 ]
 native-includes = [
     "native-include-cleanThat",
-    "native-include-googleJavaFormat",
     "native-include-palantirJavaFormat",
     "native-include-spotlessEclipseWtp",
 ]
