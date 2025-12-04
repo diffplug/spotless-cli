@@ -22,6 +22,10 @@
     <bugTrackerUrl>{{projectLinkBugTracker}}</bugTrackerUrl>
     <releaseNotes>{{releaseNotesUrl}}</releaseNotes>
     {{#chocolateyIconUrl}}<iconUrl>{{.}}</iconUrl>{{/chocolateyIconUrl}}
+    <!-- dependencies -->
+    <dependencies>
+      <dependency id="temurin" version="[{{distributionJavaVersionMajor}},)" />
+    </dependencies>
   </metadata>
   <files>
     <file src="tools\**" target="tools" />
