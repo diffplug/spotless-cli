@@ -248,16 +248,6 @@ spotless --target '**/src/**/*.cpp' clang-format --clang-version=20.1.2 --style=
 
 ### clean-that
 
-<!---freshmark ctshields
-output = [
-  link(shield('CleanThat version', 'clean-that', '{{libs.versions.native.include.cleanThat}}', 'blue'), 'https://github.com/solven-eu/cleanthat'),
-  ].join('\n')
--->
-
-[![CleanThat version](https://img.shields.io/badge/clean--that-2.23-blue.svg)](https://github.com/solven-eu/cleanthat)
-
-<!---freshmark /ctshields -->
-
 Cleanthat is a project enabling automatic code cleaning, from formatting to refactoring.
 
 To see usage instructions for the clean-that formatter, run: `spotless clean-that --help`
@@ -270,8 +260,9 @@ output =
 -->
 
 ```
-Usage: spotless clean-that [-dDhV] [-s=<sourceCompatibility>] [-a[=mutator[,
-                           mutator...]...]]... [-e[=mutator[,mutator...]...]]...
+Usage: spotless clean-that [-dDhV] [-s=<sourceCompatibility>] [-v=<useVersion>]
+                           [-a[=mutator[,mutator...]...]]... [-e[=mutator[,
+                           mutator...]...]]...
 CleanThat enables automatic refactoring of Java code.
   -a, --add-mutator[=mutator[,mutator...]...]
                   Add a mutator to the list of mutators to use. Mutators are
@@ -296,6 +287,9 @@ CleanThat enables automatic refactoring of Java code.
                     This is used to determine the Java language features
                     available.
                   (default: 1.8)
+  -v, --use-version=<useVersion>
+                  The version of CleanThat to use.
+                  (default: 2.24)
   -V, --version   Print version information and exit.
 
 ✅ This step supports the following file type: Java
