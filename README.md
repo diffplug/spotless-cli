@@ -546,16 +546,6 @@ spotless --target '**/src/**/*.java' license-header --header='/* (c) DiffPlug $Y
 
 ### palantir-java-format
 
-<!---freshmark pjfshields
-output = [
-  link(shield('Palantir Java Format version', 'palantir-java-format', '{{libs.versions.native.include.palantirJavaFormat}}', 'blue'), 'https://github.com/palantir/palantir-java-format'),
-  ].join('\n')
--->
-
-[![Palantir Java Format version](https://img.shields.io/badge/palantir--java--format-2.67.0-blue.svg)](https://github.com/palantir/palantir-java-format)
-
-<!---freshmark /pjfshields -->
-
 Formats java files according to the [palantir-java-format](https://github.com/palantir/palantir-java-format) style guide. Palantir Java Format is a modern, lambda-friendly,
 120 character Java formatter. It is based on the Google Java Format project.
 
@@ -569,7 +559,7 @@ output =
 -->
 
 ```
-Usage: spotless palantir-java-format [-hjV] [-s=<style>]
+Usage: spotless palantir-java-format [-hjV] [-s=<style>] [-v=<useVersion>]
 Runs palantir java format
   -h, --help             Show this help message and exit.
   -j, --format-javadoc   Format javadoc.
@@ -577,6 +567,9 @@ Runs palantir java format
   -s, --style=<style>    The style to use for the palantir java format.
                          One of: PALANTIR, AOSP, GOOGLE
                          (default: PALANTIR)
+  -v, --use-version=<useVersion>
+                         The version of palantir java format to use.
+                         (default: 2.80.0)
   -V, --version          Print version information and exit.
 
 ✅ This step supports the following file type: Java

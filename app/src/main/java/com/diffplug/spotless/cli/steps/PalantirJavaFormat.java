@@ -33,6 +33,13 @@ import picocli.CommandLine;
 @AdditionalInfoLinks("https://github.com/palantir/palantir-java-format")
 public class PalantirJavaFormat extends SpotlessFormatterStep {
 
+    private static final String DEFAULT_VERSION_SYSPROP = "steps.palantir-java-format.default-version";
+
+    static {
+        // workaround for dynamic property values in annotations
+        System.setProperty(DEFAULT_VERSION_SYSPROP, PalantirJavaFormatStep.defaultVersion());
+    }
+
     @CommandLine.Option(
             names = {"--style", "-s"},
             defaultValue = "PALANTIR",
@@ -45,6 +52,12 @@ public class PalantirJavaFormat extends SpotlessFormatterStep {
             defaultValue = "false",
             description = "Format javadoc." + OptionConstants.DEFAULT_VALUE_SUFFIX)
     boolean formatJavadoc;
+
+    @CommandLine.Option(
+            names = {"--use-version", "-v"},
+            defaultValue = "${sys:" + DEFAULT_VERSION_SYSPROP + "}",
+            description = "The version of palantir java format to use." + OptionConstants.DEFAULT_VALUE_SUFFIX)
+    String useVersion;
 
     public enum Style {
         PALANTIR,
