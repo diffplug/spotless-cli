@@ -7,10 +7,6 @@ durian = "1.2.0"
 junit = "5.8.1"
 maven-resolver = "2.0.13"
 mockito = "5.17.0"
-# to find required version here check eclipse_wtp_formatter/v4.21.0.lockfile
-# where <4.21.0> is the default version of com.diffplug.spotless.extra.wtp.EclipseWtpFormatterStep#defaultVersion
-native-include-spotlessEclipseWtp = "3.23.0"
-native-include-spotlessEclipseWtpFormatter = "4.21.0"
 picocli = "4.7.6"
 selfie = "2.5.5"
 slf4j = "2.0.17"
@@ -36,7 +32,6 @@ maven-resolver-transport-apache = { module = "org.apache.maven.resolver:maven-re
 maven-resolver-transport-file = { module = "org.apache.maven.resolver:maven-resolver-transport-file" } # version from bom
 maven-resolver-util = { module = "org.apache.maven.resolver:maven-resolver-util" } # version from bom
 mockito = { module = "org.mockito:mockito-core", version.ref = "mockito" }
-native-include-spotlessEclipseWtp = { module = "com.diffplug.spotless:spotless-eclipse-wtp", version.ref = "native-include-spotlessEclipseWtp" }
 picocli = { module = "info.picocli:picocli", version.ref = "picocli" }
 picocli-codegen = { module = "info.picocli:picocli-codegen", version.ref = "picocli" }
 selfie = { module = "com.diffplug.selfie:selfie-runner-junit5", version.ref = "selfie" }
@@ -59,7 +54,6 @@ maven-resolver-impl-libs = [
     "maven-resolver-supplier-mvn4",
 ]
 native-includes = [
-    "native-include-spotlessEclipseWtp",
 ]
 spotless-libs = ["spotless-lib", "spotless-lib-extra"]
 test-libs = ["assertj-core", "junit-jupiter-api", "selfie", "mockito"]

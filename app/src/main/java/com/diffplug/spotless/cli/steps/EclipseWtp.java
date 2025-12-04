@@ -34,9 +34,7 @@ import com.diffplug.spotless.extra.wtp.EclipseWtpFormatterStep;
 
 import picocli.CommandLine;
 
-@CommandLine.Command(
-        name = "eclipse-wtp",
-        description = "Runs Eclipse WTP formatter (" + EclipseWtp.ECLIPSE_WTP_VERSION + ")")
+@CommandLine.Command(name = "eclipse-wtp", description = "Runs Eclipse WTP formatter.")
 @SupportedFileTypes({"css", "html", "js", "json", "xml", "xhtml"})
 @AdditionalInfoLinks({
     "https://github.com/diffplug/spotless/tree/main/plugin-gradle#eclipse-web-tools-platform",
@@ -44,7 +42,12 @@ import picocli.CommandLine;
 })
 public class EclipseWtp extends SpotlessFormatterStep {
 
-    public static final String ECLIPSE_WTP_VERSION = "4.21.0"; // TODO we need to slurp in the lock file also
+    private static final String DEFAULT_VERSION_SYSPROP = "steps.eclipse-wtp.default-version";
+
+    static {
+        // workaround for dynamic property values in annotations
+        System.setProperty(DEFAULT_VERSION_SYSPROP, EclipseWtpFormatterStep.defaultVersion());
+    }
 
     @CommandLine.Option(
             names = {"-f", "--config-file"},
@@ -59,6 +62,12 @@ public class EclipseWtp extends SpotlessFormatterStep {
                     "The type of the Eclipse WTP formatter. If not provided, the type will be guessed based on the first few files we find. If that does not work, we fail the formatting run."
                             + OptionConstants.VALID_VALUES_SUFFIX)
     Type type;
+
+    @CommandLine.Option(
+            names = {"--use-version", "-v"},
+            defaultValue = "${sys:" + DEFAULT_VERSION_SYSPROP + "}",
+            description = "The version of Eclipse WTP formatter to use." + OptionConstants.DEFAULT_VALUE_SUFFIX)
+    String useVersion;
 
     public enum Type {
         CSS(EclipseWtpFormatterStep.CSS),
@@ -95,7 +104,7 @@ public class EclipseWtp extends SpotlessFormatterStep {
     public @NotNull List<FormatterStep> prepareFormatterSteps(SpotlessActionContext context) {
         EclipseWtpFormatterStep wtpType = type(context::targetFileType).toEclipseWtpType();
         EclipseBasedStepBuilder builder = wtpType.createBuilder(context.provisioner());
-        builder.setVersion(ECLIPSE_WTP_VERSION);
+        builder.setVersion(useVersion);
         if (configFiles != null && !configFiles.isEmpty()) {
             builder.setPreferences(configFiles.stream()
                     .map(context::resolvePath)

@@ -154,7 +154,7 @@ or apply the formatting to the files.
 Available formatting steps:
   clang-format           Runs clang-format
   clean-that             CleanThat enables automatic refactoring of Java code.
-  eclipse-wtp            Runs Eclipse WTP formatter (4.21.0)
+  eclipse-wtp            Runs Eclipse WTP formatter.
   format-annotations     Corrects line break formatting of type annotations in
                            java files.
   google-java-format     Runs google java format
@@ -309,18 +309,6 @@ spotless --target '**/src/**/*.java' clean-that --exclude-mutator=StreamAnyMatch
 
 ### eclipse-wtp
 
-<!---freshmark eclipsewtpshields
-output = [
-  link(shield('spotless eclipse wtp version', 'spotless-eclipse-wtp', '{{libs.versions.native.include.spotlessEclipseWtp}}', 'blue'), 'https://central.sonatype.com/artifact/com.diffplug.spotless/spotless-eclipse-wtp/{{libs.versions.native.include.spotlessEclipseWtp}}'),
-  link(shield('eclipse wtp version', 'eclipse-wtp-formatter', '{{libs.versions.native.include.spotlessEclipseWtpFormatter}}', 'blue'), 'https://github.com/diffplug/spotless/blob/main/lib-extra/src/main/resources/com/diffplug/spotless/extra/eclipse_wtp_formatter/v{{libs.versions.native.include.spotlessEclipseWtpFormatter}}'),
-  ].join('\n')
--->
-
-[![spotless eclipse wtp version](https://img.shields.io/badge/spotless--eclipse--wtp-3.23.0-blue.svg)](https://central.sonatype.com/artifact/com.diffplug.spotless/spotless-eclipse-wtp/3.23.0)
-[![eclipse wtp version](https://img.shields.io/badge/eclipse--wtp--formatter-4.21.0-blue.svg)](https://github.com/diffplug/spotless/blob/main/lib-extra/src/main/resources/com/diffplug/spotless/extra/eclipse_wtp_formatter/v4.21.0)
-
-<!---freshmark /eclipsewtpshields -->
-
 The [eclipse web tools platform (WTP)](https://projects.eclipse.org/projects/webtools) formatter is a formatter for web files such as HTML, CSS, JavaScript, JSON, XML and XHTML.
 
 It comes with reasonable defaults but can be configured using configuration files. For details see the [spotless documentation](https://github.com/diffplug/spotless/tree/main/plugin-gradle#eclipse-web-tools-platform).
@@ -335,8 +323,8 @@ output =
 -->
 
 ```
-Usage: spotless eclipse-wtp [-hV] [-f]... [-t=<type>]
-Runs Eclipse WTP formatter (4.21.0)
+Usage: spotless eclipse-wtp [-hV] [-f]... [-t=<type>] [-v=<useVersion>]
+Runs Eclipse WTP formatter.
   -f, --config-file   The path to the Eclipse WTP configuration file. For
                         supported config file options see spotless
                         documentation (additional info links).
@@ -346,6 +334,9 @@ Runs Eclipse WTP formatter (4.21.0)
                         we find. If that does not work, we fail the formatting
                         run.
                       One of: CSS, HTML, JS, JSON, XML, XHTML
+  -v, --use-version=<useVersion>
+                      The version of Eclipse WTP formatter to use.
+                      (default: 4.21.0)
   -V, --version       Print version information and exit.
 
 ✅ This step supports the following file types:
