@@ -18,6 +18,7 @@ package com.diffplug.spotless.cli.steps;
 import java.io.File;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.Map;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -36,10 +37,20 @@ import com.diffplug.spotless.protobuf.ProtobufConstants;
 
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "license-header", description = "Runs license header")
+@CommandLine.Command(
+        name = "license-header",
+        description = "Runs license header",
+        defaultValueProvider = LicenseHeader.OptionDefaultProvider.class)
 @SupportedFileTypes("any")
 @AdditionalInfoLinks("https://github.com/diffplug/spotless/tree/main/plugin-gradle#license-header")
 public class LicenseHeader extends SpotlessFormatterStep {
+
+    static class OptionDefaultProvider extends OptionDefaultValueProvider {
+        OptionDefaultProvider() {
+            super(Map.of(OPTION_YEAR_SEPARATOR_LONG, LicenseHeaderStep::defaultYearDelimiter));
+        }
+    }
+
     @CommandLine.ArgGroup(exclusive = true, multiplicity = "1")
     LicenseHeaderSourceOption licenseHeaderSourceOption;
 
@@ -73,10 +84,13 @@ public class LicenseHeader extends SpotlessFormatterStep {
                     + OptionConstants.VALID_AND_DEFAULT_VALUES_SUFFIX)
     LicenseHeaderStep.YearMode yearMode;
 
+    private static final String OPTION_YEAR_SEPARATOR_LONG = "--year-separator";
+    private static final String OPTION_YEAR_SEPARATOR_SHORT = "-Y";
+
     @CommandLine.Option(
-            names = {"--year-separator", "-Y"},
+            names = {OPTION_YEAR_SEPARATOR_LONG, OPTION_YEAR_SEPARATOR_SHORT},
             required = false,
-            defaultValue = "-" /* TODO simschla: Make accessible: LicenseHeaderStep.DEFAULT_YEAR_DELIMITER*/,
+            // defaultValue from DefaultValueProvider (because is dynamic)
             description = "The separator to use for the year range in the license header."
                     + OptionConstants.DEFAULT_VALUE_SUFFIX)
     String yearSeparator;
