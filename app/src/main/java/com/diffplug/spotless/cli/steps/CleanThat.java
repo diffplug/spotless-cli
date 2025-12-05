@@ -59,7 +59,7 @@ public class CleanThat extends SpotlessFormatterStep {
             names = {"--use-default-mutators", "-d"},
             defaultValue = "true",
             description =
-                    "Use the default mutators provided by CleanThat. Default mutators are: <${usage.cleanthat.defaultMutators}>."
+                    "Use the default mutators provided by ${COMMAND-NAME}. Default mutators are: <${usage.cleanthat.defaultMutators}>."
                             + OptionConstants.DEFAULT_VALUE_SUFFIX)
     boolean useDefaultMutators;
 
@@ -69,7 +69,7 @@ public class CleanThat extends SpotlessFormatterStep {
             split = OptionConstants.OPTION_LIST_SPLIT,
             paramLabel = "mutator",
             description =
-                    "Add a mutator to the list of mutators to use. Mutators are the individual refactoring steps CleanThat applies. A list of available mutators can be found in the \"Additional Info\" section. ")
+                    "Add a mutator to the list of mutators to use. Mutators are the individual refactoring steps ${COMMAND-NAME} applies. A list of available mutators can be found in the \"Additional Info\" section. ")
     List<String> addMutators;
 
     @CommandLine.Option(
@@ -93,7 +93,7 @@ public class CleanThat extends SpotlessFormatterStep {
             names = {"--source-compatibility", "-s"},
             defaultValue = "1.8",
             description =
-                    "The source JDK version to use for the CleanThat mutators. This is used to determine the Java language features available."
+                    "The source JDK version to use for the ${COMMAND-NAME} mutators. This is used to determine the Java language features available."
                             + OptionConstants.DEFAULT_VALUE_SUFFIX)
     String sourceCompatibility;
 

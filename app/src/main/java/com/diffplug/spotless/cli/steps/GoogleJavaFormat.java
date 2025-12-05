@@ -43,8 +43,7 @@ public class GoogleJavaFormat extends SpotlessFormatterStep {
     @CommandLine.Option(
             names = {"--style", "-s"},
             defaultValue = "GOOGLE",
-            description =
-                    "The style to use for the google java format." + OptionConstants.VALID_AND_DEFAULT_VALUES_SUFFIX)
+            description = "The style to use for the ${COMMAND-NAME}." + OptionConstants.VALID_AND_DEFAULT_VALUES_SUFFIX)
     Style style;
 
     public enum Style {

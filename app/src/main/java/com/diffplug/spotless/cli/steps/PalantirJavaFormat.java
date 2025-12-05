@@ -45,8 +45,7 @@ public class PalantirJavaFormat extends SpotlessFormatterStep {
     @CommandLine.Option(
             names = {"--style", "-s"},
             defaultValue = "PALANTIR",
-            description =
-                    "The style to use for the palantir java format." + OptionConstants.VALID_AND_DEFAULT_VALUES_SUFFIX)
+            description = "The style to use for the ${COMMAND-NAME}." + OptionConstants.VALID_AND_DEFAULT_VALUES_SUFFIX)
     Style style;
 
     @CommandLine.Option(

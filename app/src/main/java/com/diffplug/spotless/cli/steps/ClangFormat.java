@@ -41,18 +41,18 @@ public class ClangFormat extends SpotlessFormatterStep {
             names = {"--clang-version", "-v"},
             required = true,
             defaultValue = "10.0.1",
-            description = "The version of clang-format to use." + OptionConstants.DEFAULT_VALUE_SUFFIX)
+            description = "The version of ${COMMAND-NAME} to use." + OptionConstants.DEFAULT_VALUE_SUFFIX)
     String version;
 
     @CommandLine.Option(
             names = {"--clang-format-exec", "-c"},
-            description = "The path to the clang-format executable." + OptionConstants.DEFAULT_VALUE_SUFFIX_BEGIN
+            description = "The path to the ${COMMAND-NAME} executable." + OptionConstants.DEFAULT_VALUE_SUFFIX_BEGIN
                     + "looks on your PATH" + OptionConstants.DEFAULT_VALUE_SUFFIX_END)
     Path pathToExec;
 
     @CommandLine.Option(
             names = {"--style", "-s"},
-            description = "The style to use for clang-format.")
+            description = "The style to use for ${COMMAND-NAME}.")
     String style;
 
     @Override

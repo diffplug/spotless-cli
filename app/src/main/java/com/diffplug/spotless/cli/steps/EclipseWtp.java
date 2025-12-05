@@ -54,14 +54,14 @@ public class EclipseWtp extends SpotlessFormatterStep {
     @CommandLine.Option(
             names = {"-f", "--config-file"},
             arity = "0",
-            description = "The path to the Eclipse WTP configuration file. "
+            description = "The path to the ${COMMAND-NAME} configuration file. "
                     + "For supported config file options see spotless documentation (additional info links).")
     List<Path> configFiles;
 
     @CommandLine.Option(
             names = {"-t", "--type"},
             description =
-                    "The type of the Eclipse WTP formatter. If not provided, the type will be guessed based on the first few files we find. If that does not work, we fail the formatting run."
+                    "The type of the ${COMMAND-NAME}. If not provided, the type will be guessed based on the first few files we find. If that does not work, we fail the formatting run."
                             + OptionConstants.VALID_VALUES_SUFFIX)
     Type type;
 

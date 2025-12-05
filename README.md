@@ -266,11 +266,11 @@ Usage: spotless clean-that [-dDhV] [-s=<sourceCompatibility>] [-v=<useVersion>]
 CleanThat enables automatic refactoring of Java code.
   -a, --add-mutator[=mutator[,mutator...]...]
                   Add a mutator to the list of mutators to use. Mutators are
-                    the individual refactoring steps CleanThat applies. A list
+                    the individual refactoring steps clean-that applies. A list
                     of available mutators can be found in the "Additional Info"
                     section.
   -d, --use-default-mutators
-                  Use the default mutators provided by CleanThat. Default
+                  Use the default mutators provided by clean-that. Default
                     mutators are: <SafeAndConsensual>.
                   (default: true)
   -D, --include-draft-mutators
@@ -283,7 +283,7 @@ CleanThat enables automatic refactoring of Java code.
                     make sense for composite mutators
   -h, --help      Show this help message and exit.
   -s, --source-compatibility=<sourceCompatibility>
-                  The source JDK version to use for the CleanThat mutators.
+                  The source JDK version to use for the clean-that mutators.
                     This is used to determine the Java language features
                     available.
                   (default: 1.8)
@@ -325,14 +325,13 @@ output =
 ```
 Usage: spotless eclipse-wtp [-hV] [-f]... [-t=<type>] [-v=<useVersion>]
 Runs Eclipse WTP formatter.
-  -f, --config-file   The path to the Eclipse WTP configuration file. For
+  -f, --config-file   The path to the eclipse-wtp configuration file. For
                         supported config file options see spotless
                         documentation (additional info links).
   -h, --help          Show this help message and exit.
-  -t, --type=<type>   The type of the Eclipse WTP formatter. If not provided,
-                        the type will be guessed based on the first few files
-                        we find. If that does not work, we fail the formatting
-                        run.
+  -t, --type=<type>   The type of the eclipse-wtp. If not provided, the type
+                        will be guessed based on the first few files we find.
+                        If that does not work, we fail the formatting run.
                       One of: CSS, HTML, JS, JSON, XML, XHTML
   -v, --use-version=<useVersion>
                       The version of eclipse-wtp to use.
@@ -443,7 +442,7 @@ Runs google java format
   -r, --reflow-long-strings
                           Reflow long strings.
                           (default: false)
-  -s, --style=<style>     The style to use for the google java format.
+  -s, --style=<style>     The style to use for the google-java-format.
                           One of: AOSP, GOOGLE
                           (default: GOOGLE)
   -v, --use-version=<useVersion>
@@ -548,7 +547,7 @@ Runs palantir java format
   -h, --help             Show this help message and exit.
   -j, --format-javadoc   Format javadoc.
                          (default: false)
-  -s, --style=<style>    The style to use for the palantir java format.
+  -s, --style=<style>    The style to use for the palantir-java-format.
                          One of: PALANTIR, AOSP, GOOGLE
                          (default: PALANTIR)
   -v, --use-version=<useVersion>
