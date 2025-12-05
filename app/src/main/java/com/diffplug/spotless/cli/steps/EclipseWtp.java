@@ -34,7 +34,10 @@ import com.diffplug.spotless.extra.wtp.EclipseWtpFormatterStep;
 
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "eclipse-wtp", description = "Runs Eclipse WTP formatter.")
+@CommandLine.Command(
+        name = "eclipse-wtp",
+        description = "Runs Eclipse WTP formatter.",
+        defaultValueProvider = EclipseWtp.DefaultValueProvider.class)
 @SupportedFileTypes({"css", "html", "js", "json", "xml", "xhtml"})
 @AdditionalInfoLinks({
     "https://github.com/diffplug/spotless/tree/main/plugin-gradle#eclipse-web-tools-platform",
@@ -42,11 +45,10 @@ import picocli.CommandLine;
 })
 public class EclipseWtp extends SpotlessFormatterStep {
 
-    private static final String DEFAULT_VERSION_SYSPROP = "steps.eclipse-wtp.default-version";
-
-    static {
-        // workaround for dynamic property values in annotations
-        System.setProperty(DEFAULT_VERSION_SYSPROP, EclipseWtpFormatterStep.defaultVersion());
+    static class DefaultValueProvider extends CustomVersion.CustomVersionDefaultValueProvider {
+        DefaultValueProvider() {
+            super(EclipseWtpFormatterStep::defaultVersion);
+        }
     }
 
     @CommandLine.Option(
@@ -63,11 +65,8 @@ public class EclipseWtp extends SpotlessFormatterStep {
                             + OptionConstants.VALID_VALUES_SUFFIX)
     Type type;
 
-    @CommandLine.Option(
-            names = {"--use-version", "-v"},
-            defaultValue = "${sys:" + DEFAULT_VERSION_SYSPROP + "}",
-            description = "The version of Eclipse WTP formatter to use." + OptionConstants.DEFAULT_VALUE_SUFFIX)
-    String useVersion;
+    @CommandLine.Mixin
+    CustomVersion customVersion;
 
     public enum Type {
         CSS(EclipseWtpFormatterStep.CSS),
@@ -104,7 +103,7 @@ public class EclipseWtp extends SpotlessFormatterStep {
     public @NotNull List<FormatterStep> prepareFormatterSteps(SpotlessActionContext context) {
         EclipseWtpFormatterStep wtpType = type(context::targetFileType).toEclipseWtpType();
         EclipseBasedStepBuilder builder = wtpType.createBuilder(context.provisioner());
-        builder.setVersion(useVersion);
+        builder.setVersion(customVersion.useVersion);
         if (configFiles != null && !configFiles.isEmpty()) {
             builder.setPreferences(configFiles.stream()
                     .map(context::resolvePath)

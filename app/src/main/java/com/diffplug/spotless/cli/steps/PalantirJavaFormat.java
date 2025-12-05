@@ -28,16 +28,18 @@ import com.diffplug.spotless.java.PalantirJavaFormatStep;
 
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "palantir-java-format", description = "Runs palantir java format")
+@CommandLine.Command(
+        name = "palantir-java-format",
+        description = "Runs palantir java format",
+        defaultValueProvider = PalantirJavaFormat.DefaultValueProvider.class)
 @SupportedFileTypes("Java")
 @AdditionalInfoLinks("https://github.com/palantir/palantir-java-format")
 public class PalantirJavaFormat extends SpotlessFormatterStep {
 
-    private static final String DEFAULT_VERSION_SYSPROP = "steps.palantir-java-format.default-version";
-
-    static {
-        // workaround for dynamic property values in annotations
-        System.setProperty(DEFAULT_VERSION_SYSPROP, PalantirJavaFormatStep.defaultVersion());
+    static class DefaultValueProvider extends CustomVersion.CustomVersionDefaultValueProvider {
+        DefaultValueProvider() {
+            super(PalantirJavaFormatStep::defaultVersion);
+        }
     }
 
     @CommandLine.Option(
@@ -53,11 +55,8 @@ public class PalantirJavaFormat extends SpotlessFormatterStep {
             description = "Format javadoc." + OptionConstants.DEFAULT_VALUE_SUFFIX)
     boolean formatJavadoc;
 
-    @CommandLine.Option(
-            names = {"--use-version", "-v"},
-            defaultValue = "${sys:" + DEFAULT_VERSION_SYSPROP + "}",
-            description = "The version of palantir java format to use." + OptionConstants.DEFAULT_VALUE_SUFFIX)
-    String useVersion;
+    @CommandLine.Mixin
+    CustomVersion customVersion;
 
     public enum Style {
         PALANTIR,
@@ -68,6 +67,6 @@ public class PalantirJavaFormat extends SpotlessFormatterStep {
     @Override
     public @NotNull List<FormatterStep> prepareFormatterSteps(SpotlessActionContext context) {
         return List.of(PalantirJavaFormatStep.create(
-                PalantirJavaFormatStep.defaultVersion(), style.name(), formatJavadoc, context.provisioner()));
+                customVersion.useVersion, style.name(), formatJavadoc, context.provisioner()));
     }
 }

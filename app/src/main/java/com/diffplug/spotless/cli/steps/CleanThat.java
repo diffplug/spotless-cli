@@ -31,7 +31,10 @@ import com.diffplug.spotless.java.CleanthatJavaStep;
 
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "clean-that", description = "CleanThat enables automatic refactoring of Java code.")
+@CommandLine.Command(
+        name = "clean-that",
+        description = "CleanThat enables automatic refactoring of Java code.",
+        defaultValueProvider = CleanThat.DefaultValueProvider.class)
 @SupportedFileTypes("Java")
 @AdditionalInfoLinks({
     "https://github.com/solven-eu/cleanthat",
@@ -41,12 +44,15 @@ public class CleanThat extends SpotlessFormatterStep {
 
     public static final String DEFAULT_MUTATORS = String.join(", ", CleanthatJavaStep.defaultMutators());
 
-    private static final String DEFAULT_VERSION_SYSPROP = "steps.clean-that.default-version";
-
     static {
         // workaround for dynamic property resolution in help messages
         System.setProperty("usage.cleanthat.defaultMutators", DEFAULT_MUTATORS);
-        System.setProperty(DEFAULT_VERSION_SYSPROP, CleanthatJavaStep.defaultVersion());
+    }
+
+    static class DefaultValueProvider extends CustomVersion.CustomVersionDefaultValueProvider {
+        DefaultValueProvider() {
+            super(CleanthatJavaStep::defaultVersion);
+        }
     }
 
     @CommandLine.Option(
@@ -91,17 +97,14 @@ public class CleanThat extends SpotlessFormatterStep {
                             + OptionConstants.DEFAULT_VALUE_SUFFIX)
     String sourceCompatibility;
 
-    @CommandLine.Option(
-            names = {"--use-version", "-v"},
-            defaultValue = "${sys:" + DEFAULT_VERSION_SYSPROP + "}",
-            description = "The version of CleanThat to use." + OptionConstants.DEFAULT_VALUE_SUFFIX)
-    String useVersion;
+    @CommandLine.Mixin
+    CustomVersion customVersion;
 
     @Override
     public @NotNull List<FormatterStep> prepareFormatterSteps(SpotlessActionContext context) {
         return Collections.singletonList(CleanthatJavaStep.create(
                 CleanthatJavaStep.defaultGroupArtifact(),
-                useVersion,
+                customVersion.useVersion,
                 this.sourceCompatibility,
                 includedMutators(),
                 excludedMutators(),

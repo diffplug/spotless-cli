@@ -288,7 +288,7 @@ CleanThat enables automatic refactoring of Java code.
                     available.
                   (default: 1.8)
   -v, --use-version=<useVersion>
-                  The version of CleanThat to use.
+                  The version of clean-that to use.
                   (default: 2.24)
   -V, --version   Print version information and exit.
 
@@ -335,7 +335,7 @@ Runs Eclipse WTP formatter.
                         run.
                       One of: CSS, HTML, JS, JSON, XML, XHTML
   -v, --use-version=<useVersion>
-                      The version of Eclipse WTP formatter to use.
+                      The version of eclipse-wtp to use.
                       (default: 4.21.0)
   -V, --version       Print version information and exit.
 
@@ -447,8 +447,7 @@ Runs google java format
                           One of: AOSP, GOOGLE
                           (default: GOOGLE)
   -v, --use-version=<useVersion>
-                          The version of google java format to use. Must be >=
-                            1.8.
+                          The version of google-java-format to use.
                           (default: 1.28.0)
   -V, --version           Print version information and exit.
 
@@ -553,7 +552,7 @@ Runs palantir java format
                          One of: PALANTIR, AOSP, GOOGLE
                          (default: PALANTIR)
   -v, --use-version=<useVersion>
-                         The version of palantir java format to use.
+                         The version of palantir-java-format to use.
                          (default: 2.80.0)
   -V, --version          Print version information and exit.
 
