@@ -15,7 +15,7 @@
  */
 package com.diffplug.spotless.cli.steps;
 
-import java.util.Objects;
+import java.util.Map;
 import java.util.function.Supplier;
 
 import org.jetbrains.annotations.NotNull;
@@ -34,26 +34,9 @@ public class CustomVersion {
             description = "The version of ${COMMAND-NAME} to use." + OptionConstants.DEFAULT_VALUE_SUFFIX)
     String useVersion;
 
-    abstract static class CustomVersionDefaultValueProvider implements CommandLine.IDefaultValueProvider {
-        private final Supplier<String> defaultVersionSupplier;
-
+    abstract static class CustomVersionDefaultValueProvider extends OptionDefaultValueProvider {
         protected CustomVersionDefaultValueProvider(@NotNull Supplier<String> defaultVersionSupplier) {
-            this.defaultVersionSupplier = Objects.requireNonNull(defaultVersionSupplier);
-        }
-
-        @Override
-        public String defaultValue(CommandLine.Model.ArgSpec argSpec) throws Exception {
-            // if it is the use-version option, provide the default version, otherwise null
-            if (!argSpec.isOption()) {
-                return null;
-            }
-            if (!(argSpec instanceof CommandLine.Model.OptionSpec optionSpec)) {
-                return null;
-            }
-            if (!optionSpec.longestName().equals(LONG_OPTION)) {
-                return null;
-            }
-            return defaultVersionSupplier.get();
+            super(Map.of(LONG_OPTION, defaultVersionSupplier));
         }
     }
 }
