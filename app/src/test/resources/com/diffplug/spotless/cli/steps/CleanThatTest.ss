@@ -163,4 +163,8 @@ public class LiteralsFirstInComparisonsCases {
 	}
 }
 
+╔═ itSelectsCustomVersion ═╗
+public class A { @Deprecated
+private final transient String ANNOTATED; }
+
 ╔═ [end of file] ═╗

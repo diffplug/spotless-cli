@@ -17,7 +17,10 @@ package com.diffplug.spotless.cli.steps;
 
 import org.junit.jupiter.api.Test;
 
+import com.diffplug.spotless.cli.SpotlessCLIRunner;
 import com.diffplug.spotless.tag.CliProcessTest;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @CliProcessTest
 public class EclipseWtpTest extends EclipseWtpTestBase {
@@ -147,5 +150,22 @@ public class EclipseWtpTest extends EclipseWtpTestBase {
         String fileName =
                 runEclipseWtpWithTypeInferred("json", "{\"a\": \"b\",\t\"c\":   { \"d\": \"e\",\"f\": \"g\"}}");
         selfie().expectResource(fileName).toMatchDisk();
+    }
+
+    @Test
+    void itRespectsCustomVersion() {
+        setFile("test.json").toContent("{\"a\": \"b\",\t\"c\":   { \"d\": \"e\",\"f\": \"g\"}}");
+
+        String invalidCustomVersion = "99.99.99.v20250101-0000";
+
+        SpotlessCLIRunner.Result result = cliRunner()
+                .withTargets("test.json")
+                .withStep(EclipseWtp.class)
+                .withOption("--type", "JSON")
+                .withOption("--use-version", invalidCustomVersion)
+                .runAndFail();
+
+        assertThat(result.exitCode()).isNotEqualTo(0);
+        assertThat(result.stdErr()).contains("No such version " + invalidCustomVersion);
     }
 }

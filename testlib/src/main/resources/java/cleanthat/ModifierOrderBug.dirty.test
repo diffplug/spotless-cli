@@ -1,0 +1,1 @@
+public class A { private transient final @Deprecated String ANNOTATED; }

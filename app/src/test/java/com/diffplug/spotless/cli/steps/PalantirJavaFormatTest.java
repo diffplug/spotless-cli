@@ -23,6 +23,8 @@ import com.diffplug.spotless.cli.CLIIntegrationHarness;
 import com.diffplug.spotless.cli.SpotlessCLIRunner;
 import com.diffplug.spotless.tag.CliProcessTest;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @CliProcessTest
 public class PalantirJavaFormatTest extends CLIIntegrationHarness {
 
@@ -75,5 +77,24 @@ public class PalantirJavaFormatTest extends CLIIntegrationHarness {
                 .run();
 
         selfie().expectResource("Java.java").toMatchDisk();
+    }
+
+    @Test
+    void itRespectsCustomVersion() {
+        setFile("Java.java").toResource("java/palantirjavaformat/JavaCodeWithJavaDocUnformatted.test");
+
+        String invalidCustomVersion = "0.0.0.1-SNAPSHOT";
+
+        SpotlessCLIRunner.Result result = cliRunner()
+                .withTargets("*.java")
+                .withStep(PalantirJavaFormat.class)
+                .withOption("--use-version", invalidCustomVersion)
+                .runAndFail();
+
+        assertThat(result.exitCode()).isNotEqualTo(0);
+        assertThat(result.stdErr())
+                .contains(
+                        "The following artifacts could not be resolved: com.palantir.javaformat:palantir-java-format:jar:"
+                                + invalidCustomVersion);
     }
 }

@@ -17,7 +17,9 @@ package com.diffplug.spotless.cli.steps;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import com.diffplug.spotless.cli.CLIIntegrationHarness;
@@ -119,5 +121,57 @@ public class CleanThatTest extends CLIIntegrationHarness {
                 .run();
 
         selfie().expectResource("Test.java").toMatchDisk();
+    }
+
+    @Test
+    @Disabled("Runs for a long time when using 2.14 version of CleanThat, not suitable for regular tests")
+    void itLetsSelectCustomVersion() {
+        setFile("Test.java").toResource("java/cleanthat/StringFromString.dirty.test");
+
+        // StringFromString has been added in CleanThat 2.15, so should not work before then
+        cliRunner()
+                .withTargets("Test.java")
+                .withStep(CleanThat.class)
+                .withOption("--add-mutator", "StringFromString")
+                .run();
+
+        assertFile("Test.java").notSameSasResource("java/cleanthat/StringFromString.dirty.test");
+
+        setFile("Test2.java").toResource("java/cleanthat/StringFromString.dirty.test");
+
+        cliRunner()
+                .withTargets("Test2.java")
+                .withStep(CleanThat.class)
+                .withOption("--add-mutator", "StringFromString")
+                .withOption("--use-version", "2.14")
+                .run();
+
+        assertFile("Test2.java").sameAsResource("java/cleanthat/StringFromString.dirty.test");
+    }
+
+    @Test
+    void itSelectsCustomVersion() {
+        // bug https://github.com/solven-eu/cleanthat/issues/897 has been fixed in 2.24, so selecting 2.23 should yield
+        // no fix
+        setFile("Test.java").toResource("java/cleanthat/ModifierOrderBug.dirty.test");
+
+        cliRunner()
+                .withTargets("Test.java")
+                .withStep(CleanThat.class)
+                .withOption("--add-mutator", "ModifierOrder")
+                .run();
+
+        selfie().expectResource("Test.java").toMatchDisk();
+        assertFile("Test.java").notHasContent("Deprecatedprivate", StandardCharsets.UTF_8);
+
+        setFile("Test2.java").toResource("java/cleanthat/ModifierOrderBug.dirty.test");
+
+        cliRunner()
+                .withTargets("Test2.java")
+                .withStep(CleanThat.class)
+                .withOption("--add-mutator", "ModifierOrder")
+                .withOption("--use-version", "2.23")
+                .run();
+        assertFile("Test2.java").hasContent("Deprecatedprivate", StandardCharsets.UTF_8);
     }
 }

@@ -23,6 +23,8 @@ import com.diffplug.spotless.cli.CLIIntegrationHarness;
 import com.diffplug.spotless.cli.SpotlessCLIRunner;
 import com.diffplug.spotless.tag.CliProcessTest;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @CliProcessTest
 public class GoogleJavaFormatTest extends CLIIntegrationHarness {
 
@@ -88,5 +90,19 @@ public class GoogleJavaFormatTest extends CLIIntegrationHarness {
                 .run();
 
         selfie().expectResource("Java.java").toMatchDisk();
+    }
+
+    @Test
+    void selectingSpecificVersionWorks() {
+        setFile("Java.java").toResource("java/googlejavaformat/JavaCodeUnformatted.test");
+        // we select version below `1.17.0` (1.17.0 is required for java 21) -> should fail
+
+        SpotlessCLIRunner.Result result = cliRunner()
+                .withTargets("*.java")
+                .withStep(GoogleJavaFormat.class)
+                .withOption("--use-version=1.16.0")
+                .runAndFail();
+
+        assertThat(result.exitCode()).isNotEqualTo(0);
     }
 }
