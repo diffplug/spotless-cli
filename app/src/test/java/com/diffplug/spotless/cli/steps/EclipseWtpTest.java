@@ -17,13 +17,14 @@ package com.diffplug.spotless.cli.steps;
 
 import org.junit.jupiter.api.Test;
 
+import com.diffplug.spotless.cli.CLIIntegrationHarness;
 import com.diffplug.spotless.cli.SpotlessCLIRunner;
 import com.diffplug.spotless.tag.CliProcessTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @CliProcessTest
-public class EclipseWtpTest extends EclipseWtpTestBase {
+public class EclipseWtpTest extends CLIIntegrationHarness {
 
     // XML
     @Test
@@ -167,5 +168,43 @@ public class EclipseWtpTest extends EclipseWtpTestBase {
 
         assertThat(result.exitCode()).isNotEqualTo(0);
         assertThat(result.stdErr()).contains("No such version " + invalidCustomVersion);
+    }
+
+    protected String runEclipseWtpWithType(EclipseWtp.Type type, String unformatted) {
+        String fileName = "test." + type.name().toLowerCase();
+        setFile(fileName).toContent(unformatted);
+
+        SpotlessCLIRunner.Result result = cliRunner()
+                .withTargets(fileName)
+                .withStep(EclipseWtp.class)
+                .withOption("--type", type.name())
+                .run();
+
+        return fileName;
+    }
+
+    protected String runEclipseWtpWithTypeInferred(String fileExtension, String unformatted) {
+        String fileName = "test." + fileExtension;
+        setFile(fileName).toContent(unformatted);
+
+        SpotlessCLIRunner.Result result =
+                cliRunner().withTargets(fileName).withStep(EclipseWtp.class).run();
+
+        return fileName;
+    }
+
+    protected String runEclipseWtpWithTypeAndConfigFile(EclipseWtp.Type type, String unformatted, String configFile) {
+        String fileName = "test." + type.name().toLowerCase();
+        setFile(fileName).toContent(unformatted);
+        setFile(configFile).toResource("eclipse-wtp/" + configFile);
+
+        SpotlessCLIRunner.Result result = cliRunner()
+                .withTargets(fileName)
+                .withStep(EclipseWtp.class)
+                .withOption("--type", type.name())
+                .withOption("--config-file", configFile)
+                .run();
+
+        return fileName;
     }
 }
