@@ -205,13 +205,13 @@ public class ResourceHarness {
             return hasContent(expected, StandardCharsets.UTF_8);
         }
 
-        public ReadAsserter hasNotContent(String notExpected) {
-            return notHasContent(notExpected, StandardCharsets.UTF_8);
-        }
-
         public ReadAsserter hasContent(String expected, Charset charset) {
             assertThat(file).usingCharset(charset).hasContent(expected);
             return this;
+        }
+
+        public ReadAsserter notHasContent(String notExpected) {
+            return notHasContent(notExpected, StandardCharsets.UTF_8);
         }
 
         public ReadAsserter notHasContent(String notExpected, Charset charset) {
@@ -228,7 +228,7 @@ public class ResourceHarness {
         }
 
         public ReadAsserter notSameSasResource(String resource) {
-            return hasNotContent(getTestResource(resource));
+            return notHasContent(getTestResource(resource));
         }
 
         public ReadAsserter matches(Consumer<AbstractCharSequenceAssert<?, String>> conditions) throws IOException {

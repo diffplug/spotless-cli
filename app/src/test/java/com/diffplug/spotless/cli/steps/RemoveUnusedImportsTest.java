@@ -31,7 +31,7 @@ class RemoveUnusedImportsTest extends CLIIntegrationHarness {
 
         assertFile("Java.java")
                 .notSameSasResource("java/removeunusedimports/JavaCodeWithLicensePackageUnformatted.test")
-                .hasNotContent("Unused");
+                .notHasContent("Unused");
 
         selfie().expectResource("Java.java").toMatchDisk();
     }
@@ -48,7 +48,7 @@ class RemoveUnusedImportsTest extends CLIIntegrationHarness {
 
         assertFile("Java.java")
                 .notSameSasResource("java/removeunusedimports/JavaCodeWithLicensePackageUnformatted.test")
-                .hasNotContent("Unused");
+                .notHasContent("Unused");
 
         selfie().expectResource("Java.java").toMatchDisk();
     }
@@ -65,7 +65,7 @@ class RemoveUnusedImportsTest extends CLIIntegrationHarness {
 
         assertFile("Java.java")
                 .notSameSasResource("java/removeunusedimports/JavaCodeWithLicensePackageUnformatted.test")
-                .hasNotContent("Unused");
+                .notHasContent("Unused");
 
         selfie().expectResource("Java.java").toMatchDisk();
     }
