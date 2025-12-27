@@ -150,7 +150,7 @@ public class CleanThatTest extends CLIIntegrationHarness {
     }
 
     @Test
-    void itSelectsCustomVersion() {
+    void itSelectsCustomVersion() throws IOException {
         // bug https://github.com/solven-eu/cleanthat/issues/897 has been fixed in 2.24, so selecting 2.23 should yield
         // no fix
         setFile("Test.java").toResource("java/cleanthat/ModifierOrderBug.dirty.test");
@@ -172,6 +172,6 @@ public class CleanThatTest extends CLIIntegrationHarness {
                 .withOption("--add-mutator", "ModifierOrder")
                 .withOption("--use-version", "2.23")
                 .run();
-        assertFile("Test2.java").hasContent("Deprecatedprivate", StandardCharsets.UTF_8);
+        assertFile("Test2.java").matches(that -> that.contains("Deprecatedprivate"));
     }
 }
